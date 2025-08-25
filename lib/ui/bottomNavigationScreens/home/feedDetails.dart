@@ -848,6 +848,7 @@ class _FeedDetailsState extends State<FeedDetails> {
           ),
         ],
       )
+
       /*Stack(
             children: [
               GoogleMap(
