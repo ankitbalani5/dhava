@@ -91,6 +91,11 @@ class AppImageOthers {
   static const milestone = 'assets/image/others/milestone.png';
   static const location = 'assets/image/others/location.png';
   static const clubDP = 'assets/image/others/clubDP.png';
+  static const expand = 'assets/image/others/expand.png';
+  static const runType = 'assets/image/others/runType.png';
+  static const finish = 'assets/image/others/finish.png';
+  static const resume = 'assets/image/others/resume.png';
+  static const sampleMap = 'assets/image/others/sampleMap.png';
   static const feedCard1 = 'assets/image/others/feedCard1.png';
   static const feedCard2 = 'assets/image/others/feedCard2.png';
   static const feedCard3 = 'assets/image/others/feedCard3.png';

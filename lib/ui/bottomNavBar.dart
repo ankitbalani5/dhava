@@ -30,7 +30,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   final List<Widget> _baseScreens = [
     HomeScreen(),
     NewsScreen(),
-    Endurance(),
+    TrackingScreen()/*Endurance()*/,
     ClubScreen(),
     // DefaultScreen(isToolBar: false,)
     //TrackingScreen(),
@@ -157,10 +157,24 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
 
     return InkWell(
       onTap: () {
-        setState(() {
-          _currentIndex = index;
-          _overlayStack.clear();
-        });
+
+        if (index == 2) {
+          // ✅ Navigate to TrackingScreen when clicking on Record tab
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TrackingScreen()),
+          );
+        } else {
+          // For other tabs, just change index
+          setState(() {
+            _currentIndex = index;
+            _overlayStack.clear();
+          });
+        }
+        // setState(() {
+        //   _currentIndex = index;
+        //   _overlayStack.clear();
+        // });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
