@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String deviceId = "";
   bool isPasswordVisible = false;
 
+
   @override
   void initState() {
     _loadPreferenceData();
