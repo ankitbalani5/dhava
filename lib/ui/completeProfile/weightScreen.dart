@@ -11,7 +11,7 @@ import '../../resources/color/appColor.dart';
 import '../../resources/image/appImages.dart';
 import '../../resources/style/textStyle.dart';
 import '../../widgets/customButton.dart';
-import 'editProfileScreen.dart';
+import 'createProfile.dart';
 
 class WeightScreen extends StatefulWidget {
   const WeightScreen({super.key});
@@ -197,7 +197,7 @@ class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver
           callback: () {
             // if (_weightValue != 0) {
             //   ProfileData.weight = _weightValue.toDouble();
-              (context.findAncestorStateOfType<EditProfileScreenState>())?.addOverlay(HeightScreen());
+              (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(HeightScreen());
             // } else {
             //   Constant.showErrorDialog(context, false,  "Select weight first", () {});
             // }

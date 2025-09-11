@@ -5,6 +5,11 @@ class AppImageSvg {
   static const pause = 'assets/image/svg/pause.svg';
   static const home = 'assets/image/svg/home.svg';
   static const notification = 'assets/image/svg/notification.svg';
+  static const groupImage = 'assets/image/svg/groupImage.svg';
+  static const person = 'assets/image/svg/person.svg';
+  static const search = 'assets/image/svg/search.svg';
+  static const searchCancel = 'assets/image/svg/searchCancel.svg';
+  static const searchRed = 'assets/image/svg/searchRed.svg';
   static const news = 'assets/image/svg/news.svg';
   static const record = 'assets/image/svg/record.svg';
   static const club = 'assets/image/svg/club.svg';
@@ -17,6 +22,9 @@ class AppImageSvg {
   static const statistics = 'assets/image/svg/statistics.svg';
   static const trophy = 'assets/image/svg/trophy.svg';
   static const cancel = 'assets/image/svg/cancel.svg';
+  static const contact = 'assets/image/svg/contact.svg';
+  static const activeUser = 'assets/image/svg/activeUser.svg';
+  static const verticalLine = 'assets/image/svg/verticalLine.svg';
 
 
   static const appLogo = 'assets/image/svg/app_logo.svg';
@@ -74,6 +82,14 @@ class AppImageSvg {
 class AppImageOthers {
 
   static const userImg = 'assets/image/others/userImg.png';
+  static const mapLock = 'assets/image/others/mapLock.png';
+  static const pause = 'assets/image/others/pause.png';
+  static const mapPause = 'assets/image/others/mapPause.png';
+  static const userDp = 'assets/image/others/userDp.png';
+  static const profilePic = 'assets/image/others/profilePic.png';
+  static const step5Img = 'assets/image/others/step5Img.png';
+  static const findYourFriendBanner = 'assets/image/others/findYourFriendBanner.png';
+  static const step9Img = 'assets/image/others/step9Img.png';
   static const feedImg = 'assets/image/others/feedImg.png';
   static const feedRun = 'assets/image/others/feedRun.png';
   static const bigCircle = 'assets/weight/bigCircle.png';
@@ -92,6 +108,7 @@ class AppImageOthers {
   static const location = 'assets/image/others/location.png';
   static const clubDP = 'assets/image/others/clubDP.png';
   static const expand = 'assets/image/others/expand.png';
+  static const expand2 = 'assets/image/others/expand2.png';
   static const runType = 'assets/image/others/runType.png';
   static const finish = 'assets/image/others/finish.png';
   static const resume = 'assets/image/others/resume.png';
@@ -102,6 +119,7 @@ class AppImageOthers {
   static const feedCard4 = 'assets/image/others/feedCard4.png';
   static const feedCard5 = 'assets/image/others/feedCard5.png';
   static const feedCard6 = 'assets/image/others/feedCard6.png';
+  static const sendCode = 'assets/image/others/sendCode.png';
 
   static const splash = 'assets/image/others/splash.png';
   static const map = 'assets/image/others/map.png';
@@ -111,6 +129,10 @@ class AppImageOthers {
   static const walkEndurance = 'assets/image/others/walk.png';
   static const cycleEndurance = 'assets/image/others/cycle.png';
   static const slide1 = 'assets/image/others/slide1.png';
+  static const slide2 = 'assets/image/others/slide2.png';
+  static const slide3 = 'assets/image/others/slide3.png';
+  static const google = 'assets/image/others/google.png';
+  static const facebook = 'assets/image/others/facebook.png';
   static const roleAthlete = 'assets/image/others/roleAthlete.png';
   static const roleCoach = 'assets/image/others/roleCoach.png';
   static const roleFitnessTrainer = 'assets/image/others/roleFitnessTrainer.png';

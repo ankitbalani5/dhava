@@ -2,7 +2,7 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
-import 'package:coherent_endurance/ui/completeProfile/editProfileScreen.dart';
+import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +109,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   child: Directionality(
                     textDirection: TextDirection.ltr,
                     child: Pinput(
-                      length: 5,
+                      length: 4,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       // smsRetriever: smsRetriever,
                       inputFormatters: [
@@ -205,7 +205,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           : () {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => EditProfileScreen()), (route) => false,
+                          MaterialPageRoute(builder: (context) => CreateProfile()), (route) => false,
                         );
                         // //TODO need to check this via otp service
                         // if (_formKey.currentState!.validate()) {

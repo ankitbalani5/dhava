@@ -176,9 +176,9 @@ class _SaveActivityState extends State<SaveActivity> {
   Widget build(BuildContext context) {
     Uint8List? image = widget.trackingData["mapImage"];
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         title: Text('Save Activity', style: CustomTextStyles.bold()),
         centerTitle: true,
         // leading: Center(child: Text('Resume', style: CustomTextStyles.regular(),)),
@@ -190,16 +190,16 @@ class _SaveActivityState extends State<SaveActivity> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (image != null)
-                Image.memory(image, height: 200, fit: BoxFit.cover)
-              else
-                const Text("No image captured"),
-              ElevatedButton(
-                onPressed: isUploading ? null : uploadActivity,
-                child: isUploading
-                    ? CircularProgressIndicator()
-                    : Text("Upload Activity"),
-              ),
+              // if (image != null)
+              //   Image.memory(image, height: 200, fit: BoxFit.cover)
+              // else
+              //   const Text("No image captured"),
+              // ElevatedButton(
+              //   onPressed: isUploading ? null : uploadActivity,
+              //   child: isUploading
+              //       ? CircularProgressIndicator()
+              //       : Text("Upload Activity"),
+              // ),
               /// title
               TextFormField(
                 controller: titleController,
@@ -825,7 +825,7 @@ class _SaveActivityState extends State<SaveActivity> {
       ),
       bottomNavigationBar: BottomAppBar(
         height: 70,
-        color: Colors.black,
+        color: Colors.white,
         child: CustomButton(
           text: 'Save Activity',
           callback: () {

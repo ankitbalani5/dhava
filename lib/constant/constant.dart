@@ -7,11 +7,51 @@ import '../resources/style/textStyle.dart';
 import '../widgets/customButton.dart';
 import 'errorDialog.dart';
 
+class PrefKey {
+  static var accessToken;
+  static var refreshToken;
+}
 
 class Constant {
 
   static SharedPreferences? sharedPreferences;
   static bool isNavigation = false;
+  static var token;
+  static var firstName;
+  static var lastName;
+  static var email;
+  static var image;
+  static var fcmToken;
+  static var access_token;
+  static var refresh_token;
+
+
+  static String getProfileScreenCount(){
+    return '9';
+  }
+
+  static Widget likeImageWidget (){
+    return Stack(
+      children: [
+        Container(
+          width: 80,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Image.asset(AppImageOthers.userImg, height: 30,),
+            ],
+          ),
+        ),
+
+        Positioned(
+            right: 25,
+            child: Image.asset(AppImageOthers.userImg, height: 30,)),
+        Positioned(
+            right: 50,
+            child: Image.asset(AppImageOthers.userImg, height: 30,)),
+      ],
+    );
+  }
 
   static showErrorDialog(BuildContext context, bool isSuccess, String message,  VoidCallback callback) {
     Future.microtask(() => showDialog(
@@ -114,10 +154,12 @@ class Constant {
   }
 
 
+
+
   static Widget expandTimeWidget(){
     return Container(
       width: double.infinity,
-      color: Colors.black,
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -145,10 +187,12 @@ class Constant {
 
               SizedBox(
                 height: 200,
-                child: VerticalDivider(
-                  thickness: 1,
-                  color: Colors.white,
-                  // width: 20,
+                child: Expanded(
+                  child: VerticalDivider(
+                    thickness: 1,
+                    color: Colors.grey,
+                    // width: 20,
+                  ),
                 ),
               ),
               Column(

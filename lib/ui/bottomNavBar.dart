@@ -13,9 +13,10 @@ import '../constant/Constant.dart';
 import '../resources/color/appColor.dart';
 import '../resources/image/appImages.dart';
 import '../resources/style/textStyle.dart';
-
+final GlobalKey<_BottomNavBarState> bottomNavKey = GlobalKey<_BottomNavBarState>();
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  int i ;
+  BottomNavBar({this.i = 0, super.key});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -30,7 +31,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   final List<Widget> _baseScreens = [
     HomeScreen(),
     NewsScreen(),
-    TrackingScreen()/*Endurance()*/,
+    /*TrackingScreen()*/Endurance(),
     ClubScreen(),
     // DefaultScreen(isToolBar: false,)
     //TrackingScreen(),
@@ -38,8 +39,16 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
 
   @override
   void initState() {
+    _currentIndex = widget.i;
     _initializePreferences();
     super.initState();
+  }
+
+  // 🔹 यह function index change करेगा
+  void changeTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   _initializePreferences() {
@@ -97,55 +106,96 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   int getOverlayCount() {
     return _overlayStack.length;
   }
+  int currentTap = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _baseScreens[_currentIndex], // Base screens
-          ..._overlayStack, // Overlay screens
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        padding: EdgeInsets.zero,
-        height: 60,
-        color: AppColor.backgroundGrey,
-        //surfaceTintColor: Colors.black,
-        child: Container(
-          height: 60,
-          decoration: BoxDecoration(color: AppColor.backgroundGrey),
-          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              bottomNavItem(
-                label: 'Home',
-                index: 0,
-                icon: AppImageSvg.home,
-              ),
-              bottomNavItem(
-                label: 'News',
-                index: 1,
-                icon: AppImageSvg.news,
-              ),
-              bottomNavItem(
-                label: 'Record',
-                index: 2,
-                icon: AppImageSvg.record,
-              ),
-              bottomNavItem(
-                label: 'Club',
-                index: 3,
-                icon: AppImageSvg.club,
-              ),
-              // bottomNavItem(
-              //   label: 'Profile',
-              //   index: 4,
-              //   icon: AppImageSvg.profile,
+    return WillPopScope(
+      onWillPop: () async {
+        // ✅ अगर current index 0 नहीं है → पहले Home tab पर जाओ
+        if (_currentIndex != 0) {
+          setState(() {
+            _currentIndex = 0;
+            _overlayStack.clear(); // अगर overlay open है तो उसे भी बंद करो
+          });
+          return false; // App exit नहीं होगा
+        }
+
+        // ✅ अगर पहले से ही Home tab पर हो → Double back press से exit
+        DateTime now = DateTime.now();
+        if (currentBackPressTime == null ||
+            now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
+          currentBackPressTime = now;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Press back again to exit"),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          return false; // पहली बार back press → सिर्फ message दिखेगा
+        }
+
+        // ✅ 2 सेकंड के अंदर फिर से back press → App exit होगा
+        return true;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _baseScreens[_currentIndex], // Base screens
+            ..._overlayStack, // Overlay screens
+          ],
+        ),
+        bottomNavigationBar: Container(
+          // elevation: 10,
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.grey))
+          ),
+          child: BottomAppBar(
+            padding: EdgeInsets.zero,
+            height: 60,
+            color: Colors.white,
+            // color: AppColor.backgroundGrey,
+            //surfaceTintColor: Colors.black,
+            child: Container(
+              height: 60,
+              // decoration: BoxDecoration(
+              //     border: Border(top: BorderSide(color: Colors.grey))
               // ),
-            ],
+              // decoration: BoxDecoration(color: AppColor.backgroundGrey),
+              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  bottomNavItem(
+                    label: 'Home',
+                    index: 0,
+                    icon: AppImageSvg.home,
+                  ),
+                  bottomNavItem(
+                    label: 'News',
+                    index: 1,
+                    icon: AppImageSvg.news,
+                  ),
+                  bottomNavItem(
+                    label: 'Record',
+                    index: 2,
+                    icon: AppImageSvg.record,
+                  ),
+                  bottomNavItem(
+                    label: 'Club',
+                    index: 3,
+                    icon: AppImageSvg.club,
+                  ),
+                  // bottomNavItem(
+                  //   label: 'Profile',
+                  //   index: 4,
+                  //   icon: AppImageSvg.profile,
+                  // ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -158,19 +208,19 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     return InkWell(
       onTap: () {
 
-        if (index == 2) {
-          // ✅ Navigate to TrackingScreen when clicking on Record tab
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => TrackingScreen()),
-          );
-        } else {
+        // if (index == 2) {
+        //   // ✅ Navigate to TrackingScreen when clicking on Record tab
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => TrackingScreen()),
+        //   );
+        // } else {
           // For other tabs, just change index
           setState(() {
             _currentIndex = index;
             _overlayStack.clear();
           });
-        }
+        // }
         // setState(() {
         //   _currentIndex = index;
         //   _overlayStack.clear();
@@ -178,29 +228,40 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
-        decoration:
-        isSelected
-            ? BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: AppColor.primaryColor.withOpacity(0.2),
-        )
-            : null,
+        // decoration:
+        // isSelected
+        //     ? BoxDecoration(
+        //   borderRadius: BorderRadius.circular(30),
+        //   color: AppColor.primaryColor.withOpacity(0.2),
+        // )
+        //     : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset(icon, height: 30, width: 30),
-            if (isSelected) ...[
-              const SizedBox(width: 5),
-              Text(
-                label,
-                style: CustomTextStyles.semiBold(
-                  fontSize: 14,
-                  textColor: Colors.white,
-                ),
-              ),
-            ],
+            Column(
+              children: [
+                SvgPicture.asset(icon, height: 23, width: 23, color: isSelected ? AppColor.bgRed : Colors.black,),
+                  Text(
+                    label,
+                    style: CustomTextStyles.semiBold(
+                      fontSize: 8,
+                      textColor: isSelected ? AppColor.bgRed : Colors.black,
+                    ),
+                  ),
+              ],
+            ),
+            // if (isSelected) ...[
+            //   const SizedBox(width: 5),
+            //   Text(
+            //     label,
+            //     style: CustomTextStyles.semiBold(
+            //       fontSize: 14,
+            //       textColor: Colors.white,
+            //     ),
+            //   ),
+            // ],
           ],
         ),
       ),

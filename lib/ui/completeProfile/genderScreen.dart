@@ -1,4 +1,5 @@
 
+import 'package:coherent_endurance/ui/completeProfile/chooseActivity.dart';
 import 'package:coherent_endurance/ui/completeProfile/weightScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +8,7 @@ import '../../constant/preferenceKey.dart';
 import '../../resources/color/appColor.dart';
 import '../../resources/style/textStyle.dart';
 import '../../widgets/customButton.dart';
-import 'editProfileScreen.dart';
+import 'createProfile.dart';
 
 class GenderScreen extends StatefulWidget {
   const GenderScreen({super.key});
@@ -59,7 +60,7 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -68,7 +69,7 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Text(
-                "What's Your Gender",
+                "Select Your Gender",
                 textAlign: TextAlign.center, // Ensures text is centered
                 style: CustomTextStyles.semiBold(fontSize: 24),
               ),
@@ -89,24 +90,26 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
               height: screenHeight * 0.50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                gradient: LinearGradient(
-                  colors: [
-                    AppColor.primaryColor.withOpacity(0.2),
-                    AppColor.primaryColor.withOpacity(0.2),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+                color: AppColor.bgTile
+                // gradient: LinearGradient(
+                //   colors: [
+                //     AppColor.primaryColor.withOpacity(0.2),
+                //     AppColor.primaryColor.withOpacity(0.2),
+                //   ],
+                //   begin: Alignment.topCenter,
+                //   end: Alignment.bottomCenter,
+                // ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
               child: Column(
                 children: [
+                  SizedBox(height: 5,),
                   genderButton(
                     icon: Icons.male,
                     label: 'Male',
                     value: 'male',
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   genderButton(
                     icon: Icons.female,
                     label: 'Female',
@@ -122,13 +125,13 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
           ? SizedBox()
           : Container(
         height: 60,
-        color: Colors.black,
+        // color: Colors.black,
         child:  CustomButton(
           text: 'Continue',
           callback: () {
             // if (gender.isNotEmpty) {
             //   ProfileData.gender = gender;
-              (context.findAncestorStateOfType<EditProfileScreenState>())?.addOverlay(WeightScreen());
+              (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(ChooseActivity());
             // } else {
             //   Constant.showErrorDialog(
             //     context,
@@ -167,21 +170,26 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
               isSelected
                   ? LinearGradient(
                     colors: [
-                      AppColor.primaryColor.withOpacity(0.2),
-                      AppColor.primaryColor.withOpacity(0.2),
+                      AppColor.bgRed, AppColor.bgRed
+                      // AppColor.primaryColor.withOpacity(0.2),
+                      // AppColor.primaryColor.withOpacity(0.2),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   )
                   : LinearGradient(
                     colors: [
-                      AppColor.backgroundGrey.withOpacity(0.5),
-                      AppColor.backgroundGrey.withOpacity(0.5),],
+
+                      AppColor.primaryColor.withOpacity(0.2),
+                      AppColor.primaryColor.withOpacity(0.2),
+                      // AppColor.backgroundGrey.withOpacity(0.5),
+                      // AppColor.backgroundGrey.withOpacity(0.5),
+                    ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
           border: Border.all(
-            color: isSelected ? AppColor.primaryColor : AppColor.backgroundGrey,
+            color: AppColor.bgRed/*isSelected ? AppColor.primaryColor : AppColor.backgroundGrey*/,
             width: 1
           ),
         ),
@@ -189,11 +197,25 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 80),
-              const SizedBox(height: 5),
-              Text(
-                label,
-                  style: CustomTextStyles.bold()
+              value == 'female' ? Column(
+                children: [
+                  Icon(icon, color: isSelected ? Colors.white : Colors.black, size: 80),
+                  const SizedBox(height: 5),
+                  Text(
+                    label,
+                      style: CustomTextStyles.bold(textColor: isSelected ? Colors.white : Colors.black)
+                  ),
+                ],
+              ) :
+              Column(
+                children: [
+                  Text(
+                      label,
+                      style: CustomTextStyles.bold(textColor: isSelected ? Colors.white : Colors.black)
+                  ),
+                  SizedBox(height: 5,),
+                  Icon(icon, color: isSelected ? Colors.white : Colors.black, size: 80),
+                ],
               ),
             ],
           ),

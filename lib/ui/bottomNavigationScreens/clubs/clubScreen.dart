@@ -12,7 +12,9 @@ import 'clubWidgets/challengesWidget.dart';
 import 'clubWidgets/clubsWidget.dart';
 
 class ClubScreen extends StatefulWidget {
-  const ClubScreen({super.key});
+  final String? initialTab; // ✅ नया parameter
+
+  const ClubScreen({super.key, this.initialTab});
 
   @override
   State<ClubScreen> createState() => _ClubScreenState();
@@ -24,12 +26,22 @@ class _ClubScreenState extends State<ClubScreen> {
   String clubsKey = 'clubs';
   String tabStatus = 'active';
 
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ अगर initialTab आया है तो वही सेट होगा, वरना active रहेगा
+    tabStatus = widget.initialTab ?? activeKey;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         title: Text('Challenges', style: CustomTextStyles.bold(),),
         actions: [
           Padding(
@@ -89,10 +101,10 @@ class _ClubScreenState extends State<ClubScreen> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: tabStatus == activeKey ? AppColor.bgRed : Colors.white24
+                    borderRadius: BorderRadius.circular(8),
+                    color: tabStatus == activeKey ? AppColor.bgRed : AppColor.bgTile
                   ),
-                  child: Center(child: Text(activeKey, style: CustomTextStyles.medium(fontSize: 16),)),
+                  child: Center(child: Text(activeKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == activeKey ? Colors.white : Colors.black),)),
                 ),
               ),
               SizedBox(width: 10,),
@@ -106,10 +118,10 @@ class _ClubScreenState extends State<ClubScreen> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: tabStatus == challengesKey ? AppColor.bgRed : Colors.white24
+                    borderRadius: BorderRadius.circular(8),
+                    color: tabStatus == challengesKey ? AppColor.bgRed : AppColor.bgTile
                   ),
-                  child: Center(child: Text(challengesKey, style: CustomTextStyles.medium(fontSize: 16),)),
+                  child: Center(child: Text(challengesKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == challengesKey ? Colors.white : Colors.black),)),
                 ),
               ),
               SizedBox(width: 10,),
@@ -123,16 +135,16 @@ class _ClubScreenState extends State<ClubScreen> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: tabStatus == clubsKey ? AppColor.bgRed : Colors.white24
+                    borderRadius: BorderRadius.circular(8),
+                    color: tabStatus == clubsKey ? AppColor.bgRed : AppColor.bgTile
                   ),
-                  child: Center(child: Text(clubsKey, style: CustomTextStyles.medium(fontSize: 16),)),
+                  child: Center(child: Text(clubsKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == clubsKey ? Colors.white : Colors.black),)),
                 ),
               ),
             ],
           ),
           tabStatus == activeKey ?
-          Expanded(child: activeWidget()) : SizedBox(),
+          Expanded(child: ActiveWidget()) : SizedBox(),
           tabStatus == challengesKey ?
           Expanded(child: challengesWidget()) : SizedBox(),
           tabStatus == clubsKey ?

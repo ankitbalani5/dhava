@@ -21,6 +21,7 @@ import 'package:http/http.dart' as http;
 import 'package:screenshot/screenshot.dart';
 import '../../../data/localDBModel/WorkoutModel.dart';
 import '../../defaultScreen/defaultScreen.dart';
+import '../mapSetting.dart';
 
 
 class TrackingScreen extends StatefulWidget {
@@ -442,15 +443,32 @@ class _TrackingScreenState extends State<TrackingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Tracking', style: CustomTextStyles.bold(),),
-        leading: GestureDetector(
+        title: isShort ? Text('Tracking', style: CustomTextStyles.bold(),) : SizedBox(),
+        leading: isShort ? GestureDetector(
             onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios, color: Colors.white,)),
-        backgroundColor: Colors.black,
+            child: Icon(Icons.arrow_back_ios, color: Colors.black,)) : SizedBox(),
+        backgroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: isShort ? GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MapSetting()));
+                },
+                child: Icon(Icons.settings)) : GestureDetector(
+                onTap: () {
+                  isShort = !isShort;
+                  setState(() {
+
+                  });
+                },
+                child: Image.asset(AppImageOthers.expand2, height: 24,)),
+          )
+        ],
       ),
       body: pathPoints.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -486,12 +504,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
                       child: Container(
                         height: 155,
                         // color: AppColor.textBackgroundGrey,
-                        color: Colors.black,
+                        color: Colors.white,
                         child: Container(
                           margin: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(colors: [AppColor.bgRed.withOpacity(.5), Colors.black], begin: Alignment.topCenter, end: Alignment.bottomCenter)
+                            gradient: LinearGradient(colors: [AppColor.bgRed.withOpacity(.5), Colors.white], begin: Alignment.topCenter, end: Alignment.bottomCenter)
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -508,7 +526,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                           Text("${elapsed.inMinutes.remainder(60)}m ",
                                               style: CustomTextStyles.regular(fontSize: 25)),
                                           Text("${elapsed.inSeconds.remainder(60)}s",
-                                              style: CustomTextStyles.regular(fontSize: 18, textColor: Colors.grey)),
+                                              style: CustomTextStyles.regular(fontSize: 18, textColor: Colors.black)),
                                         ],
                                       ),
                                       Text('Time', style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
@@ -532,32 +550,32 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                   ),
                                 ],
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Text("${elevationGain.toStringAsFixed(1)} m",
-                                          style: CustomTextStyles.bold(fontSize: 22)),
-                                      Text("Elevation Gain", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text("${maxElevation.toStringAsFixed(1)} m",
-                                          style: CustomTextStyles.bold(fontSize: 22)),
-                                      Text("Max Elevation", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text("$steps", style: CustomTextStyles.bold(fontSize: 22)),
-                                      Text("Steps", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
-                                    ],
-                                  ),
-            
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              //   children: [
+                              //     Column(
+                              //       children: [
+                              //         Text("${elevationGain.toStringAsFixed(1)} m",
+                              //             style: CustomTextStyles.bold(fontSize: 22)),
+                              //         Text("Elevation Gain", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       children: [
+                              //         Text("${maxElevation.toStringAsFixed(1)} m",
+                              //             style: CustomTextStyles.bold(fontSize: 22)),
+                              //         Text("Max Elevation", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       children: [
+                              //         Text("$steps", style: CustomTextStyles.bold(fontSize: 22)),
+                              //         Text("Steps", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
+                              //       ],
+                              //     ),
+                              //
+                              //   ],
+                              // ),
                               SizedBox(height: 10,)
                             ],
                           ),
@@ -575,7 +593,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
             });
           },
-          child: Constant.expandTimeWidget()
+          child: expandTimeWidget()
       ),
       bottomNavigationBar: SizedBox(
         height: isShort ? 70 : 70,
@@ -590,15 +608,53 @@ class _TrackingScreenState extends State<TrackingScreen> {
           ],
         )
             : Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           height: 60,
           child: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              SizedBox(),
-              SvgPicture.asset(AppImageSvg.pause),
-              SvgPicture.asset(AppImageSvg.map),
-              SizedBox()
+              Expanded(
+                child: Container(
+                  height: 60,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColor.bgRed
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppImageOthers.resume, height: 24),
+                      SizedBox(width: 5,),
+                      Text('Resume', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 10,),
+              Expanded(
+                child: Container(
+                  height: 60,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.black
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppImageOthers.finish, height: 24,),
+                      SizedBox(width: 5,),
+                      Text('Finish', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
+                    ],
+                  ),
+                ),
+              ),
+              // SizedBox(),
+              // SvgPicture.asset(AppImageSvg.pause),
+              // SvgPicture.asset(AppImageSvg.map),
+              // SizedBox()
             ],
           )),
         ),
@@ -663,10 +719,27 @@ class _TrackingScreenState extends State<TrackingScreen> {
         });
         // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
       },
-      child: Container(
+      child:
+      Container(
+        height: 60,
+        width: MediaQuery.of(context).size.width-60,
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: AppColor.bgRed
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(AppImageOthers.pause, height: 18),
+            SizedBox(width: 5,),
+            Text('Pause', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
+          ],
+        ),
+      ),/*Container(
         height: 60,
         child: Center(child: SvgPicture.asset(AppImageSvg.pause)),
-      ),
+      ),*/
     );
   }
 
@@ -675,46 +748,85 @@ class _TrackingScreenState extends State<TrackingScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          SizedBox(),
-          GestureDetector(
-            onTap: () {
-              // showCongratulationDialog(context);
+          SizedBox(width: 10),
+          Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  // showCongratulationDialog(context);
 
-              pause = false;
-              startActivity = true;
-              startTimer();
-              setState(() {
+                  pause = false;
+                  startActivity = true;
+                  startTimer();
+                  setState(() {
 
-              });
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
-            },
-            child: Container(
+                  });
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
+                },
+                child: Container(
+                    height: 60,
+                    // width: MediaQuery.of(context).size.width - 40,
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColor.bgRed
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(AppImageOthers.resume, height: 24,),
+                        SizedBox(width: 5,),
+                        Text('Resume', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
+                      ],
+                    ),
+                  ),
+                /*Container(
               height: 60,
               child: Center(
-                  child: Image.asset(AppImageOthers.resume)
+                  child: Image.asset(AppImageOthers.resume, color: Colors.white,)
               ),
-            ),
+            ),*/
+              ),
           ),
-          // SizedBox(),
-          GestureDetector(
-            onTap: () {
-              // showCongratulationDialog(context);
 
-              // startActivity = true;
-              // setState(() {
-              //
-              // });
-              stopTracking();
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
-              // sendTrackingData();
-              onFinishTracking();
-            },
-            child: Container(
+          SizedBox(width: 10),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                // showCongratulationDialog(context);
+
+                // startActivity = true;
+                // setState(() {
+                //
+                // });
+                stopTracking();
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
+                // sendTrackingData();
+                onFinishTracking();
+              },
+              child: Container(
+                  height: 60,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.black
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppImageOthers.finish, height: 24,),
+                      SizedBox(width: 5,),
+                      Text('Finish', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
+                    ],
+                  ),
+                ),
+              /*Container(
               height: 60,
-              child: Center(child: Image.asset(AppImageOthers.finish)),
+              child: Center(child: Image.asset(AppImageOthers.finish, color: Colors.white,)),
+            ),*/
             ),
           ),
-          SizedBox(),
+
+          SizedBox(width: 10),
         ],
       ),
     );
@@ -777,4 +889,54 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
 
+  static Widget expandTimeWidget(){
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('Time', style: CustomTextStyles.semiBold()),
+          Text('00:00:00', style: CustomTextStyles.bold(fontSize: 80),),
+          Divider(),
+          Text('AVG PACE', style: CustomTextStyles.semiBold()),
+          Text('0:00', style: CustomTextStyles.bold(fontSize: 150),),
+          Text('/KM', style: CustomTextStyles.semiBold()),
+          Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 80,
+                    width: 50,
+                    color: Colors.blue,
+                  ),
+                  Text('0:00', style: CustomTextStyles.semiBold()),
+                ],
+              ),
+
+              SizedBox(
+                height: 200,
+                child: VerticalDivider(
+                  thickness: 1,
+                  color: Colors.grey,
+                  // width: 20,
+                ),
+              ),
+              Column(
+                children: [
+                  Text('DISTANCE', style: CustomTextStyles.semiBold()),
+                  Text('0:00', style: CustomTextStyles.bold(fontSize: 70),),
+                  Text('KILOMETERS', style: CustomTextStyles.semiBold()),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

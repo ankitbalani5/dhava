@@ -14,7 +14,7 @@ import '../../resources/color/appColor.dart';
 import '../../resources/image/appImages.dart';
 import '../../resources/style/textStyle.dart';
 import '../../widgets/customButton.dart';
-import 'editProfileScreen.dart';
+import 'createProfile.dart';
 
 File? _uploadImageFile;
 
@@ -178,7 +178,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
         height: 60,
         // color: Colors.black,
         child: CustomButton(text: 'Continue', callback: () {
-          (context.findAncestorStateOfType<EditProfileScreenState>())?.addOverlay(GenderScreen());
+          (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(GenderScreen());
         },),
         // child: BlocConsumer<UpdateProfileBloc, UpdateProfileState>(
         //   listener: (context, state) async {
