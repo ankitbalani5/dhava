@@ -90,6 +90,13 @@ dev_dependencies:
   table_calendar: ^3.0.9
   sleek_circular_slider: ^2.0.1
   animated_to: ^0.4.0
+  dio: ^5.9.0
+  pedometer: ^4.1.1
+  screenshot: ^3.0.0
+  google_fonts: ^6.3.1
+  google_sign_in:
+  flutter_facebook_auth:
+  firebase_auth: ^5.3.1
 
 
 # For information on the generic Dart part of this file, see the
@@ -122,10 +129,31 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: InterRegular
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Regular.ttf
+    - family: InterMedium
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Medium.ttf
+    - family: InterSemiBold
+      fonts:
+        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
+    - family: InterBold
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Bold.ttf
+#    - family: WorkSansSemiBold
+#      fonts:
+#        - asset: assets/fonts/work_sans_semi_bold.ttf
+#    - family: WorkSansMedium
+#      fonts:
+#        - asset: assets/fonts/work_sans_medium.ttf
+#    - family: WorkSansRegular
+#      fonts:
+#        - asset: assets/fonts/work_sans_regular.ttf
+#    - family: WorkSansBold
+#      fonts:
+#        - asset: assets/fonts/work_sans_bold.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

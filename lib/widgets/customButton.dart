@@ -18,11 +18,11 @@ class CustomButton extends StatefulWidget {
       {super.key,
       required this.text,
       required this.callback,
-      this.fontSize = 18,
+      this.fontSize = 16,
       this.height,
       this.width,
       this.child,
-      this.color = AppColor.primaryColor,
+      this.color = AppColor.bgRed,
       this.textColor = Colors.white});
 
   @override
@@ -39,7 +39,7 @@ class _CustomButtonState extends State<CustomButton> {
             height: widget.height ?? 50,
             width: widget.width ?? MediaQuery.of(context).size.width * .6,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(8),
               color: widget.color,
             ),
             child: Row(

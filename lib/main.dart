@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/loginBloc/login_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
-void main() {
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -24,9 +27,10 @@ class MyApp extends StatelessWidget {
       child:
       MaterialApp(
         debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Coherent Endurance',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'InterRegular',
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
       ),
       home: SplashScreen(),
     ));

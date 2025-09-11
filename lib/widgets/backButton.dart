@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BackButtonWidget extends StatelessWidget {
   Color backgroundColor;
   Color arrowColor;
-  BackButtonWidget({this.backgroundColor = Colors.white24, this.arrowColor = Colors.white});
+  BackButtonWidget({this.backgroundColor = Colors.transparent , this.arrowColor = Colors.black});
 
   @override
   Widget build(BuildContext context) {

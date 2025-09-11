@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:flutter/material.dart';
 
@@ -12,62 +13,123 @@ class MilestoneScreen extends StatefulWidget {
 }
 
 class _MilestoneScreenState extends State<MilestoneScreen> {
+  List<Map<String, String>> milestone = [
+    {"image": AppImageOthers.milestone, "title": "10th Activity"},
+    {"image": AppImageOthers.milestone, "title": "100th Activity"},
+    {"image": AppImageOthers.milestone, "title": "150th Activity"},
+    {"image": AppImageOthers.milestone, "title": "200th Activity"},
+    {"image": AppImageOthers.milestone, "title": "300th Activity"},
+    {"image": AppImageOthers.milestone, "title": "400th Activity"},
+    {"image": AppImageOthers.milestone, "title": "400th Activity"},
+    {"image": AppImageOthers.milestone, "title": "400th Activity"},
+    {"image": AppImageOthers.milestone, "title": "400th Activity"},
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
             },
             child: BackButtonWidget()
         ),
-        title: Text('Badges', style: CustomTextStyles.bold(),),
+        title: Text('Milestones', style: CustomTextStyles.bold(),),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(12)
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Image.asset(AppImageOthers.milestone, height: 75),
-                        SizedBox(height: 10,),
-                        Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Image.asset(AppImageOthers.milestone, height: 75),
-                        SizedBox(height: 10,),
-                        Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Image.asset(AppImageOthers.milestone, height: 75),
-                        SizedBox(height: 10,),
-                        Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+
+              buildBadgeGrid(milestone),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: AppColor.bgTile,
+              //     borderRadius: BorderRadius.circular(12)
+              //   ),
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         Column(
+              //           children: [
+              //             Image.asset(AppImageOthers.milestone, height: 75),
+              //             SizedBox(height: 10,),
+              //             Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
+              //           ],
+              //         ),
+              //         Column(
+              //           children: [
+              //             Image.asset(AppImageOthers.milestone, height: 75),
+              //             SizedBox(height: 10,),
+              //             Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
+              //           ],
+              //         ),
+              //         Column(
+              //           children: [
+              //             Image.asset(AppImageOthers.milestone, height: 75),
+              //             SizedBox(height: 10,),
+              //             Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // )
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget buildBadgeGrid(List<Map<String, String>> badges) {
+    List<Widget> rows = [];
+
+    for (int i = 0; i < badges.length; i += 3) {
+      final rowItems = badges.skip(i).take(3).toList();
+
+      rows.add(
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200, // ✅ background per row
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: rowItems.map((badge) {
+              return Column(
+                children: [
+                  Image.asset(
+                    badge["image"]!,
+                    height: 75, width: 70,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    badge["title"]!,
+                    style: CustomTextStyles.semiBold(fontSize: 12),
+                  ),
+
+                  if (badge["subTitle"] != null && badge["subTitle"]!.isNotEmpty)
+                    Text(
+                      badge['subTitle']!,
+                      style: CustomTextStyles.regular(fontSize: 12),
+                    )
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    }
+
+    return Column(children: rows);
+  }
+
 }

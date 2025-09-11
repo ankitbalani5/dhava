@@ -1,4 +1,6 @@
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/news/newsDetail.dart';
 import 'package:flutter/material.dart';
 
 import '../../../resources/style/textStyle.dart';
@@ -18,9 +20,10 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         // leading: GestureDetector(
         //     onTap: () {
         //       Navigator.pop(context);
@@ -73,45 +76,62 @@ class _NewsScreenState extends State<NewsScreen> {
       body: ListView.builder(
         itemCount: 3,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(AppImageOthers.newsBanner),
-                SizedBox(height: 10,),
-                Text('Start Your Healthy Life Today!', style: CustomTextStyles.bold(fontSize: 12),),
-                SizedBox(height: 10,),
-                Text('Kickstart Your Journey To Wellness With Simple,'
-                    ' Sustainable Habits Now! Kickstart Your Journey To Wellness With Simple,'
-                    ' Sustainable Habits Now! Kickstart Your Journey To Wellness With Simple,'
-                    ' Sustainable Habits Now!', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey),),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.access_time_outlined, color: Colors.redAccent, size: 14,),
-                        SizedBox(width: 5,),
-                        Text('2 Mins Ago', style: CustomTextStyles.medium(fontSize: 10 )),
-                      ],
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xff531212),
-                          borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
-                        child: Center(
-                          child: Text('Read More', style: CustomTextStyles.medium(fontSize: 14 )),
-                        ),
-                      ),
-                    )
-                  ],
-                )
-              ],
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NewsDetail()));
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(AppImageOthers.newsBanner),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Start Your Healthy Life Today!', style: CustomTextStyles.bold(fontSize: 14),),
+                      Row(
+                        children: [
+                          Text('Helpful', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),),
+                          SizedBox(width: 5,),
+                          Icon(Icons.thumb_up, color: Colors.black , size: 15,)
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  // Text('Kickstart Your Journey To Wellness With Simple,'
+                  //     ' Sustainable Habits Now! Kickstart Your Journey To Wellness With Simple,'
+                  //     ' Sustainable Habits Now! Kickstart Your Journey To Wellness With Simple,'
+                  //     ' Sustainable Habits Now!', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey),),
+                  // SizedBox(height: 10,),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Row(
+                  //       children: [
+                  //         Icon(Icons.access_time_outlined, color: Colors.redAccent, size: 14,),
+                  //         SizedBox(width: 5,),
+                  //         Text('2 Mins Ago', style: CustomTextStyles.medium(fontSize: 10 )),
+                  //       ],
+                  //     ),
+                  //     Container(
+                  //       decoration: BoxDecoration(
+                  //           color: Color(0xff531212),
+                  //           borderRadius: BorderRadius.circular(20)
+                  //       ),
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
+                  //         child: Center(
+                  //           child: Text('Read More', style: CustomTextStyles.medium(fontSize: 14 )),
+                  //         ),
+                  //       ),
+                  //     )
+                  //   ],
+                  // )
+                ],
+              ),
             ),
           );
         },

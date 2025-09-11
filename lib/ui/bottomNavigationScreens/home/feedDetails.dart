@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../data/localDBModel/WorkoutModel.dart';
+import 'package:coherent_endurance/constant/constant.dart';
 
 
 class FeedDetails extends StatefulWidget {
@@ -136,7 +137,7 @@ class _FeedDetailsState extends State<FeedDetails> {
             expandedHeight: 300,
             floating: false,
             pinned: true,
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.white,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [
@@ -176,7 +177,7 @@ class _FeedDetailsState extends State<FeedDetails> {
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.black,
+                color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -205,40 +206,41 @@ class _FeedDetailsState extends State<FeedDetails> {
                   // Run Summary
                   // Image.asset(AppImageOthers.feedCard1),
                   Container(
-                    height: 330,
+                    height: 300,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        // image: AssetImage('assets/shoe_bg.png'),
-                        image: AssetImage(AppImageOthers.feedCard1),
-                        fit: BoxFit.cover,
-                        // colorFilter: ColorFilter.mode(
-                        //     Colors.black.withOpacity(0.4), BlendMode.darken),
-                      ),
+                      // image: DecorationImage(
+                      //   // image: AssetImage('assets/shoe_bg.png'),
+                      //   image: AssetImage(AppImageOthers.feedCard1),
+                      //   fit: BoxFit.cover,
+                      //   // colorFilter: ColorFilter.mode(
+                      //   //     Colors.black.withOpacity(0.4), BlendMode.darken),
+                      // ),
                       borderRadius: BorderRadius.circular(12),
-                      color: Colors.brown.shade900,
+                      // color: Colors.brown.shade900,
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
+                          contentPadding: EdgeInsets.zero,
                           leading: const CircleAvatar(
                             backgroundImage: AssetImage(AppImageOthers.user),
                           ),
                           title: const Text(
                             'Jessica Taylor',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.black),
                           ),
                           subtitle: const Text(
                             'August 15, 2025 at 8:20 AM · Iskandar Puteri, Malaysia',
-                            style: TextStyle(color: Colors.white70, fontSize: 12),
+                            style: TextStyle(color: Colors.black, fontSize: 12),
                           ),
                           // trailing: Icon(Icons.more_vert, color: Colors.white),
                         ),
                         const SizedBox(height: 10),
                         const Text("Lunch Run",
                             style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
@@ -263,113 +265,130 @@ class _FeedDetailsState extends State<FeedDetails> {
                             _InfoColumn(
                                 title: "Max Elevation", value: "419 m"),
                             SizedBox(width: 15,),
-                            SizedBox(width: 15,),
-                            SizedBox(width: 15,),
+                            _InfoColumn(title: "Steps", value: "10797"),
+                            // SizedBox(width: 15,),
                           ],
                         ),
                         const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text(
-                              "With someone who didn’t record?",
-                              style: TextStyle(color: Colors.white70),
-                            ),
-                            Text(
-                              "Add Others",
-                              style: TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Icon(Icons.thumb_up_alt_outlined,
-                                color: Colors.white),
-                            Icon(Icons.chat_bubble_outline, color: Colors.white),
-                            Icon(Icons.share_outlined, color: Colors.white),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: 20),
-
-                  Container(
-                    height: 156,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        // image: AssetImage('assets/shoe_bg.png'),
-                        image: AssetImage(AppImageOthers.feedCard2),
-                        fit: BoxFit.cover,
-                        // colorFilter: ColorFilter.mode(
-                        //     Colors.black.withOpacity(0.4), BlendMode.darken),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.brown.shade900,
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Matched Runs', style: CustomTextStyles.semiBold(fontSize: 20),),
-                            Text('This Run', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                            Text('10:47 /Km', style: CustomTextStyles.regular(fontSize: 16)),
-
-                          ],
-                        ),
-
-                        // Right Graph Section
-                        Column(
-                          children: [
-                            SizedBox(
-                              width: 120,
-                              height: 90,
-                              child: CustomPaint(
-                                painter: MatchedRunsGraphPainter(),
-                              ),
-                            ),
-                            SizedBox(height: 15,),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text('View 22 Matched Runs', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
-                              ],
-                            )
-                          ],
-                        )
+                                Constant.likeImageWidget(),
+                                SizedBox(width: 10,),
+                                Text('8 gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
 
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.thumb_up,
+                                    color: Colors.black),
+                                Icon(Icons.share,
+                                    color: Colors.black),
+                              ],
+                            ),
+                            // Text(
+                            //   "With someone who didn’t record?",
+                            //   style: TextStyle(color: Colors.black),
+                            // ),
+                            // Text(
+                            //   "Add Others",
+                            //   style: TextStyle(
+                            //       color: Colors.orange,
+                            //       fontWeight: FontWeight.bold),
+                            // ),
+                          ],
+                        ),
+                        // const SizedBox(height: 10),
+                        // const Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //   children: [
+                        //     Icon(Icons.thumb_up_alt_outlined,
+                        //         color: Colors.black),
+                        //     Icon(Icons.chat_bubble_outline, color: Colors.black),
+                        //     Icon(Icons.share_outlined, color: Colors.black),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
+
+                  // const SizedBox(height: 20),
+                  //
+                  // Container(
+                  //   height: 156,
+                  //   decoration: BoxDecoration(
+                  //     image: DecorationImage(
+                  //       // image: AssetImage('assets/shoe_bg.png'),
+                  //       image: AssetImage(AppImageOthers.feedCard2),
+                  //       fit: BoxFit.cover,
+                  //       // colorFilter: ColorFilter.mode(
+                  //       //     Colors.black.withOpacity(0.4), BlendMode.darken),
+                  //     ),
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     color: Colors.brown.shade900,
+                  //   ),
+                  //   padding: const EdgeInsets.all(16),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text('Matched Runs', style: CustomTextStyles.semiBold(fontSize: 20),),
+                  //           Text('This Run', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                  //           Text('10:47 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                  //
+                  //         ],
+                  //       ),
+                  //
+                  //       // Right Graph Section
+                  //       Column(
+                  //         children: [
+                  //           SizedBox(
+                  //             width: 120,
+                  //             height: 90,
+                  //             child: CustomPaint(
+                  //               painter: MatchedRunsGraphPainter(),
+                  //             ),
+                  //           ),
+                  //           SizedBox(height: 15,),
+                  //           Row(
+                  //             mainAxisAlignment: MainAxisAlignment.end,
+                  //             children: [
+                  //               Text('View 22 Matched Runs', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
+                  //             ],
+                  //           )
+                  //         ],
+                  //       )
+                  //
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: 20),
 
                   // results
                   Container(
                     height: 324,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        // image: AssetImage('assets/shoe_bg.png'),
-                        image: AssetImage(AppImageOthers.feedCard3),
-                        fit: BoxFit.cover,
-                        // colorFilter: ColorFilter.mode(
-                        //     Colors.black.withOpacity(0.4), BlendMode.darken),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.brown.shade900,
+                      // image: DecorationImage(
+                      //   // image: AssetImage('assets/shoe_bg.png'),
+                      //   image: AssetImage(AppImageOthers.feedCard3),
+                      //   fit: BoxFit.cover,
+                      //   // colorFilter: ColorFilter.mode(
+                      //   //     Colors.black.withOpacity(0.4), BlendMode.darken),
+                      // ),
+                      // borderRadius: BorderRadius.circular(12),
+                      // color: Colors.brown.shade900,
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Results', style: CustomTextStyles.semiBold(fontSize: 20)),
+                        Text('Best Efforts', style: CustomTextStyles.semiBold(fontSize: 20)),
                         SizedBox(height: 15,),
                         Row(
                           children: [
@@ -442,15 +461,15 @@ class _FeedDetailsState extends State<FeedDetails> {
                   Container(
                     height: 180,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        // image: AssetImage('assets/shoe_bg.png'),
-                        image: AssetImage(AppImageOthers.feedCard4),
-                        fit: BoxFit.cover,
-                        // colorFilter: ColorFilter.mode(
-                        //     Colors.black.withOpacity(0.4), BlendMode.darken),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.brown.shade900,
+                      // image: DecorationImage(
+                      //   // image: AssetImage('assets/shoe_bg.png'),
+                      //   image: AssetImage(AppImageOthers.feedCard4),
+                      //   fit: BoxFit.cover,
+                      //   // colorFilter: ColorFilter.mode(
+                      //   //     Colors.black.withOpacity(0.4), BlendMode.darken),
+                      // ),
+                      // borderRadius: BorderRadius.circular(12),
+                      // color: Colors.brown.shade900,
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -464,30 +483,30 @@ class _FeedDetailsState extends State<FeedDetails> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Km', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('Km', style: CustomTextStyles.regular(fontSize: 10)),
                                   SizedBox(height: 10,),
-                                  Text('1 Mile', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1 Mile', style: CustomTextStyles.regular(fontSize: 10)),
 
                                   SizedBox(height: 10,),
-                                  Text('1K', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1K', style: CustomTextStyles.regular(fontSize: 10)),
 
                                   SizedBox(height: 10,),
-                                  Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 10)),
 
                                 ],
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Pace', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('Pace', style: CustomTextStyles.regular(fontSize: 10)),
                                   SizedBox(height: 10,),
-                                  Text('1 Mile', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1 Mile', style: CustomTextStyles.regular(fontSize: 10)),
 
                                   SizedBox(height: 10,),
-                                  Text('1K', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1K', style: CustomTextStyles.regular(fontSize: 10)),
 
                                   SizedBox(height: 10,),
-                                  Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 10)),
 
                                 ],
                               ),
@@ -527,15 +546,15 @@ class _FeedDetailsState extends State<FeedDetails> {
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('Elev', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('Elev', style: CustomTextStyles.regular(fontSize: 10)),
                                   SizedBox(height: 10,),
-                                  Text('-0', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('-0', style: CustomTextStyles.regular(fontSize: 10)),
 
                                   SizedBox(height: 10,),
-                                  Text('0', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('0', style: CustomTextStyles.regular(fontSize: 10)),
 
                                   SizedBox(height: 10,),
-                                  Text('1', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey)),
+                                  Text('1', style: CustomTextStyles.regular(fontSize: 10)),
 
                                 ],
                               ),
@@ -547,17 +566,17 @@ class _FeedDetailsState extends State<FeedDetails> {
                   const SizedBox(height: 20),
 
                   Container(
-                    height: 610,
+                    height: 580,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        // image: AssetImage('assets/shoe_bg.png'),
-                        image: AssetImage(AppImageOthers.feedCard5),
-                        fit: BoxFit.cover,
-                        // colorFilter: ColorFilter.mode(
-                        //     Colors.black.withOpacity(0.4), BlendMode.darken),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.brown.shade900,
+                      // image: DecorationImage(
+                      //   // image: AssetImage('assets/shoe_bg.png'),
+                      //   image: AssetImage(AppImageOthers.feedCard5),
+                      //   fit: BoxFit.cover,
+                      //   // colorFilter: ColorFilter.mode(
+                      //   //     Colors.black.withOpacity(0.4), BlendMode.darken),
+                      // ),
+                      // borderRadius: BorderRadius.circular(12),
+                      // color: Colors.brown.shade900,
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -566,10 +585,10 @@ class _FeedDetailsState extends State<FeedDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Pace', style: CustomTextStyles.semiBold(fontSize: 20)),
-                            Icon(Icons.info_outline, color: Colors.white,)
+                            Icon(Icons.info_outline, color: Colors.black,)
                           ],
                         ),
-                        SizedBox(height: 80,),
+                        SizedBox(height: 40,),
 
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -591,11 +610,11 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   drawVerticalLine: true,
                                   drawHorizontalLine: true,
                                   getDrawingHorizontalLine: (value) => FlLine(
-                                    color: Colors.white24,
+                                    color: Colors.grey.shade200,
                                     strokeWidth: 1,
                                   ),
                                   getDrawingVerticalLine: (value) => FlLine(
-                                    color: Colors.white24,
+                                    color: Colors.grey.shade200,
                                     strokeWidth: 1,
                                   ),
                                 ),
@@ -607,7 +626,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                       getTitlesWidget: (value, meta) {
                                         return Text(
                                           value.toInt().toString(),
-                                          style: const TextStyle(color: Colors.white, fontSize: 12),
+                                          style: const TextStyle(color: Colors.black, fontSize: 12),
                                         );
                                       },
                                     ),
@@ -620,7 +639,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                         if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
                                           return Text(
                                             '${value.toStringAsFixed(1)} Km',
-                                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                                            style: const TextStyle(color: Colors.black, fontSize: 12),
                                           );
                                         }
                                         return const SizedBox();
@@ -649,7 +668,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                         colors: [
                                           AppColor.bgRed,
                                           // Colors.white.withOpacity(0.6),
-                                          Colors.transparent,
+                                          Colors.white,
                                         ],
                                         begin: Alignment.topCenter,
                                         end: Alignment.bottomCenter,
@@ -705,21 +724,21 @@ class _FeedDetailsState extends State<FeedDetails> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
                   // elevation
                   Container(
-                    height: 430,
+                    height: 410,
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                        // image: AssetImage('assets/shoe_bg.png'),
-                        image: AssetImage(AppImageOthers.feedCard2),
-                        fit: BoxFit.cover,
-                        // colorFilter: ColorFilter.mode(
-                        //     Colors.black.withOpacity(0.4), BlendMode.darken),
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.brown.shade900,
+                      // image: DecorationImage(
+                      //   // image: AssetImage('assets/shoe_bg.png'),
+                      //   image: AssetImage(AppImageOthers.feedCard2),
+                      //   fit: BoxFit.cover,
+                      //   // colorFilter: ColorFilter.mode(
+                      //   //     Colors.black.withOpacity(0.4), BlendMode.darken),
+                      // ),
+                      // borderRadius: BorderRadius.circular(12),
+                      // color: Colors.brown.shade900,
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -728,17 +747,17 @@ class _FeedDetailsState extends State<FeedDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Elevation', style: CustomTextStyles.semiBold(fontSize: 20)),
-                            Icon(Icons.info_outline, color: Colors.white,),
+                            Icon(Icons.info_outline, color: Colors.black,),
                           ],
                         ),
                         SizedBox(height: 15,),
 
                         Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1E0E0E),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          // decoration: BoxDecoration(
+                          //   color: const Color(0xFF1E0E0E),
+                          //   borderRadius: BorderRadius.circular(12),
+                          // ),
                           child: SizedBox(
                             height: 220, // <-- FIXED HEIGHT ADDED
                             width: double.infinity, // <-- FIXED WIDTH ADDED
@@ -753,11 +772,11 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   drawVerticalLine: true,
                                   drawHorizontalLine: true,
                                   getDrawingHorizontalLine: (value) => FlLine(
-                                    color: Colors.white24,
+                                    color: Colors.grey.shade200,
                                     strokeWidth: 1,
                                   ),
                                   getDrawingVerticalLine: (value) => FlLine(
-                                    color: Colors.white24,
+                                    color: Colors.grey.shade200,
                                     strokeWidth: 1,
                                   ),
                                 ),
@@ -769,7 +788,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                       getTitlesWidget: (value, meta) {
                                         return Text(
                                           value.toInt().toString(),
-                                          style: const TextStyle(color: Colors.white, fontSize: 12),
+                                          style: const TextStyle(color: Colors.black, fontSize: 12),
                                         );
                                       },
                                     ),
@@ -782,7 +801,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                         if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
                                           return Text(
                                             '${value.toStringAsFixed(1)} Km',
-                                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                                            style: const TextStyle(color: Colors.black, fontSize: 12),
                                           );
                                         }
                                         return const SizedBox();
@@ -809,8 +828,8 @@ class _FeedDetailsState extends State<FeedDetails> {
                                       show: true,
                                       gradient: LinearGradient(
                                         colors: [
-                                          Colors.white.withOpacity(0.6),
-                                          Colors.transparent,
+                                          AppColor.bgRed,
+                                          Colors.white,
                                         ],
                                         begin: Alignment.topCenter,
                                         end: Alignment.bottomCenter,
@@ -842,6 +861,25 @@ class _FeedDetailsState extends State<FeedDetails> {
                       ],
                     ),
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Problem with your location data?', style: CustomTextStyles.regular(fontSize: 14)),
+
+                      Container(
+                        height: 25,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            // color: AppColor.bgRed
+                            border: Border.all(color: AppColor.bgRed)
+                        ),
+                        child: Center(
+                          child: Text('Report', style: TextStyle(color: AppColor.bgRed),),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
@@ -892,10 +930,10 @@ class _InfoColumn extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
-        Text(title, style: const TextStyle(color: Colors.white70)),
+        Text(title, style: const TextStyle(color: Colors.grey)),
         Text(value,
             style: const TextStyle(
-                fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+                fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
       ],
     );
   }
