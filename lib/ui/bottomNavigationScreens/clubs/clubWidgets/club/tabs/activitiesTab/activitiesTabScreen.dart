@@ -82,7 +82,7 @@ class ActivitiesTabScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Constant.likeImageWidget(),
+                        likeImageWidget(),
                          SizedBox(width: 10),
                         Text('8 gave kudos',
                             style: CustomTextStyles.regular(
@@ -111,6 +111,29 @@ class ActivitiesTabScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  static Widget likeImageWidget (){
+    return Stack(
+      children: [
+        Container(
+          width: 80,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Image.asset(AppImageOthers.userImg, height: 30,),
+            ],
+          ),
+        ),
+
+        Positioned(
+            right: 25,
+            child: Image.asset(AppImageOthers.userImg, height: 30,)),
+        Positioned(
+            right: 50,
+            child: Image.asset(AppImageOthers.userImg, height: 30,)),
+      ],
     );
   }
 }

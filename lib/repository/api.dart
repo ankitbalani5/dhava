@@ -425,4 +425,5 @@ class ApiEndPoint {
   static const String getMyFeed = '/api/v1/activity/my-feed';
   static const String activityLike = '/api/v1/activity/like';
   static const String userFind = '/api/v1/user/find';
+  static const String getAllChallenges = '/api/v1/challenges/all';
 }
