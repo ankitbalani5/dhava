@@ -5,6 +5,7 @@ import 'package:coherent_endurance/ui/bottomNavigationScreens/endurance.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/home/homeScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/news/newsScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/record/trackingScreen.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/tips/tipsScreen.dart';
 import 'package:coherent_endurance/ui/defaultScreen/defaultScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +37,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     NewsScreen(),
     /*TrackingScreen()*/Endurance(),
     ClubScreen(),
+    TipScreen()
     // DefaultScreen(isToolBar: false,)
     //TrackingScreen(),
   ];
@@ -219,6 +221,11 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
                     label: 'Club',
                     index: 3,
                     icon: AppImageSvg.club,
+                  ),
+                  bottomNavItem(
+                    label: 'Tips',
+                    index: 4,
+                    icon: AppImageSvg.tips,
                   ),
                   // bottomNavItem(
                   //   label: 'Profile',

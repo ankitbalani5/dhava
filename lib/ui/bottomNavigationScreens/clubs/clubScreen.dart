@@ -1,3 +1,5 @@
+
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:flutter/material.dart';
 
@@ -6,10 +8,10 @@ import '../../../resources/style/textStyle.dart';
 import '../../notification/notificationScreen.dart';
 import '../../profileScreens/profileScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'clubWidgets/activeWidget.dart';
-import 'clubWidgets/challengesWidget.dart';
-import 'clubWidgets/clubsWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'clubWidgets/active/activeWidget.dart';
+import 'clubWidgets/challenges/challengesWidget.dart';
+import 'clubWidgets/club/clubsWidget.dart';
 
 class ClubScreen extends StatefulWidget {
   final String? initialTab; // ✅ नया parameter
@@ -17,10 +19,10 @@ class ClubScreen extends StatefulWidget {
   const ClubScreen({super.key, this.initialTab});
 
   @override
-  State<ClubScreen> createState() => _ClubScreenState();
+  State<ClubScreen> createState() => ClubScreenState();
 }
 
-class _ClubScreenState extends State<ClubScreen> {
+class ClubScreenState extends State<ClubScreen> {
   String activeKey = 'active';
   String challengesKey = 'challenges';
   String clubsKey = 'clubs';
@@ -30,10 +32,28 @@ class _ClubScreenState extends State<ClubScreen> {
   @override
   void initState() {
     super.initState();
-    // ✅ अगर initialTab आया है तो वही सेट होगा, वरना active रहेगा
     tabStatus = widget.initialTab ?? activeKey;
+    loadJoinClub();
   }
 
+  Future<void> loadJoinClub() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      Constant.isJoinClub = prefs.getBool('isJoinClub') ?? false;
+    });
+
+
+  }
+
+
+  Future<void> saveJoinClub(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isJoinClub', value);
+    setState(() {
+      Constant.isJoinClub = value;
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,8 +167,19 @@ class _ClubScreenState extends State<ClubScreen> {
           Expanded(child: ActiveWidget()) : SizedBox(),
           tabStatus == challengesKey ?
           Expanded(child: challengesWidget()) : SizedBox(),
-          tabStatus == clubsKey ?
-          Expanded(child: clubsWidget()) : SizedBox()
+          tabStatus == clubsKey
+              ? Expanded(
+            child: clubsWidget(
+              context: context,
+              isJoinClub: Constant.isJoinClub,
+              onJoinClub: (value) {
+                saveJoinClub(value);
+              },
+            ),
+          )
+              : const SizedBox(),
+          // tabStatus == clubsKey ?
+          // Expanded(child: clubsWidget()) : SizedBox()
         ],
       ),
     );

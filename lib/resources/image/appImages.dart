@@ -13,6 +13,7 @@ class AppImageSvg {
   static const news = 'assets/image/svg/news.svg';
   static const record = 'assets/image/svg/record.svg';
   static const club = 'assets/image/svg/club.svg';
+  static const tips = 'assets/image/svg/tips.svg';
   static const profile = 'assets/image/svg/profile.svg';
   static const userImg = 'assets/image/svg/userImg.svg';
   static const bell = 'assets/image/svg/bell.svg';
@@ -76,6 +77,7 @@ class AppImageSvg {
   static const sideDrawer = 'assets/image/svg/sideDrawer.svg';
   static const run = 'assets/image/svg/run.svg';
   static const map = 'assets/image/svg/map.svg';
+  static const diet = 'assets/image/svg/diet.svg';
   // static const trophy = 'assets/image/svg/trophy.svg';
   static const ratingStar = 'assets/image/svg/ratingStar.svg';
   static const userBio = 'assets/image/svg/userBio.svg';
@@ -168,4 +170,32 @@ class AppImageOthers {
   static const subscription = 'assets/image/others/subscription.png';
   static const processBackground = 'assets/image/others/processBackground.png';
   static const recruitment = 'assets/image/others/recruitment.png';
+
+  static const pcrImg = 'assets/image/others/pcrImg.png';
+  static const activitiesIcon = 'assets/image/others/activitiesIcon.png';
+  static const backArrow = 'assets/image/others/backArrow.png';
+  static const defaultUserImg = 'assets/image/others/defaultUserImg.png';
+  static const editIcon = 'assets/image/others/editIcon.png';
+  static const leaderIcon = 'assets/image/others/leaderIcon.png';
+  static const notificationIcon = 'assets/image/others/notificationIcon.png';
+  static const overviewIcon = 'assets/image/others/overviewIcon.png';
+  static const shareIcon = 'assets/image/others/shareIcon.png';
+  static const clubDetailBanner = 'assets/image/others/clubDetailBanner.png';
+  static const memberIcon = 'assets/image/others/memberIcon.png';
+  static const earthIcon = 'assets/image/others/earthIcon.png';
+  static const chalBanner = 'assets/image/others/chalBanner.png';
+  static const trophyImg = 'assets/image/others/trophyImg.png';
+  static const challengesDetailBanner = 'assets/image/others/challengesDetailBanner.png';
+  static const challengesLogo = 'assets/image/others/challengesLogo.png';
+  static const calenderImg = 'assets/image/others/calenderImg.png';
+  static const challangesRunBanner = 'assets/image/others/challangesRunBanner.png';
+  static const cycleImg = 'assets/image/others/cycleImg.png';
+  static const allSportImg = 'assets/image/others/allSportImg.png';
+  static const walkingImg = 'assets/image/others/walkingImg.png';
+  static const globImg = 'assets/image/others/globImg.png';
+  static const dropLocation = 'assets/image/others/dropLocation.png';
+  static const clubDialogImg = 'assets/image/others/clubDialogImg.png';
+  static const dietBanner = 'assets/image/others/dietBanner.png';
+  static const runBanner = 'assets/image/others/runBanner.png';
+  static const cycleBanner = 'assets/image/others/cycleBanner.png';
 }

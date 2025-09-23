@@ -38,6 +38,7 @@ class Constant {
   static ProfileModel? getProfile;
   static CategoryModel? getCategory;
 
+  static bool isJoinClub = false;
 
   static String getProfileScreenCount(){
     return '9';
