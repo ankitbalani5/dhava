@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 
+import 'package:coherent_endurance/models/categoryModel.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
@@ -11,10 +12,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../resources/color/appColor.dart';
+import '../../bloc/saveActivityBloc/save_activity_bloc.dart';
 import '../../constant/constant.dart';
 import '../../repository/api.dart';
 import 'endurance.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SaveActivity extends StatefulWidget {
   final Map<String, dynamic> trackingData;
@@ -279,7 +282,7 @@ class _SaveActivityState extends State<SaveActivity> {
     final matchedCategory = Constant.getCategory!.data!
         .firstWhere(
           (element) => element.categoryId == widget.trackingData["runType"],
-      // orElse: () => Data(categoryName: ""), // fallback अगर न मिले
+      orElse: () => Data(categoryId: ''), // fallback अगर न मिले
     );
 
     selectedRunType = matchedCategory.categoryName ?? "";
@@ -884,12 +887,50 @@ class _SaveActivityState extends State<SaveActivity> {
       bottomNavigationBar: BottomAppBar(
         height: 70,
         color: Colors.white,
-        child: CustomButton(
-          text: 'Save Activity',
-          callback: () {
-            uploadActivity();
-            // saveActivity();
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => Endurance()));
+        child: BlocConsumer<SaveActivityBloc, SaveActivityState>(
+          listener: (context, state) {
+            if (state is SaveActivityLoading) {
+              Constant.loadingDialog(context);
+              // Loader show करो
+            } else if (state is SaveActivitySuccess) {
+              Constant.closeLoadingDialog(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Activity Saved Successfully")),
+              );
+            } else if (state is SaveActivityError) {
+              Constant.closeLoadingDialog(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.error)),
+              );
+            }
+          },
+          builder: (context, state) {
+            return CustomButton(
+              text: 'Save Activity',
+              callback: () {
+
+                context.read<SaveActivityBloc>().add(
+                  SaveActivityPressed(
+                    trackingData: widget.trackingData,
+                    categoryId: categoryId,
+                    title: titleController.text,
+                    description: descriptionController.text,
+                    runType: selectedRunType,
+                    typeOfRun: selectedTypeOfRun,
+                    feeling: selectedFeeling,
+                    privateNote: privateNoteController.text,
+                    gear: selectedGear,
+                    visibility: selectedVisibility,
+                    hiddenDetails: selectedHiddenDetails,
+                    isPublish: isPublish, context: context,
+
+                  ),
+                );
+                // uploadActivity();
+                // saveActivity();
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => Endurance()));
+              },
+            );
           },
         ),
       ),

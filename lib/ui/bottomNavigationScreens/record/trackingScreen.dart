@@ -54,6 +54,15 @@ class _TrackingScreenState extends State<TrackingScreen> {
   @override
   void initState() {
     super.initState();
+    // अगर Constant.getCategory में "Run" category है तो उसे default assign करो
+    final defaultCategory = Constant.getCategory?.data?.firstWhere(
+          (e) => e.categoryName?.toLowerCase() == "run",
+      // orElse: () => Constant.getCategory?.data.first, // fallback पहला element
+    );
+
+    runType = defaultCategory?.categoryId;
+    print('runtype::: $runType');
+
     initTracking();
     initStepTracking();
   }

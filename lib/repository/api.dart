@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coherent_endurance/constant/constant.dart';
+import 'dart:typed_data';
 
 import '../models/refreshTokenModel.dart';
 import '../ui/authScreens/loginScreen.dart';
@@ -15,7 +17,9 @@ class Api {
   static const String BaseUrl = "https://tracking.coherentlab.com";
   //static const String BaseUrl = "https://great11.com";
 
-  static getHeader(){
+  static getHeader() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    Constant.access_token = pref.getString(PrefKey.accessToken);
     final headers = {
       'Content-Type': 'application/json',
       'authorization': 'Bearer ${Constant.access_token}'
@@ -29,7 +33,7 @@ class Api {
   }
 
   static Future getApi(String endPoint, var header, BuildContext context) async {
-    final response = await http.get(Uri.parse(BaseUrl + endPoint), headers: getHeader());
+    final response = await http.get(Uri.parse(BaseUrl + endPoint), headers: header);
 
     try {
       if (response.statusCode == 200) {
@@ -59,7 +63,7 @@ class Api {
       var header, BuildContext context) async {
     final response = await http.get(
       Uri.parse(BaseUrl + endPoint).replace(queryParameters: queryParameters),
-      headers: getHeader(),
+      headers: header,
     );
 
     try {
@@ -86,7 +90,7 @@ class Api {
   }
 
   static Future postApi(String endPoint, var body, var header, BuildContext context) async {
-    final response = await http.post(Uri.parse(BaseUrl + endPoint), headers: getHeader(), body: jsonEncode(body));
+    final response = await http.post(Uri.parse(BaseUrl + endPoint), headers: header, body: jsonEncode(body));
 
     try {
       if (response.statusCode == 200) {
@@ -111,10 +115,7 @@ class Api {
     }
   }
 
-  static Future saveActivityApi(
-      Map<String, dynamic> body,
-      BuildContext context,
-      ) async {
+  static Future saveActivityApi(Map<String, dynamic> body, BuildContext context,) async {
     try {
       var request = http.MultipartRequest(
         'POST',
@@ -126,14 +127,24 @@ class Api {
       request.headers['Content-Type'] = 'multipart/form-data';
 
       // अगर mapImage है तो MultipartFile में add करो
-      if (body['mapImage'] != null && body['mapImage'] ) {
-        request.files.add(http.MultipartFile.fromBytes(
+      if (body['mapImage'] != null && body['mapImage'] is Uint8List) {
+        request.files.add(await http.MultipartFile.fromBytes(
           'mapImage',
           body['mapImage'],
           filename: "tracking_map.png",
           contentType: MediaType('image', 'png'),
         ));
       }
+
+
+      // if (body['mapImage'] != null && body['mapImage'] ) {
+      //   request.files.add(http.MultipartFile.fromBytes(
+      //     'mapImage',
+      //     body['mapImage'],
+      //     filename: "tracking_map.png",
+      //     contentType: MediaType('image', 'png'),
+      //   ));
+      // }
 
       // बाकी normal fields add करो
       body.forEach((key, value) {
@@ -225,7 +236,7 @@ class Api {
   static Future postApiWithQuery(String endPoint, var queryParameters, var header, BuildContext context) async {
     final response = await http.post(
       Uri.parse(BaseUrl + endPoint).replace(queryParameters: queryParameters),
-      headers: getHeader(),
+      headers: header,
     );
 
     try {
@@ -314,7 +325,7 @@ class Api {
         Constant.refresh_token = '';
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => RegisterScreen()),
           (route) => false,
         );
 
