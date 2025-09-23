@@ -64,6 +64,7 @@ class DietDetailScreen extends StatelessWidget {
 
           Expanded(
             child: ListView(
+
               padding: const EdgeInsets.all(16),
               children: [
                 /// Type
