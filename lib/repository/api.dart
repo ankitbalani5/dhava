@@ -12,7 +12,7 @@ import '../ui/authScreens/loginScreen.dart';
 
 
 class Api {
-  static const String BaseUrl = "https://tigers11.in";
+  static const String BaseUrl = "https://tracking.coherentlab.com";
   //static const String BaseUrl = "https://great11.com";
 
   static Future getApi(String endPoint, var header, BuildContext context) async {
@@ -281,4 +281,7 @@ class Api {
 class EndPoint {
 
   static const String refreshToken = '/api/v1/auth/referesh-token';
+  static const String getAllChallenges = '/api/v1/challenges/all';
+
+
 }

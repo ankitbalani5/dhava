@@ -3,6 +3,7 @@ import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../resources/style/textStyle.dart';
 import '../../../../../resources/color/appColor.dart';
 
