@@ -1,6 +1,8 @@
 
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/club/createAClub.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/club/tabs/memberScreen.dart';
 import 'package:coherent_endurance/ui/introScreens/sliderScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -42,17 +44,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> getDeviceId() async {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
     try {
       if (Theme.of(context).platform == TargetPlatform.android) {
         var androidInfo = await deviceInfo.androidInfo;
         setState(() {
-          deviceId = androidInfo.id; // Unique device ID on Android
+          deviceId = androidInfo.id;
         });
       } else if (Theme.of(context).platform == TargetPlatform.iOS) {
         var iosInfo = await deviceInfo.iosInfo;
         setState(() {
-          deviceId = iosInfo.identifierForVendor ?? ''; // Unique ID on iOS
+          deviceId = iosInfo.identifierForVendor ?? '';
         });
       }
     } catch (e) {
@@ -74,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       }
       else {
-        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=> SliderScreen()));
+        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=> /*SliderScreen*/BottomNavBar()));
       }
     },);
 

@@ -1,22 +1,16 @@
 
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pinput/pinput.dart';
 
-
-import 'package:webview_flutter/webview_flutter.dart';
-
-import '../../bloc/loginBloc/login_bloc.dart';
-import '../bottomNavigationScreens/record/trackingScreen.dart';
 
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -111,17 +105,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     child: Pinput(
                       length: 4,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      // smsRetriever: smsRetriever,
+
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly
                       ],
                       keyboardType: TextInputType.number,
                       controller: pinController,
                       focusNode: focusNode,
-                      separatorBuilder: (index) => const SizedBox(width: 8),
-                      // validator: (value) {
-                      //   return value != Constant.otp ? 'Pin is incorrect' : null;
-                      // },
+                      separatorBuilder: (index) =>  SizedBox(width: 8),
+
                       hapticFeedbackType: HapticFeedbackType.lightImpact,
                       onCompleted: (pin) {
                         debugPrint('onCompleted: $pin');
@@ -133,7 +125,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            margin: const EdgeInsets.only(bottom: 9),
+                            margin:  EdgeInsets.only(bottom: 9),
                             width: 22,
                             height: 2,
                             color: Colors.transparent,
@@ -147,20 +139,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ),
                       focusedPinTheme: defaultPinTheme.copyWith(
                         decoration: defaultPinTheme.decoration!.copyWith(
-                          // color: AppColor.textBackgroundGrey,
                         ),
                       ),
                       submittedPinTheme: defaultPinTheme.copyWith(
                         decoration: defaultPinTheme.decoration!.copyWith(
-                          // color: AppColor.primaryColor.withOpacity(.2),
-                          // border: Border.all(color: Color(0xffFF6F61B5))
+
                           border: Border.all(
-                            color: const Color(0xB5FF6F61), // #FF6F61 at 71% opacity (B5 hex)
+                            color:  Color(0xB5FF6F61),
                             width: 1,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0x54FF6F61), // #FF6F61 at 33% opacity (54 hex)
+                              color:  Color(0x54FF6F61),
                               blurRadius: 14,
                               offset: Offset(0, 0),
                             ),
@@ -176,23 +166,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
                 SizedBox(height: 20),
                 BlocConsumer<LoginBloc, LoginState>(
-                  // listener: (context, state) async {
-                  //   if (state is VerifyOtpSuccess) {
-                  //
-                  //     var message = state.commonResponseModel.message;
-                  //     Constant.showErrorDialog(context, true,  message ?? "Something went wrong", () {
-                  //       Navigator.pushAndRemoveUntil(
-                  //         context,
-                  //         MaterialPageRoute(builder: (context) => MainScreen()), (route) => false,
-                  //       );
-                  //     });
-                  //
-                  //   }
-                  //   if (state is VerifyOtpError) {
-                  //     var message = state.error;
-                  //     Constant.showErrorDialog(context, false,  message ?? "Something went wrong", () {});
-                  //   }
-                  // },
+
                   builder: (context, state) {
                     return CustomButton(
                       text:

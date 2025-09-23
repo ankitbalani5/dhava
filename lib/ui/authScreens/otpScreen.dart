@@ -1,13 +1,11 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/authScreens/createPassword.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
-import '../../constant/Constant.dart';
-import '../../widgets/customButton.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -29,10 +27,6 @@ class _OtpScreenState extends State<OtpScreen> {
     pinController = TextEditingController();
     focusNode = FocusNode();
 
-    /// In case you need an SMS autofill feature
-    // smsRetriever = SmsRetrieverImpl(
-    //   SmartAuth(),
-    // );
   }
   final defaultPinTheme = PinTheme(
     width: 51,
@@ -76,39 +70,7 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 100),
 
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: List.generate(
-            //     4,
-            //         (index) => SizedBox(
-            //       width: 60,
-            //       child: TextField(
-            //         textAlign: TextAlign.center,
-            //         keyboardType: TextInputType.number,
-            //         decoration: InputDecoration(
-            //           // filled: true,
-            //           // fillColor: Colors.grey[200],
-            //
-            //           border: OutlineInputBorder(
-            //             borderRadius: BorderRadius.circular(8),
-            //             borderSide: BorderSide(color: Colors.grey),
-            //
-            //           ),
-            //           enabledBorder: OutlineInputBorder(
-            //             borderRadius: BorderRadius.circular(8),
-            //             borderSide: BorderSide(color: Colors.grey),
-            //
-            //           ),
-            //           focusedBorder: OutlineInputBorder(
-            //             borderRadius: BorderRadius.circular(8),
-            //             borderSide: BorderSide(color: Colors.grey),
-            //
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Directionality(
@@ -116,7 +78,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 child: Pinput(
                   length: 4,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  // smsRetriever: smsRetriever,
+
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly
                   ],
@@ -125,9 +87,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   focusNode: focusNode,
                   defaultPinTheme: defaultPinTheme,
                   separatorBuilder: (index) => const SizedBox(width: 8),
-                  // validator: (value) {
-                  //   return value != Constant.otp ? 'Pin is incorrect' : null;
-                  // },
+
                   hapticFeedbackType: HapticFeedbackType.lightImpact,
                   onCompleted: (pin) {
                     debugPrint('onCompleted: $pin');
@@ -166,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 25),
+             SizedBox(height: 25),
             Center(
               child: Text('Resend Code', style: TextStyle(
                 fontSize: 14,
@@ -174,7 +134,6 @@ class _OtpScreenState extends State<OtpScreen> {
                 fontFamily: 'InterMedium',
                 decoration: TextDecoration.underline,),),
             )
-
 
           ],
         ),
@@ -186,33 +145,11 @@ class _OtpScreenState extends State<OtpScreen> {
           children: [
             CustomButton(
               text: 'Verify',
-              // width: MediaQuery.of(context).size.width,
               color: AppColor.bgRed,
               textColor: Colors.white,
               callback: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
               },),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
-            //   },
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.red,
-            //     minimumSize: const Size(double.infinity, 50),
-            //   ),
-            //   child: const Text("Email me a code",
-            //       style: TextStyle(color: Colors.white)),
-            // ),
-            // const SizedBox(height: 15),
-            //
-            // Center(
-            //   child: TextButton(
-            //     onPressed: () {},
-            //     child: Text("Use Password Instead",
-            //       style: CustomTextStyles.bold(fontSize: 16, textColor: Colors.black),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

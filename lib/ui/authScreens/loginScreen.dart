@@ -1,4 +1,7 @@
 
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
+import 'package:coherent_endurance/constant/preferenceKey.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
@@ -6,15 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validate_phone_number/country_picker.dart';
 import 'package:validate_phone_number/validation.dart';
-
-import '../../bloc/loginBloc/login_bloc.dart';
-import '../../constant/Constant.dart';
-import '../../constant/preferenceKey.dart';
 import 'otpVerificationScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -44,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     deviceId = sharedPreferences?.getString(PreferenceKey.deviceId) ?? '';
 
 
-    setState(() {}); // Ensure UI updates if needed after initialization
+    setState(() {});
   }
 
   bool isValidEmail(String email) {
@@ -63,14 +61,14 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+            padding:  EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // SvgPicture.asset(AppImageSvg.logo2),
+
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding:  EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     'Coherent\nEndurance',
                     textAlign: TextAlign.center,
@@ -134,10 +132,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         BorderSide(color: AppColor.textBackgroundGrey)),
                     errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Colors.red)),
+                        borderSide:  BorderSide(color: Colors.red)),
                     focusedErrorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Colors.red)),
+                        borderSide:  BorderSide(color: Colors.red)),
                     contentPadding: EdgeInsets.symmetric(horizontal: 20),
                   ),
                   controller: controller,
@@ -152,224 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                 ),
-                // TextFormField(
-                //   readOnly: false,
-                //   //textCapitalization: TextCapitalization.none,
-                //   controller: emailController,
-                //   keyboardType: TextInputType.emailAddress,
-                //   style: CustomTextStyles.semiBold(),
-                //   // Input text color
-                //   decoration: InputDecoration(
-                //     hintText: 'Email',
-                //     hintStyle: CustomTextStyles.semiBold(textColor: AppColor.textBackgroundGrey),
-                //     counterText: '', // hide default
-                //     prefixIcon: Padding(
-                //       padding: const EdgeInsets.all(12.0),
-                //       // Adjust padding as needed
-                //       child: SvgPicture.asset(
-                //         AppImageSvg.email,
-                //         color: Colors.white,
-                //         // Path to your SVG file
-                //         height: 25,
-                //         width: 25,
-                //       ),
-                //     ),
-                //     enabledBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: AppColor.textBackgroundGrey, // normal state
-                //         width: 1,
-                //       ),
-                //     ),
-                //     errorBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: Colors.red, // error state
-                //         width: 1,
-                //       ),
-                //     ),
-                //     focusedBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: AppColor.primaryColor, // focused state
-                //         width: 1,
-                //       ),
-                //     ),
-                //     focusedErrorBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: Colors.red, // focused + error state
-                //         width: 1,
-                //       ),
-                //     ),
-                //   ),
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter your email';
-                //     } else if (!isValidEmail(value)) {
-                //       return 'Enter a valid email address';
-                //     }
-                //     return null;
-                //   },
-                // ),
-                // SizedBox(height: 20),
-                // TextFormField(
-                //   readOnly: false,
-                //   obscureText: !isPasswordVisible,
-                //   // Toggle password visibility
-                //   //textCapitalization: TextCapitalization.characters,
-                //   controller: passwordController,
-                //   keyboardType: TextInputType.text,
-                //   style: CustomTextStyles.semiBold(),
-                //   // Input text color
-                //   decoration: InputDecoration(
-                //     hintText: 'Password',
-                //     hintStyle: CustomTextStyles.semiBold(textColor: AppColor.textBackgroundGrey),
-                //     // Input text color,
-                //     prefixIcon: Padding(
-                //       padding: const EdgeInsets.all(12.0),
-                //       // Adjust padding as needed
-                //       child: SvgPicture.asset(
-                //         AppImageSvg.lock,
-                //         color: Colors.white,
-                //         // Path to your SVG file
-                //         height: 25,
-                //         width: 25,
-                //       ),
-                //     ),
-                //     suffixIcon: IconButton(
-                //       icon: Icon(
-                //         isPasswordVisible
-                //             ? Icons.visibility
-                //             : Icons.visibility_off,
-                //         color: Colors.white, // Eye icon color
-                //       ),
-                //       onPressed: () {
-                //         setState(() {
-                //           isPasswordVisible =
-                //               !isPasswordVisible; // Toggle visibility state
-                //         });
-                //       },
-                //     ),
-                //     enabledBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: AppColor.textBackgroundGrey, // normal state
-                //         width: 1,
-                //       ),
-                //     ),
-                //     errorBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: Colors.red, // error state
-                //         width: 1,
-                //       ),
-                //     ),
-                //     focusedBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: AppColor.primaryColor, // focused state
-                //         width: 1,
-                //       ),
-                //     ),
-                //     focusedErrorBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(15),
-                //       borderSide: const BorderSide(
-                //         color: Colors.red, // focused + error state
-                //         width: 1,
-                //       ),
-                //     ),
-                //   ),
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter password';
-                //     } else if (value.length < 8) {
-                //       return 'Please length should not be less then 8'
-                //           ;
-                //     } else {
-                //       return null;
-                //     }
-                //   },
-                // ),
+
                 SizedBox(height: 20),
                 BlocConsumer<LoginBloc, LoginState>(
-                  // listener: (context, state) async {
-                  //   if (state is LoginSuccess) {
-                  //     var data = state.loginModel.data;
-                  //     var message = state.loginModel.message;
-                  //     var securityCode = data?.securityCode ?? "";
-                  //     var userPlanType = data?.userType ?? "";
-                  //     var uuid = data?.uuid ?? "";
-                  //
-                  //     if (uuid.isEmpty) {
-                  //       Constant.showErrorDialog(
-                  //         context,
-                  //         false,
-                  //         "UUID is missing",
-                  //         () {},
-                  //       );
-                  //     } else if (userPlanType.isEmpty) {
-                  //       Constant.showErrorDialog(
-                  //         context,
-                  //         false,
-                  //         "User type is missing",
-                  //             () {},
-                  //       );
-                  //     } else if (securityCode.isEmpty) {
-                  //       Constant.showErrorDialog(
-                  //         context,
-                  //         false,
-                  //         "Security code is missing",
-                  //             () {},
-                  //       );
-                  //     } else {
-                  //       await sharedPreferences?.setString(
-                  //         PreferenceKey.securityCode,
-                  //         securityCode,
-                  //       );
-                  //       await sharedPreferences?.setString(PreferenceKey.uuid, uuid);
-                  //       await sharedPreferences?.setString(
-                  //         PreferenceKey.userPlanType,
-                  //         userPlanType,
-                  //       );
-                  //     }
-                  //
-                  //     await sharedPreferences?.setString(
-                  //       PreferenceKey.email,
-                  //       emailController.text,
-                  //     );
-                  //     await sharedPreferences?.setString(
-                  //       PreferenceKey.password,
-                  //       passwordController.text,
-                  //     );
-                  //
-                  //     if (data != null) {
-                  //
-                  //       Constant.securityCode = securityCode;
-                  //       Constant.userPlanType = userPlanType;
-                  //       //Constant.userRole = userRole;
-                  //
-                  //       await sharedPreferences?.setBool(PreferenceKey.isLogin, true);
-                  //       Navigator.pushAndRemoveUntil(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (context) => MainScreen(),
-                  //         ),
-                  //             (route) => false,
-                  //       );
-                  //
-                  //     }
-                  //   }
-                  //   if (state is LoginError) {
-                  //     var message = state.error;
-                  //     Constant.showErrorDialog(
-                  //       context,
-                  //       false,
-                  //       message ?? "Something went wrong",
-                  //       () {},
-                  //     );
-                  //   }
-                  // },
+
                   builder: (context, state) {
                     return CustomButton(
                       width: screenHeight * .30,
@@ -385,18 +169,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                             (route) => false,
                                       );
-                                // if (_formKey.currentState!.validate()) {
-                                //   context.read<LoginBloc>().add(
-                                //     UserLoginEvent(
-                                //       context: context,
-                                //       email: emailController.text,
-                                //       password: passwordController.text,
-                                //       fcmToken: "",
-                                //       deviceId: deviceId,
-                                //       deviceType: "mobile",
-                                //     ),
-                                //   );
-                                // }
                               },
                       child:
                           state is LoginLoading

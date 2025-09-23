@@ -2,11 +2,7 @@
 import 'package:coherent_endurance/ui/completeProfile/heightScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:simple_ruler_picker/simple_ruler_picker.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
-
-import 'package:coherent_endurance/constant/constant.dart';
 import '../../resources/color/appColor.dart';
 import '../../resources/image/appImages.dart';
 import '../../resources/style/textStyle.dart';

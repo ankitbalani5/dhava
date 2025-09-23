@@ -1,10 +1,10 @@
-import 'package:coherent_endurance/resources/color/appColor.dart';
+
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/authScreens/otpScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -25,7 +25,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon:  Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -41,31 +41,22 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 10),
+             SizedBox(height: 10),
             Row(
               children: [
                 Text("Please Enter Your Email Address To\nRecieve A Verification Code.", style: CustomTextStyles.regular(fontSize: 16, textColor: Colors.black),),
-                // Text("NamanYadav0321@gmail.com", style: CustomTextStyles.bold(fontSize: 16, textColor: Colors.black),),
               ],
             ),
-            const SizedBox(height: 60),
-
+             SizedBox(height: 60),
             Text('Enter Email', style: CustomTextStyles.medium(fontSize: 14),),
             SizedBox(height: 5,),
-            // Password Input
+
             TextField(
-              // obscureText: !isVisible,
               decoration: InputDecoration(
                 hintText: "abc@gmail.com",
                 hintStyle: TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: Colors.grey[200],
-                // prefixIcon: Icon(Icons.lock_outline, color: Colors.grey,),
-                // suffixIcon: IconButton(
-                //   icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
-                //   onPressed: () => setState(() => isVisible = !isVisible),
-                // ),
-
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: Colors.transparent),
@@ -84,24 +75,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
             ),
             const SizedBox(height: 20),
-            // Center(child: Text('Try Another Way',
-            //   style: TextStyle(
-            //       fontSize: 14,
-            //       fontWeight: FontWeight.w500,
-            //       fontFamily: 'InterMedium',
-            //       decoration: TextDecoration.underline),))
 
-
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen()));
-            //   },
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.black,
-            //     minimumSize: const Size(double.infinity, 50),
-            //   ),
-            //   child: const Text("Log In", style: TextStyle(color: Colors.white)),
-            // ),
           ],
         ),
       ),
@@ -109,9 +83,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         color: Colors.transparent,
         child: CustomButton(
           text: 'Send',
-          // width: MediaQuery.of(context).size.width,
-          // color: Colors.transparent,
-          // textColor: Colors.black,
           callback: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen()));
           },),

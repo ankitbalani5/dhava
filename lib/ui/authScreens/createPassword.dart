@@ -1,11 +1,9 @@
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../resources/color/appColor.dart';
-import '../../widgets/customButton.dart';
 
 class CreateNewPasswordScreen extends StatelessWidget {
   const CreateNewPasswordScreen({super.key});
@@ -23,7 +21,7 @@ class CreateNewPasswordScreen extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding:  EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -31,12 +29,12 @@ class CreateNewPasswordScreen extends StatelessWidget {
               "Create New Password",
               style: CustomTextStyles.bold(fontSize: 28, textColor: Colors.black),
             ),
-            const SizedBox(height: 5),
+             SizedBox(height: 5),
             Text(
               "Your New Password Must Be Different Previously Used",
               style: CustomTextStyles.regular(fontSize: 16),
             ),
-            const SizedBox(height: 90),
+             SizedBox(height: 90),
 
             Text('New Password', style: CustomTextStyles.medium(fontSize: 14),),
             SizedBox(height: 5,),
@@ -64,7 +62,7 @@ class CreateNewPasswordScreen extends StatelessWidget {
               ),
               obscureText: true,
             ),
-            const SizedBox(height: 15),
+             SizedBox(height: 15),
             Text('Confirm Password', style: CustomTextStyles.medium(fontSize: 14),),
             SizedBox(height: 5,),
             TextField(
@@ -91,17 +89,8 @@ class CreateNewPasswordScreen extends StatelessWidget {
               ),
               obscureText: true,
             ),
-            const SizedBox(height: 30),
+             SizedBox(height: 30),
 
-            // ElevatedButton(
-            //   onPressed: () {},
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.red,
-            //     minimumSize: const Size(double.infinity, 50),
-            //   ),
-            //   child: const Text("Verify Number",
-            //       style: TextStyle(color: Colors.white)),
-            // ),
           ],
         ),
       ),
@@ -110,7 +99,6 @@ class CreateNewPasswordScreen extends StatelessWidget {
         child:
         CustomButton(
           text: 'Save',
-          // width: MediaQuery.of(context).size.width,
           color: AppColor.bgRed,
           textColor: Colors.white,
           callback: () {

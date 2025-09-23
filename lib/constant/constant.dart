@@ -25,6 +25,7 @@ class Constant {
   static var access_token;
   static var refresh_token;
 
+  static bool isJoinClub = false;
 
   static String getProfileScreenCount(){
     return '9';
