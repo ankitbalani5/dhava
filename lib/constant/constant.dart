@@ -1,15 +1,26 @@
 
+import 'package:coherent_endurance/models/categoryModel.dart';
+import 'package:coherent_endurance/models/profileModel.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
+import 'package:coherent_endurance/ui/profileScreens/editProfileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../resources/image/appImages.dart';
 import '../resources/style/textStyle.dart';
 import '../widgets/customButton.dart';
+import '../widgets/loadingAnimation.dart';
 import 'errorDialog.dart';
 
 class PrefKey {
-  static var accessToken;
-  static var refreshToken;
+  static String isLogin = 'isLogin';
+  static String isFirstTime = 'isFirstTime';
+  static String savedEmail = 'saved_email';
+  static String savedPassword = 'saved_password';
+  static String rememberMe = 'remember_me';
+  static var accessToken = 'accessToken';
+  static var refreshToken = 'refreshToken';
 }
 
 class Constant {
@@ -24,33 +35,33 @@ class Constant {
   static var fcmToken;
   static var access_token;
   static var refresh_token;
+  static ProfileModel? getProfile;
+  static CategoryModel? getCategory;
 
 
   static String getProfileScreenCount(){
     return '9';
   }
 
-  static Widget likeImageWidget (){
-    return Stack(
-      children: [
-        Container(
-          width: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Image.asset(AppImageOthers.userImg, height: 30,),
-            ],
-          ),
-        ),
 
-        Positioned(
-            right: 25,
-            child: Image.asset(AppImageOthers.userImg, height: 30,)),
-        Positioned(
-            right: 50,
-            child: Image.asset(AppImageOthers.userImg, height: 30,)),
-      ],
-    );
+
+  static loadingDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => PopScope(
+          canPop: false,
+          child: AlertDialog(
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              content: Center(
+                child: LoadingAnimation(),
+              )),
+        ));
+  }
+
+  static closeLoadingDialog(BuildContext context) {
+    return Navigator.pop(context);
   }
 
   static showErrorDialog(BuildContext context, bool isSuccess, String message,  VoidCallback callback) {
@@ -63,6 +74,132 @@ class Constant {
       },
     ));
   }
+
+  static String capitalizeEachWord(String text) {
+    if (text.isEmpty) return text;
+    return text.split(" ").map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(" ");
+  }
+
+
+  static Widget showCompleteProfileDialog(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.redAccent, width: 1), // border line
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 25, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(AppImageOthers.completeProfileDialogIcon, height: 50, width: 50,),
+                SizedBox(height: 15,),
+                // Title
+                Text(
+                  "Need to complete your profile before proceeds",
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyles.bold(fontSize: 16),
+                ),
+                const SizedBox(height: 10),
+
+                // Subtitle
+                Text(
+                  "To complete the sign up process, please Choose the language",
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),
+                ),
+                const SizedBox(height: 25),
+
+                // Complete Profile Button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: const Size(double.infinity, 45),
+                  ),
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                        builder: (context) => CreateProfile()), (route) => false,);
+                  },
+                  child: Text(
+                    "Complete Profile",
+                    style: CustomTextStyles.semiBold(fontSize: 16, textColor: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Skip For Now Button
+                CustomButton(
+                  color: Colors.white,
+                  textColor: AppColor.bgRed,
+                  fontSize: 16,
+                  text: 'Skip For Now',
+                  callback: () {
+                    Navigator.pop(context);
+                },)
+                // OutlinedButton(
+                //   style: OutlinedButton.styleFrom(
+                //     backgroundColor: Colors.white,
+                //     side: BorderSide.none,
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(30),
+                //     ),
+                //     minimumSize: const Size(double.infinity, 45),
+                //   ),
+                //   onPressed: () {
+                //     Navigator.pop(context);
+                //   },
+                //   child: const Text(
+                //     "Skip For Now",
+                //     style: TextStyle(
+                //       color: Colors.redAccent,
+                //       fontSize: 16,
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+
+          // Top circular icon (overlapping)
+          // Positioned(
+          //   top: -40,
+          //   child: CircleAvatar(
+          //     radius: 30,
+          //     backgroundColor: Colors.white,
+          //     child: Container(
+          //       decoration: const BoxDecoration(
+          //         shape: BoxShape.circle,
+          //         gradient: LinearGradient(
+          //           colors: [Colors.redAccent, Colors.orangeAccent],
+          //           begin: Alignment.topLeft,
+          //           end: Alignment.bottomRight,
+          //         ),
+          //       ),
+          //       child: const CircleAvatar(
+          //         radius: 28,
+          //         backgroundColor: Colors.transparent,
+          //         child: Icon(Icons.directions_run, color: Colors.white, size: 28),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+        ],
+      ),
+    );
+  }
+
+
 
   static String centimeterToFeet(String centimeter) {
     // Parse the centimeter input to a double

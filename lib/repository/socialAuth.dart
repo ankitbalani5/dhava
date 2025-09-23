@@ -269,7 +269,7 @@ class SocialAuth{
             SharedPreferences pref = await SharedPreferences.getInstance();
             pref.setString('token', e['token'].toString());
             pref.setString('current_steps', e['userdata']['current_steps'].toString());
-            Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)));
           }
         });
       } else {

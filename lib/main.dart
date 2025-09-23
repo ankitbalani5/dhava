@@ -1,4 +1,6 @@
 
+import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/ui/introScreens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
         providers: [
         // BlocProvider<CommonResponseBloc>(create: (context) => CommonResponseBloc(),),
         BlocProvider<LoginBloc>(create: (context) => LoginBloc()),
+        BlocProvider<ProfileBloc>(create: (context) => ProfileBloc()),
+        BlocProvider<ActivityBloc>(create: (context) => ActivityBloc()),
     ],
       child:
       MaterialApp(

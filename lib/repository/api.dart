@@ -12,11 +12,24 @@ import '../ui/authScreens/loginScreen.dart';
 
 
 class Api {
-  static const String BaseUrl = "https://tigers11.in";
+  static const String BaseUrl = "https://tracking.coherentlab.com";
   //static const String BaseUrl = "https://great11.com";
 
+  static getHeader(){
+    final headers = {
+      'Content-Type': 'application/json',
+      'authorization': 'Bearer ${Constant.access_token}'
+    };
+
+    return headers;
+  }
+
+  static getAuthorisationHeader(){
+    return 'Bearer ${Constant.access_token}';
+  }
+
   static Future getApi(String endPoint, var header, BuildContext context) async {
-    final response = await http.get(Uri.parse(BaseUrl + endPoint), headers: header);
+    final response = await http.get(Uri.parse(BaseUrl + endPoint), headers: getHeader());
 
     try {
       if (response.statusCode == 200) {
@@ -46,7 +59,7 @@ class Api {
       var header, BuildContext context) async {
     final response = await http.get(
       Uri.parse(BaseUrl + endPoint).replace(queryParameters: queryParameters),
-      headers: header,
+      headers: getHeader(),
     );
 
     try {
@@ -73,7 +86,7 @@ class Api {
   }
 
   static Future postApi(String endPoint, var body, var header, BuildContext context) async {
-    final response = await http.post(Uri.parse(BaseUrl + endPoint), headers: header, body: jsonEncode(body));
+    final response = await http.post(Uri.parse(BaseUrl + endPoint), headers: getHeader(), body: jsonEncode(body));
 
     try {
       if (response.statusCode == 200) {
@@ -98,11 +111,121 @@ class Api {
     }
   }
 
-  static Future postApiWithQuery(String endPoint, var queryParameters,
-      var header, BuildContext context) async {
+  static Future saveActivityApi(
+      Map<String, dynamic> body,
+      BuildContext context,
+      ) async {
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(BaseUrl + '/api/v1/activity/save'), // तुम्हारा endpoint
+      );
+
+      // headers
+      request.headers['authorization'] = 'Bearer ${Constant.access_token}';
+      request.headers['Content-Type'] = 'multipart/form-data';
+
+      // अगर mapImage है तो MultipartFile में add करो
+      if (body['mapImage'] != null && body['mapImage'] ) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'mapImage',
+          body['mapImage'],
+          filename: "tracking_map.png",
+          contentType: MediaType('image', 'png'),
+        ));
+      }
+
+      // बाकी normal fields add करो
+      body.forEach((key, value) {
+        if (key != 'mapImage') {
+          if (value is List || value is Map) {
+            // JSON stringify for objects/arrays
+            request.fields[key] = jsonEncode(value);
+          } else {
+            request.fields[key] = value.toString();
+          }
+        }
+      });
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final jsonString = jsonDecode(response.body);
+        print('saveActivityApi::::$jsonString');
+        return jsonString;
+      } else if (response.statusCode == 401) {
+        // Token expired, try refreshing
+        bool success = await _refreshToken(context);
+        if (success) {
+          return saveActivityApi(body, context); // Retry
+        } else {
+          return null;
+        }
+      } else {
+        print("Error saveActivityApi: ${response.statusCode}, Response: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print('Error saveActivityApi: $e');
+      return null;
+    }
+  }
+
+
+  static Future updateProfileApi(String endPoint, Map<String, dynamic> body, Map<String, String> header, BuildContext context) async {
+    try {
+      var request = http.MultipartRequest("POST", Uri.parse(BaseUrl + endPoint));
+
+      // headers (authorization वगैरह)
+      request.headers.addAll(header);
+
+      // अगर profile_pic file है तो MultipartFile में add करो
+      if (body['profile_pic'] != null && body['profile_pic'].toString().isNotEmpty) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'profile_pic',
+          body['profile_pic'], // यहां file path pass करो
+        ));
+      }
+
+      // बाकी normal fields add करना
+      body.forEach((key, value) {
+        if (key != 'profile_pic') {
+          request.fields[key] = value?.toString() ?? '';
+        }
+      });
+
+      // request भेजना
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final jsonString = jsonDecode(response.body);
+        print('${endPoint}::::$jsonString');
+        return jsonString;
+      } else if (response.statusCode == 401) {
+        // Token expired, try refreshing the token
+        bool success = await _refreshToken(context);
+        if (success) {
+          header['authorization'] = 'Bearer ${Constant.access_token}';
+          return updateProfileApi(endPoint, body, header, context); // Retry request
+        } else {
+          return null;
+        }
+      } else {
+        print("Error: ${response.statusCode}, Response: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print('error api $endPoint $e');
+      return null;
+    }
+  }
+
+  static Future postApiWithQuery(String endPoint, var queryParameters, var header, BuildContext context) async {
     final response = await http.post(
       Uri.parse(BaseUrl + endPoint).replace(queryParameters: queryParameters),
-      headers: header,
+      headers: getHeader(),
     );
 
     try {
@@ -179,9 +302,7 @@ class Api {
     var header = {'Content-Type': 'application/json'};
 
     final response = await http.post(
-      Uri.parse(BaseUrl + EndPoint.refreshToken),
-      headers: header,
-      body: jsonEncode(body),
+      Uri.parse(BaseUrl + ApiEndPoint.refreshToken), headers: header, body: jsonEncode(body),
     );
 
     if (response.statusCode == 200) {
@@ -199,7 +320,7 @@ class Api {
 
         return false;
       } else {
-        print("Error: ${response.statusCode}, Response: ${response.body}");
+        print("Response: ${response.statusCode}, Response: ${response.body}");
       }
       String newAccessToken = result.data!.accessToken.toString();
       String newRefreshToken = result.data!.refreshToken.toString();
@@ -278,7 +399,19 @@ class Api {
 
 }
 
-class EndPoint {
+class ApiEndPoint {
 
+  static const String login = '/api/v1/auth/login';
   static const String refreshToken = '/api/v1/auth/referesh-token';
+  static const String sendOtp = '/api/v1/auth/send-otp';
+  static const String verifyOtp = '/api/v1/auth/verify-otp';
+  static const String forgotPassword = '/api/v1/auth/forgot-password';
+  static const String createPassword = '/api/v1/auth/create-password';
+  static const String getProfile = '/api/v1/get-profile';
+  static const String getCategory = '/api/v1/category';
+  static const String updateProfile = '/api/v1/update-profile';
+  static const String getFeed = '/api/v1/activity/feed';
+  static const String getMyFeed = '/api/v1/activity/my-feed';
+  static const String activityLike = '/api/v1/activity/like';
+  static const String userFind = '/api/v1/user/find';
 }

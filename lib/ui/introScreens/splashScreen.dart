@@ -1,5 +1,7 @@
 
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/ui/introScreens/sliderScreen.dart';
 import 'package:flutter/material.dart';
@@ -65,16 +67,18 @@ class _SplashScreenState extends State<SplashScreen> {
   fetchData() async {
     sharedPreferences.setString(PreferenceKey.deviceId, deviceId);
 
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 3), () async {
       if (isLogin) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => BottomNavBar()),
+          MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)),
               (route) => false,
         );
       }
       else {
-        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=> SliderScreen()));
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        var isFirstTime = pref.getBool(PrefKey.isFirstTime);
+        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=> isFirstTime == true ? SliderScreen() : RegisterScreen()));
       }
     },);
 

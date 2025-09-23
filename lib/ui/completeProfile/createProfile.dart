@@ -63,18 +63,31 @@ class CreateProfileState extends State<CreateProfile> with SingleTickerProviderS
   }
 
   Future<bool> _onWillPop() async {
-    if (_overlayStack.isNotEmpty) {
-      // If there are overlays in the stack, remove the last one
-      if (_overlayStack.length == 1) {
-        Navigator.of(context).pop();
-      } else {
-        removeOverlay();
-      }
-      return false; // Prevent default back button behavior
+    if (_overlayStack.length > 1) {
+      // Agar ek se zyada overlays hai to last remove karo
+      removeOverlay();
+      return false; // system back ko consume kar lo
+    } else if (_overlayStack.length == 1) {
+      // Agar last overlay bacha hai to poora screen band karo
+      Navigator.of(context).pop();
+      return true;
     }
-    Navigator.of(context).pop();
-    return true; // Allow default behavior if no overlays are present
+    return true;
   }
+
+  // Future<bool> _onWillPop() async {
+  //   if (_overlayStack.isNotEmpty) {
+  //     // If there are overlays in the stack, remove the last one
+  //     if (_overlayStack.length == 1) {
+  //       Navigator.of(context).pop();
+  //     } else {
+  //       removeOverlay();
+  //     }
+  //     return false; // Prevent default back button behavior
+  //   }
+  //   Navigator.of(context).pop();
+  //   return true; // Allow default behavior if no overlays are present
+  // }
 
   @override
   Widget build(BuildContext context) {

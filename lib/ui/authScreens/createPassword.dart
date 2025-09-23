@@ -1,14 +1,30 @@
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../bloc/loginBloc/login_bloc.dart';
 import '../../resources/color/appColor.dart';
 import '../../widgets/customButton.dart';
 
-class CreateNewPasswordScreen extends StatelessWidget {
-  const CreateNewPasswordScreen({super.key});
+import 'package:shared_preferences/shared_preferences.dart';
+
+class CreateNewPasswordScreen extends StatefulWidget {
+  String email;
+  CreateNewPasswordScreen({required this.email, super.key});
+
+  @override
+  State<CreateNewPasswordScreen> createState() => _CreateNewPasswordScreenState();
+}
+
+class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
+  var _formKey = GlobalKey<FormState>();
+  var passwordController = TextEditingController();
+  var confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,98 +40,157 @@ class CreateNewPasswordScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Create New Password",
-              style: CustomTextStyles.bold(fontSize: 28, textColor: Colors.black),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Your New Password Must Be Different Previously Used",
-              style: CustomTextStyles.regular(fontSize: 16),
-            ),
-            const SizedBox(height: 90),
-
-            Text('New Password', style: CustomTextStyles.medium(fontSize: 14),),
-            SizedBox(height: 5,),
-            TextField(
-              decoration: InputDecoration(
-                hintText: "**********",
-                filled: true,
-                fillColor: Colors.grey[200],
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.transparent),
-
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.transparent),
-
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey),
-
-                ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Create New Password",
+                style: CustomTextStyles.bold(
+                    fontSize: 28, textColor: Colors.black),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 15),
-            Text('Confirm Password', style: CustomTextStyles.medium(fontSize: 14),),
-            SizedBox(height: 5,),
-            TextField(
-              decoration: InputDecoration(
-                hintText: "**********",
-                filled: true,
-                fillColor: Colors.grey[200],
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.transparent),
-
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.transparent),
-
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey),
-
-                ),
+              const SizedBox(height: 5),
+              Text(
+                "Your New Password Must Be Different Previously Used",
+                style: CustomTextStyles.regular(fontSize: 16),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 30),
+              const SizedBox(height: 90),
 
-            // ElevatedButton(
-            //   onPressed: () {},
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.red,
-            //     minimumSize: const Size(double.infinity, 50),
-            //   ),
-            //   child: const Text("Verify Number",
-            //       style: TextStyle(color: Colors.white)),
-            // ),
-          ],
+              Text('New Password', style: CustomTextStyles.medium(fontSize: 14),),
+              SizedBox(height: 5,),
+              TextFormField(
+                controller: passwordController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if(value == null || value.isEmpty){
+                    return 'please enter password';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText: "**********",
+                  filled: true,
+                  fillColor: Colors.grey[200],
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.transparent),
+
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.transparent),
+
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.grey),
+
+                  ),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 15),
+              Text('Confirm Password',
+                style: CustomTextStyles.medium(fontSize: 14),),
+              SizedBox(height: 5,),
+              TextFormField(
+                controller: confirmPasswordController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if(value == null || value.isEmpty){
+                    return 'please enter confirm password';
+                  }
+                  if(value != passwordController.text){
+                    return 'please match confirm password';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText: "**********",
+                  filled: true,
+                  fillColor: Colors.grey[200],
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.transparent),
+
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.transparent),
+
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.grey),
+
+                  ),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 30),
+
+              // ElevatedButton(
+              //   onPressed: () {},
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.red,
+              //     minimumSize: const Size(double.infinity, 50),
+              //   ),
+              //   child: const Text("Verify Number",
+              //       style: TextStyle(color: Colors.white)),
+              // ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.transparent,
         child:
-        CustomButton(
-          text: 'Save',
-          // width: MediaQuery.of(context).size.width,
-          color: AppColor.bgRed,
-          textColor: Colors.white,
-          callback: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateProfile()));
-          },),
+        BlocConsumer<LoginBloc, LoginState>(
+          listener: (context, state) {
+            if(state is CreatePasswordLoading){
+
+            }
+            if(state is CreatePasswordSuccess){
+              Fluttertoast.showToast(msg: state.createPasswordModel.message.toString());
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                  builder: (context) => BottomNavBar(key: bottomNavKey)), (route) => false,);
+            }
+            if(state is CreatePasswordError){
+              Fluttertoast.showToast(msg: state.error);
+            }
+          },
+          builder: (context, state) {
+            return CustomButton(
+              text: state is CreatePasswordLoading ? '' : 'Save',
+              // width: MediaQuery.of(context).size.width,
+              color: AppColor.bgRed,
+              textColor: Colors.white,
+              callback: state is CreatePasswordLoading
+                  ? () {}
+                  : () {
+                if(_formKey.currentState!.validate()){
+
+                context.read<LoginBloc>().add(CreatePasswordEvent(
+                    context: context, email: widget.email, password: passwordController.text,
+                    confirmPassword: confirmPasswordController.text));
+                }
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => CreateProfile()));
+              },
+              child: state is CreatePasswordLoading
+                  ? Center(
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 20,
+                ),
+              )
+                  : null,
+            );
+          },
+        ),
       ),
     );
   }

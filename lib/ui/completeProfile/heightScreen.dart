@@ -196,7 +196,7 @@ class _HeightScreenState extends State<HeightScreen> with WidgetsBindingObserver
         callback: () {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavBar()), (route) => false,
+            MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)), (route) => false,
           );
           // if (_heightValue != 0) {
           //   // ProfileData.height = _heightValue.toDouble();

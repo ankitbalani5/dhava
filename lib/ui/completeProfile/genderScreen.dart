@@ -1,4 +1,5 @@
 
+import 'package:coherent_endurance/data/createProfileData.dart';
 import 'package:coherent_endurance/ui/completeProfile/chooseActivity.dart';
 import 'package:coherent_endurance/ui/completeProfile/weightScreen.dart';
 import 'package:flutter/material.dart';
@@ -131,6 +132,8 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
           callback: () {
             // if (gender.isNotEmpty) {
             //   ProfileData.gender = gender;
+            CreateProfileData.gender = gender;
+            print(CreateProfileData.gender);
               (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(ChooseActivity());
             // } else {
             //   Constant.showErrorDialog(

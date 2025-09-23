@@ -211,6 +211,7 @@
 // }
 
 import 'dart:async';
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -221,6 +222,8 @@ import 'package:flutter/material.dart';
 
 import '../../data/commonDataModel/commonDataModel.dart';
 import '../authScreens/loginScreen.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SliderScreen extends StatefulWidget {
   const SliderScreen({super.key});
@@ -381,11 +384,13 @@ class _SliderScreenState extends State<SliderScreen> {
                         text: 'Login',
                         textColor: Colors.white,
                         // color: AppColor.primaryColor,
-                        callback: () {
-                          Navigator.push(
+                        callback: () async {
+                          SharedPreferences pref = await SharedPreferences.getInstance();
+                          pref.setBool(PrefKey.isFirstTime, true);
+                          Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const RegisterScreen()));
+                                  builder: (context) => const RegisterScreen()), (route) => false,);
                         },
                         width: screenHeight * .30,
                       ),

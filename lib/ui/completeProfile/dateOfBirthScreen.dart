@@ -1,4 +1,5 @@
 
+import 'package:coherent_endurance/data/createProfileData.dart';
 import 'package:coherent_endurance/ui/completeProfile/genderScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> with WidgetsBindi
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0.0),
               child: Text(
-                "Welcome, Naman!",
+                "Welcome, ${CreateProfileData.firstName} ${CreateProfileData.lastName}!",
                 textAlign: TextAlign.center, // Ensures text is centered
                 style: CustomTextStyles.bold(fontSize: 22),
               ),
@@ -176,6 +177,8 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> with WidgetsBindi
           if (dob.isNotEmpty) {
             // ProfileData.dateOfBirth = dob.toString();
             //
+            CreateProfileData.dob = dob;
+            print(CreateProfileData.dob);
             (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(GenderScreen());
           } else {
             Constant.showErrorDialog(context, false, "Please Select date of birth", (){});

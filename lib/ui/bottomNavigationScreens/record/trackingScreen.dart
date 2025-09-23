@@ -48,7 +48,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
   double lastElevation = 0.0;
   int steps = 0;
   Stream<StepCount>? stepStream;
-
+  String? runType;
 
 
   @override
@@ -661,6 +661,73 @@ class _TrackingScreenState extends State<TrackingScreen> {
       ),
     );
   }
+ // selected runType ka naam/id store karne ke liye
+  void _showRunTypeBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 40,),
+                  const Text(
+                    "Choose A Sport",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: Constant.getCategory!.data?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final item = Constant.getCategory!.data![index];
+                      final isSelected = runType == item.categoryId; // check if selected
+                      return ListTile(
+                        leading: Image.network(
+                          item.categoryIcon ?? "",
+                          height: 28,
+                          width: 28,
+                          color: isSelected ? Colors.red : null, // icon color
+                          errorBuilder: (_, __, ___) => const Icon(Icons.error),
+                        ),
+                        title: Text(
+                          item.categoryName ?? "",
+                          style: TextStyle(
+                            color: isSelected ? Colors.red : Colors.black, // text color
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(Icons.check, color: Colors.red)
+                            : null,
+                        onTap: () {
+                          setState(() {
+                            runType = item.categoryId; // Save selected
+                          });
+                          Navigator.pop(context, item.categoryId);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((selectedValue) {
+      if (selectedValue != null) {
+        runType = selectedValue; // bottomsheet close hone ke baad assign
+      }
+    });
+  }
 
 
 
@@ -670,7 +737,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SizedBox(),
-          Image.asset(AppImageOthers.runType, height: 50,),
+          GestureDetector(
+              onTap: () => _showRunTypeBottomSheet(context),
+              child: Image.asset(AppImageOthers.runType, height: 50,)),
           GestureDetector(
             onTap: () {
               // showCongratulationDialog(context);
@@ -849,6 +918,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
           builder: (context) =>
               SaveActivity(
                 trackingData: {
+                  "runType": runType,
                   "distance": results["totalDistance"],
                   "time": results["elapsedTime"],
                   "avgPace": results["avgPace"],

@@ -1,11 +1,15 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/authScreens/loginScreen.dart';
+import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
 import 'package:coherent_endurance/ui/settingScreens/changeEmail.dart';
 import 'package:coherent_endurance/ui/settingScreens/contactAccess.dart';
 import 'package:coherent_endurance/ui/settingScreens/dataPermission.dart';
 import 'package:coherent_endurance/ui/settingScreens/emailNotification.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -78,21 +82,21 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ListTile(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
               },
               title: Text('Support', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),
             ListTile(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
               },
               title: Text('Legal', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),
             ListTile(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
               },
               title: Text('About', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
@@ -159,9 +163,12 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     // Log Out Button
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.pop(context);
-                        // TODO: Add your logout logic here
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        await prefs.clear(); // or just remove saved_email/saved_password
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RegisterScreen( )), (route) => false,);
+
                       },
                       child: Text(
                         "Log Out?",

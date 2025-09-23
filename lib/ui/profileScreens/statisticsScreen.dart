@@ -142,7 +142,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               SizedBox(height: 20,),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(15),
                   color: AppColor.bgTile,
                 ),
                 child: Padding(
@@ -182,7 +182,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               SizedBox(height: 20,),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(15),
                   color: AppColor.bgTile,
                 ),
                 child: Padding(
@@ -230,7 +230,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               SizedBox(height: 20,),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(15),
                   color: AppColor.bgTile,
                 ),
                 child: Padding(

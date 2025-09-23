@@ -5,12 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constant/Constant.dart';
+import '../../bloc/loginBloc/login_bloc.dart';
+import '../../constant/constant.dart';
 import '../../widgets/customButton.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  String email;
+  OtpScreen({required this.email, super.key});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -72,7 +81,7 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 5),
             Text(
-              "Please Enter The 5 Digit Code Sent To\nXyz@gmail.com", style: CustomTextStyles.regular(fontSize: 16),
+              "Please Enter The 5 Digit Code Sent To\n${widget.email}", style: CustomTextStyles.regular(fontSize: 16),
             ),
             const SizedBox(height: 100),
 
@@ -114,7 +123,7 @@ class _OtpScreenState extends State<OtpScreen> {
               child: Directionality(
                 textDirection: TextDirection.ltr,
                 child: Pinput(
-                  length: 4,
+                  length: 5,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   // smsRetriever: smsRetriever,
                   inputFormatters: [
@@ -168,11 +177,35 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 25),
             Center(
-              child: Text('Resend Code', style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'InterMedium',
-                decoration: TextDecoration.underline,),),
+              child: BlocListener<LoginBloc, LoginState>(
+                listenWhen: (previous, current) {
+                  // सिर्फ पहली बार navigation allow करो
+                  return current is SendOtpSuccess && previous is! SendOtpSuccess;
+                },
+                listener: (context, state) {
+                  // if(state is SendOtpLoading){
+                  //   Constant.loadingDialog(context);
+                  // }
+                  if(state is SendOtpSuccess){
+                    // pinController.clear();
+                    Fluttertoast.showToast(msg: state.sendOtpModel.data!.otp.toString());
+                    // Constant.closeLoadingDialog(context);
+                  }
+                  if(state is SendOtpError){
+                    Fluttertoast.showToast(msg: state.error);
+                  }
+                },
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<LoginBloc>().add(SendOtpEvent(context: context, email: widget.email));
+                  },
+                  child: Text('Resend Code', style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'InterMedium',
+                    decoration: TextDecoration.underline,),),
+                ),
+              ),
             )
 
 
@@ -184,14 +217,45 @@ class _OtpScreenState extends State<OtpScreen> {
         // height: 140,
         child: Column(
           children: [
-            CustomButton(
-              text: 'Verify',
-              // width: MediaQuery.of(context).size.width,
-              color: AppColor.bgRed,
-              textColor: Colors.white,
-              callback: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
-              },),
+            BlocConsumer<LoginBloc, LoginState>(
+              listener: (context, state) async {
+                if(state is VerifyOtpSuccess){
+
+                  SharedPreferences pref = await SharedPreferences.getInstance();
+                  pref.setBool(PrefKey.isLogin, true);
+                  pref.setString(PrefKey.accessToken, state.loginResponse.data!.accessToken.toString());
+                  pref.setString(PrefKey.refreshToken, state.loginResponse.data!.refreshToken.toString());
+                  print('isLogin::::::::::${pref.getBool(PrefKey.isLogin)}');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen(email: widget.email,)));
+
+                }
+                if(state is VerifyOtpError){
+                  Fluttertoast.showToast(msg: state.error);
+                }
+              },
+              builder: (context, state) {
+                return CustomButton(
+                  text: state is VerifyOtpLoading ? '' : 'Verify',
+                  // width: MediaQuery.of(context).size.width,
+                  color: AppColor.bgRed,
+                  textColor: Colors.white,
+                  callback: state is VerifyOtpLoading
+                      ? () {}
+                      : () {
+                    context.read<LoginBloc>().add(VerifyOtpEvent(context: context, email: widget.email, otp: pinController.text, deviceId: '', fcmToken: '', deviceType: 'mobile'));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
+                  },
+                  child: state is VerifyOtpLoading
+                      ? Center(
+                    child: LoadingAnimationWidget.inkDrop(
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  )
+                      : null,
+                );
+              },
+            ),
             // ElevatedButton(
             //   onPressed: () {
             //     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));

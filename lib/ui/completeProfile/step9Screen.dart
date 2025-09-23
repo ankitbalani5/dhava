@@ -1,9 +1,14 @@
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:flutter/material.dart';
 
+import '../../bloc/profileBloc/profile_bloc.dart';
+import '../../constant/Constant.dart';
+import '../../data/createProfileData.dart';
 import '../../resources/style/textStyle.dart';
 import '../../widgets/customButton.dart';
 import '../bottomNavBar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Step9Screen extends StatefulWidget {
   const Step9Screen({super.key});
@@ -27,21 +32,51 @@ class _Step9ScreenState extends State<Step9Screen> {
               right: 0,
               child: Column(
                 children: [
-                  Text('Welcome, Parul!', style: CustomTextStyles.boldWorkSens(fontSize: 31, textColor: Colors.white),),
+                  Text('Welcome, ${CreateProfileData.firstName.capitalize()} ${CreateProfileData.lastName.capitalize()}!',
+                    style: CustomTextStyles.boldWorkSens(fontSize: 31, textColor: Colors.white),),
                   SizedBox(height: 5,),
                   Text('150+ million active people on\nStrava are excited to move with you.', textAlign: TextAlign.center, style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.white),),
                   SizedBox(height: 40,),
-                  CustomButton(text: "Let's go", callback: () {
+                  BlocConsumer<ProfileBloc, ProfileState>(
+                    listener: (context, state) {
+                      if(state is UpdateProfileLoading){
+                        Constant.loadingDialog(context);
+                      }
+                      if(state is UpdateProfileSuccess){
+                        Constant.closeLoadingDialog(context);
+                        Fluttertoast.showToast(msg: state.profileModel.message.toString());
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)), (route) => false,);
+                      }
+                      if(state is UpdateProfileError){
+                        Fluttertoast.showToast(msg: state.error.toString());
+                        Constant.closeLoadingDialog(context);
+                      }
+                    },
+                    builder: (context, state) {
+                      return CustomButton(text: "Let's go", callback: () {
+                        context.read<ProfileBloc>().add(UpdateProfileEvent(context: context,
+                          firstName: CreateProfileData.firstName, lastName: CreateProfileData.lastName,
+                          dob: CreateProfileData.dob, gender: CreateProfileData.gender, fitnessLevel: CreateProfileData.fitnessLevel,
+                          planToUse: CreateProfileData.planToUse, categoryIds: CreateProfileData.categoryIds, 
+                        ));
 
-                    // (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(LevelScreen());
+                        // (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(LevelScreen());
 
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)), (route) => false,);
-                  },)
+                      },);
+                    },
+                  )
                 ],
               )
           )
         ],
       ),
     );
+  }
+
+}
+extension StringCasingExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1).toLowerCase();
   }
 }

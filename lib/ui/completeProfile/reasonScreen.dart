@@ -1,5 +1,7 @@
+import 'package:coherent_endurance/data/createProfileData.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../resources/color/appColor.dart';
 import '../../resources/style/textStyle.dart';
@@ -188,8 +190,16 @@ class _ReasonScreenState extends State<ReasonScreen> {
           textColor: Colors.white,
           callback: () {
 
+            if(isSelect.isNotEmpty){
+              CreateProfileData.planToUse = isSelect;
+              print(CreateProfileData.planToUse);
+              (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(FindYourFriends());
+            }else{
+
+              Fluttertoast.showToast(msg: 'please select plan to use');
+            }
             // (context.findAncestorStateOfType<EditProfileScreenState>())?.addOverlay(DateOfBirthScreen());
-            (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(FindYourFriends());
+
             // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar()), (route) => false,);
           },
         ),

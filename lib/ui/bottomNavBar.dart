@@ -1,4 +1,5 @@
 
+import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/endurance.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/home/homeScreen.dart';
@@ -8,8 +9,10 @@ import 'package:coherent_endurance/ui/defaultScreen/defaultScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../constant/Constant.dart';
+import '../bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/constant/constant.dart';
 import '../resources/color/appColor.dart';
 import '../resources/image/appImages.dart';
 import '../resources/style/textStyle.dart';
@@ -41,6 +44,8 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   void initState() {
     _currentIndex = widget.i;
     _initializePreferences();
+    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+    context.read<ProfileBloc>().add(CategoryEvent(context));
     super.initState();
   }
 
@@ -140,11 +145,38 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
         return true;
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            _baseScreens[_currentIndex], // Base screens
-            ..._overlayStack, // Overlay screens
-          ],
+        body: BlocConsumer<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if(state is ProfileLoading){
+              Constant.loadingDialog(context);
+            }
+            if(state is ProfileSuccess){
+              Constant.closeLoadingDialog(context);
+              Constant.getProfile = state.profileModel;
+
+              if(Constant.getProfile!.data!.isProfileCompleted == false){
+                Future.microtask(() => showDialog(
+                  context: this.context,
+                  barrierDismissible: false,
+                  // Prevent dialog dismissal by tapping outside
+                  builder: (BuildContext context) {
+                    return Constant.showCompleteProfileDialog(context);
+                  },
+                ));
+              }
+            }
+            if(state is CategorySuccess){
+              Constant.getCategory = state.categoryModel;
+            }
+          },
+          builder: (context, state) {
+            return Stack(
+              children: [
+                _baseScreens[_currentIndex], // Base screens
+                ..._overlayStack, // Overlay screens
+              ],
+            );
+          },
         ),
         bottomNavigationBar: Container(
           // elevation: 10,

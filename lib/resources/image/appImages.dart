@@ -25,6 +25,8 @@ class AppImageSvg {
   static const contact = 'assets/image/svg/contact.svg';
   static const activeUser = 'assets/image/svg/activeUser.svg';
   static const verticalLine = 'assets/image/svg/verticalLine.svg';
+  static const earth = 'assets/image/svg/earth.svg';
+  static const time = 'assets/image/svg/time.svg';
 
 
   static const appLogo = 'assets/image/svg/app_logo.svg';
@@ -81,6 +83,7 @@ class AppImageSvg {
 
 class AppImageOthers {
 
+  static const completeProfileDialogIcon = 'assets/image/others/completeProfileDialogIcon.png';
   static const userImg = 'assets/image/others/userImg.png';
   static const mapLock = 'assets/image/others/mapLock.png';
   static const pause = 'assets/image/others/pause.png';
@@ -113,6 +116,7 @@ class AppImageOthers {
   static const finish = 'assets/image/others/finish.png';
   static const resume = 'assets/image/others/resume.png';
   static const sampleMap = 'assets/image/others/sampleMap.png';
+  static const addPhoto = 'assets/image/others/addPhoto.png';
   static const feedCard1 = 'assets/image/others/feedCard1.png';
   static const feedCard2 = 'assets/image/others/feedCard2.png';
   static const feedCard3 = 'assets/image/others/feedCard3.png';

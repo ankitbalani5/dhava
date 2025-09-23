@@ -156,7 +156,7 @@ class _EnduranceState extends State<Endurance> {
 
           /// Bottom Text and Button
           Positioned(
-            bottom: 50,
+            bottom: 20,
             left: 20,
             right: 20,
             child: Column(

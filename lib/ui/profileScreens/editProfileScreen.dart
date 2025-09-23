@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class EditProfileScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Picture
             Center(
@@ -102,18 +104,29 @@ class EditProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Athlete Information
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "ATHLETE INFORMATION",
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
+            // Align(
+            //   alignment: Alignment.centerLeft,
+            //   child: Text(
+            //     "ATHLETE INFORMATION",
+            //     style: TextStyle(
+            //       fontSize: 13,
+            //       color: Colors.grey[600],
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    "ATHLETE INFORMATION",
+                    style: CustomTextStyles.semiBold(fontSize: 14)
                 ),
-              ),
+                Text('Used To Calculate Calories, Power And More', style: CustomTextStyles.regular(fontSize: 12),),
+
+              ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
             // Google Fit Option
             Container(
@@ -150,19 +163,18 @@ class EditProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Performance Potential Title
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "PERFORMANCE POTENTIAL",
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "PERFORMANCE POTENTIAL",
+                  style: CustomTextStyles.semiBold(fontSize: 14)
                 ),
-              ),
-            ),
-            const SizedBox(height: 10),
+                Text('Used To Set Heart Rate And Running Pace Zones', style: CustomTextStyles.regular(fontSize: 12),),
 
+              ],
+            ),
+            const SizedBox(height: 20),
             // Max Heart Rate
             _buildTextField("Max Heart Rate (bpm)", "185"),
             const SizedBox(height: 15),

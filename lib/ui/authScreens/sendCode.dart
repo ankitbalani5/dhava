@@ -6,8 +6,17 @@ import 'package:coherent_endurance/ui/authScreens/passwordScreen.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 
+import '../../bloc/loginBloc/login_bloc.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import 'package:fluttertoast/fluttertoast.dart';
+
 class SendCode extends StatefulWidget {
-  const SendCode({super.key});
+  String email;
+  SendCode({required this.email , super.key});
 
   @override
   State<SendCode> createState() => _SendCodeState();
@@ -24,20 +33,55 @@ class _SendCodeState extends State<SendCode> {
             left: 0,
             right: 0,
             bottom: MediaQuery.of(context).size.width/3,
-              child: CustomButton(
-                width: 265,
-                fontSize: 20,
-                text: 'Email me a code',
-                callback: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen()));
-                },)
+              child: BlocConsumer<LoginBloc, LoginState>(
+                listener: (context, state) {
+                  if(state is SendOtpSuccess){
+                    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OtpScreen(email: widget.email)));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) => LoginBloc(),
+                          child: OtpScreen(email: widget.email),
+                        ),
+                      ),
+                    );
+
+                    Fluttertoast.showToast(msg: state.sendOtpModel.data!.otp.toString());
+                  }
+                  if(state is SendOtpError){
+                    Fluttertoast.showToast(msg: state.error);
+                  }
+                },
+                builder: (context, state) {
+                  return CustomButton(
+                    width: 265,
+                    fontSize: 20,
+                    text: state is LoginLoading ? '' : 'Email me a code',
+                    callback: state is LoginLoading
+                        ? () {}
+                        : () {
+                      context.read<LoginBloc>().add(SendOtpEvent(context: context, email: widget.email));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen(email: widget.email)));
+                    },
+                    child: state is LoginLoading
+                        ? Center(
+                      child: LoadingAnimationWidget.inkDrop(
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    )
+                        : null,
+                  );
+                },
+              )
           ),
           Positioned(
               left: 0,
               right: 0,
               bottom: MediaQuery.of(context).size.width/5,
               child: TextButton(onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PasswordScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => PasswordScreen(email: widget.email)));
               }, child: Text('Use Password Instead', style: CustomTextStyles.semiBold(fontSize: 20, textColor: AppColor.bgRed),))
           )
         ],

@@ -21,6 +21,16 @@ class UserLoginEvent extends LoginEvent {
   });
 }
 
+class ForgotPasswordEvent extends LoginEvent {
+  final BuildContext context;
+  final String email;
+
+  ForgotPasswordEvent({
+    required this.context,
+    required this.email,
+  });
+}
+
 class UserRegisterEvent extends LoginEvent {
   final BuildContext context;
   final String email;
@@ -57,21 +67,43 @@ class PasswordResetEvent extends LoginEvent {
 
 class SendOtpEvent extends LoginEvent {
   final BuildContext context;
-  final String phoneNumber;
+  final String email;
 
   SendOtpEvent({
     required this.context,
-    required this.phoneNumber,
+    required this.email,
   });
 }
 
 class VerifyOtpEvent extends LoginEvent {
   final BuildContext context;
+  final String email;
   final String otp;
+  final String deviceId;
+  final String fcmToken;
+  final String deviceType;
 
   VerifyOtpEvent({
     required this.context,
+    required this.email,
     required this.otp,
+    required this.deviceId,
+    required this.fcmToken,
+    required this.deviceType,
+  });
+}
+
+class CreatePasswordEvent extends LoginEvent {
+  final BuildContext context;
+  final String email;
+  final String password;
+  final String confirmPassword;
+
+  CreatePasswordEvent({
+    required this.context,
+    required this.email,
+    required this.password,
+    required this.confirmPassword,
   });
 }
 

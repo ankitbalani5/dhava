@@ -43,11 +43,13 @@ class _SearchScreenState extends State<SearchScreen>
       create: (_) => SearchCubit(),
       child: BlocBuilder<SearchCubit, SearchState>(
         builder: (context, state) {
-          if (state is SearchActive) {
-            return const SearchActiveWidget(); // Overlay UI
+          // ❌ Default UI सिर्फ़ SearchInitial पर दिखेगी
+          if (state is SearchInitial) {
+            return _buildDefaultSearchUI(context);
           }
 
-          return _buildDefaultSearchUI(context);
+          // ✅ बाकी सब states में SearchActiveWidget दिखे
+          return const SearchActiveWidget();
         },
       ),
     );

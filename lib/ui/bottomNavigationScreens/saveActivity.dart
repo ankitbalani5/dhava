@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../resources/color/appColor.dart';
+import '../../constant/constant.dart';
+import '../../repository/api.dart';
 import 'endurance.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,7 +27,7 @@ class SaveActivity extends StatefulWidget {
 }
 
 class _SaveActivityState extends State<SaveActivity> {
-  String selectedRunType = "Run";
+  String selectedRunType = '';
   List<String> runTypes = ["Run", "Walk", "Cycle"];
   List<String> TypeOfRun = ["Long Run", "Tempo Run", "Intervals", "Recovery Run"];
   List<String> Feeling = ["Good", "Very Good", "Great"];
@@ -45,7 +47,106 @@ class _SaveActivityState extends State<SaveActivity> {
 
   bool isUploading = false;
 
+
   Future<void> uploadActivity() async {
+    setState(() => isUploading = true);
+
+    await Api.saveActivityApi({
+      "category_id": categoryId,
+      "title": titleController.text,
+      "description": descriptionController.text,
+      "distance": widget.trackingData["distance"],
+      "pace": widget.trackingData["avgPace"],
+      "moving_time": widget.trackingData["time"],
+      "city": "Demo City",
+      "state": "Demo State",
+      "country": "Demo Country",
+      "address": "Demo Address",
+      "elavation_gain": widget.trackingData["elevationGain"],
+      "max_elavation": widget.trackingData["maxElevation"],
+      "steps": widget.trackingData["steps"],
+      "fastest_split": widget.trackingData["fastestSplit"],
+      "path": widget.trackingData["path"],
+      "run_type": selectedRunType,
+      "type_of_run": selectedTypeOfRun,
+      "feeling": selectedFeeling,
+      "private_note": privateNoteController.text,
+      "gear": selectedGear,
+      "visibility": selectedVisibility,
+      "hidden_details": selectedHiddenDetails,
+      "mute_activity": isPublish,
+      "type": "activity",
+      "avg_elapsed_pace": widget.trackingData["avgPace"],
+      "elapsed_time": widget.trackingData["time"],
+      "max_speed": widget.trackingData["maxSpeed"] ?? 0,
+      "mapImage": widget.trackingData["mapImage"],
+    }, context);
+
+    // try {
+    //   Uint8List? image = widget.trackingData["mapImage"];
+    //
+    //   var request = http.MultipartRequest(
+    //     'POST',
+    //     Uri.parse("https://tracking.coherentlab.com/api/v1/activity/save"),
+    //   );
+    //
+    //   Map<String, dynamic> body = {
+    //     "category_id": categoryId ?? "", // ya fixed id
+    //     "title": titleController.text,
+    //     "description": descriptionController.text,
+    //     "distance": widget.trackingData["distance"]?.toString() ?? "0",
+    //     "elapsed_time": widget.trackingData["time"]?.toString() ?? "0",
+    //     "avg_elapsed_pace": widget.trackingData["avgPace"]?.toString() ?? "0",
+    //     "fastest_split": widget.trackingData["fastestSplit"]?.toString() ?? "0",
+    //     "steps": widget.trackingData["steps"]?.toString() ?? "0",
+    //     "elavation_gain": widget.trackingData["elevationGain"]?.toString() ?? "0",
+    //     "max_elavation": widget.trackingData["maxElevation"]?.toString() ?? "0",
+    //     "path": jsonEncode(widget.trackingData["path"] ?? []),
+    //     "run_type": selectedRunType,
+    //     "type_of_run": selectedTypeOfRun,
+    //     "feeling": selectedFeeling,
+    //     "private_note": privateNoteController.text,
+    //     "gear": selectedGear,
+    //     "visibility": selectedVisibility,
+    //     "hidden_details": selectedHiddenDetails,
+    //     "mute_activity": isPublish.toString(),
+    //     "type": "activity",
+    //     "segments": jsonEncode(widget.trackingData["segments"] ?? []),
+    //     "splits": jsonEncode(widget.trackingData["splits"] ?? []),
+    //     "max_speed": widget.trackingData["maxSpeed"]?.toString() ?? "0",
+    //     "avgPace": widget.trackingData["avgPace"]?.toString() ?? "0",
+    //   };
+    //
+    //   body.forEach((key, value) {
+    //     request.fields[key] = value.toString();
+    //   });
+    //
+    //   if (image != null) {
+    //     request.files.add(http.MultipartFile.fromBytes(
+    //       'mapImage',
+    //       image,
+    //       filename: "tracking_map.png",
+    //     ));
+    //   }
+    //
+    //   final response = await request.send();
+    //   if (response.statusCode == 200) {
+    //     print("Activity uploaded successfully");
+    //     final respStr = await response.stream.bytesToString();
+    //     print(respStr);
+    //   } else {
+    //     print("Upload failed: ${response.statusCode}");
+    //     final respStr = await response.stream.bytesToString();
+    //     print(respStr);
+    //   }
+    // } catch (e) {
+    //   print("Error uploading activity: $e");
+    // }
+
+    setState(() => isUploading = false);
+  }
+
+  /*Future<void> uploadActivity() async {
     setState(() => isUploading = true);
 
     try {
@@ -81,7 +182,7 @@ class _SaveActivityState extends State<SaveActivity> {
     }
 
     setState(() => isUploading = false);
-  }
+  }*/
 
   // Future<void> saveActivity() async {
   //   final url = Uri.parse("https://yourapi.com/save-activity");
@@ -170,7 +271,21 @@ class _SaveActivityState extends State<SaveActivity> {
   }
   */
   }
+  String categoryId = '';
 
+  @override
+  void initState() {
+
+    final matchedCategory = Constant.getCategory!.data!
+        .firstWhere(
+          (element) => element.categoryId == widget.trackingData["runType"],
+      // orElse: () => Data(categoryName: ""), // fallback अगर न मिले
+    );
+
+    selectedRunType = matchedCategory.categoryName ?? "";
+    categoryId = matchedCategory.categoryId ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,9 +295,13 @@ class _SaveActivityState extends State<SaveActivity> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text('Save Activity', style: CustomTextStyles.bold()),
-        centerTitle: true,
-        // leading: Center(child: Text('Resume', style: CustomTextStyles.regular(),)),
-        leadingWidth: 100,
+        // centerTitle: true,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios, color: Colors.black,))/*Center(child: Text('Resume', style: CustomTextStyles.regular(),))*/,
+        // leadingWidth: 100,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -205,14 +324,14 @@ class _SaveActivityState extends State<SaveActivity> {
                 controller: titleController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 // keyboardType: TextInputType.number,
-                cursorColor: Colors.white,
+                cursorColor: Colors.black,
                 // inputFormatters: [
                 //   FilteringTextInputFormatter.digitsOnly
                 // ],
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white24,
+                  fillColor: AppColor.bgTile,
                   hintText: 'Afternoon Run',
                   hintStyle: TextStyle(color: Colors.grey),
                   prefixStyle: TextStyle(
@@ -221,15 +340,15 @@ class _SaveActivityState extends State<SaveActivity> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Colors.red)),
@@ -254,15 +373,15 @@ class _SaveActivityState extends State<SaveActivity> {
                 controller: descriptionController,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 // keyboardType: TextInputType.number,
-                cursorColor: Colors.white,
+                cursorColor: Colors.black,
                 // inputFormatters: [
                 //   FilteringTextInputFormatter.digitsOnly
                 // ],
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
                 maxLines: 3,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white24,
+                  fillColor: AppColor.bgTile,
                   hintText: "How'd it go? Share more about your activity and use @ to tag someone.",
                   hintStyle: TextStyle(color: Colors.grey),
                   prefixStyle: TextStyle(
@@ -271,15 +390,15 @@ class _SaveActivityState extends State<SaveActivity> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Colors.red)),
@@ -305,13 +424,21 @@ class _SaveActivityState extends State<SaveActivity> {
                 onChanged: (value) {
                   setState(() {
                     selectedRunType = value.toString();
+                    // selected category object find करो
+                    final selectedCategory = Constant.getCategory?.data
+                        ?.firstWhere((element) => element.categoryName == selectedRunType);
+
+                    // categoryId assign करो
+                    categoryId = selectedCategory?.categoryId ?? "";
                   });
                 },
-                items: (String? filter, _) => runTypes,
+                items: (String? filter, _) => Constant.getCategory?.data
+                    ?.map((e) => e.categoryName ?? "")
+                    .toList() ?? [],
                 suffixProps: DropdownSuffixProps(
                     dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
                     )
                 ),
                 popupProps: const PopupProps.menu(
@@ -323,26 +450,26 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.white),
+                  baseStyle: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white24,
+                    fillColor: AppColor.bgTile,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.directions_run, color: Colors.white),
+                      child: Icon(Icons.directions_run, color: Colors.black),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                   ),
                 ),
@@ -350,107 +477,34 @@ class _SaveActivityState extends State<SaveActivity> {
               const SizedBox(height: 20),
 
               /// Map & Photo Row
-              Row(
-                children: [
-                  /// Map Sample Box
-                  Expanded(
-                    child: Container(
-                      height: 115,
-                      decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Image.asset(AppImageOthers.sampleMap, fit: BoxFit.fill, width: double.maxFinite,)
-                        /*Text(
-                          "🗺️ This is a sample map.\nYou’ll see your activity map after saving.",
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
-                          textAlign: TextAlign.center,
-                        ),*/
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-
-                  /// Add Photo/Video Box
-                  Expanded(
-                    child: DottedBorder(
-                      borderType: BorderType.RRect, // 👈 Rounded Rectangle
-                      radius: Radius.circular(12), // ✅ Correct property
-                      dashPattern: [4, 5],
-                      strokeWidth: 1,
-                      color: AppColor.bgRed,
-                      child: Container(
-                        height: 110,
-                        padding: const EdgeInsets.all(20),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(AppImageOthers.img, height: 40,),
-                              SizedBox(height: 2,),
-                              Text(
-                                "Add Photos/Video",
-                                style: TextStyle(color: AppColor.bgRed),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Expanded(
-                  //   child: DottedBorder(
-                  //     options: RectDottedBorderOptions(
-                  //       color: Colors.red,
-                  //       radius: const Radius.circular(12),
-                  //       dashPattern: [4, 5],
-                  //       strokeWidth: 1,
-                  //       padding: EdgeInsets.all(20),
-                  //     ),
-                  //     // height: 100,
-                  //     // decoration: BoxDecoration(
-                  //     //   border: Border.all(color: Colors.redAccent),
-                  //     //   borderRadius: BorderRadius.circular(10),
-                  //     // ),
-                  //     child: Container(
-                  //       height: 100,
-                  //       child: const Center(
-                  //         child: Text(
-                  //           "Add Photos/Video",
-                  //           style: TextStyle(color: Colors.redAccent),
-                  //           textAlign: TextAlign.center,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
+              Container(
+                height: 128,
+                width: double.infinity,
+                child: Image.asset(AppImageOthers.sampleMap, fit: BoxFit.fill, width: double.maxFinite,),
               ),
               const SizedBox(height: 16),
 
-              /// Change Map Type Button
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    side: const BorderSide(color: AppColor.bgRed),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text("Change Map Type", style: TextStyle(color: AppColor.bgRed)),
-                ),
-              ),
+              Image.asset(AppImageOthers.addPhoto),
+              // /// Change Map Type Button
+              // SizedBox(
+              //   height: 50,
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.transparent,
+              //       side: const BorderSide(color: AppColor.bgRed),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+              //     ),
+              //     onPressed: () {},
+              //     child: const Text("Change Map Type", style: TextStyle(color: AppColor.bgRed)),
+              //   ),
+              // ),
               const SizedBox(height: 24),
 
               /// Details Section
-              const Text("Details", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text("Details", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
 
               /// Type of Run dropdown
@@ -464,8 +518,8 @@ class _SaveActivityState extends State<SaveActivity> {
                 items: (String? filter, _) => TypeOfRun,
                 suffixProps: DropdownSuffixProps(
                     dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
                     )
                 ),
                 popupProps: const PopupProps.menu(
@@ -477,26 +531,26 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.white),
+                  baseStyle: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white24,
+                    fillColor: AppColor.bgTile,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.waves, color: Colors.white),
+                      child: Icon(Icons.waves, color: Colors.black),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                   ),
                 ),
@@ -514,8 +568,8 @@ class _SaveActivityState extends State<SaveActivity> {
                 items: (String? filter, _) => Feeling,
                 suffixProps: DropdownSuffixProps(
                     dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
                     )
                 ),
                 popupProps: const PopupProps.menu(
@@ -527,27 +581,27 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.white),
+                  baseStyle: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white24,
+                    fillColor: AppColor.bgTile,
                     // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.emoji_emotions_outlined, color: Colors.white),
+                      child: SvgPicture.asset(AppImageSvg.time)/*Icon(Icons.emoji_emotions_outlined, color: Colors.black)*/,
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                   ),
                 ),
@@ -563,28 +617,32 @@ class _SaveActivityState extends State<SaveActivity> {
                 // inputFormatters: [
                 //   FilteringTextInputFormatter.digitsOnly
                 // ],
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
                 maxLines: 3,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white24,
-                  hintText: "How'd it go? Share more about your activity and use @ to tag someone.",
+                  fillColor: AppColor.bgTile,
+                  hintText: "Jot down private notes here. Only you can see these.",
                   hintStyle: TextStyle(color: Colors.grey),
                   prefixStyle: TextStyle(
-                    color: AppColor.textBackgroundGrey,
+                    color: Colors.black,
+                  ),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Icon(Icons.lock, color: Colors.black),
                   ),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide:
-                      BorderSide(color: AppColor.textBackgroundGrey)),
+                      BorderSide(color: Colors.transparent)),
                   errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Colors.red)),
@@ -602,60 +660,60 @@ class _SaveActivityState extends State<SaveActivity> {
                   }
                 },
               ),
-              SizedBox(height: 15,),
-
-              /// new gear
-              DropdownSearch<String>(
-                selectedItem: selectedGear,
-                onChanged: (value) {
-                  setState(() {
-                    selectedGear = value.toString();
-                  });
-                },
-                items: (String? filter, _) => Gear,
-                suffixProps: DropdownSuffixProps(
-                    dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
-                    )
-                ),
-                popupProps: const PopupProps.menu(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(maxHeight: 200),
-                  showSelectedItems: true,
-                  menuProps: MenuProps(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white24,
-                    // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: SvgPicture.asset(AppImageSvg.run, )/*Icon(Icons.run, color: Colors.white)*/,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
-                    ),
-                  ),
-                ),
-              ),
+              // SizedBox(height: 15,),
+              //
+              // /// new gear
+              // DropdownSearch<String>(
+              //   selectedItem: selectedGear,
+              //   onChanged: (value) {
+              //     setState(() {
+              //       selectedGear = value.toString();
+              //     });
+              //   },
+              //   items: (String? filter, _) => Gear,
+              //   suffixProps: DropdownSuffixProps(
+              //       dropdownButtonProps: DropdownButtonProps(
+              //           iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
+              //           iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+              //       )
+              //   ),
+              //   popupProps: const PopupProps.menu(
+              //     fit: FlexFit.loose,
+              //     constraints: BoxConstraints(maxHeight: 200),
+              //     showSelectedItems: true,
+              //     menuProps: MenuProps(
+              //       backgroundColor: Colors.white,
+              //     ),
+              //   ),
+              //   decoratorProps: DropDownDecoratorProps(
+              //     baseStyle: TextStyle(color: Colors.white),
+              //     decoration: InputDecoration(
+              //       filled: true,
+              //       fillColor: Colors.white24,
+              //       // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+              //       prefixIcon: Padding(
+              //         padding: const EdgeInsets.all(12.0),
+              //         child: SvgPicture.asset(AppImageSvg.run, )/*Icon(Icons.run, color: Colors.white)*/,
+              //       ),
+              //       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(14),
+              //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+              //       ),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(14),
+              //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+              //       ),
+              //       focusedBorder: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(14),
+              //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               SizedBox(height: 25,),
 
-              const Text("Visibility", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text("Visibility", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
               SizedBox(height: 15,),
 
               Text('Who can see', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
@@ -672,8 +730,8 @@ class _SaveActivityState extends State<SaveActivity> {
                 items: (String? filter, _) => Visibility,
                 suffixProps: DropdownSuffixProps(
                     dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
                     )
                 ),
                 popupProps: const PopupProps.menu(
@@ -685,27 +743,27 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.white),
+                  baseStyle: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white24,
+                    fillColor: AppColor.bgTile,
                     // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: /*SvgPicture.asset(AppImageSvg.run, )*/Icon(Icons.wordpress, color: Colors.white),
+                      child: SvgPicture.asset(AppImageSvg.earth, )/*Icon(Icons.wordpress, color: Colors.black)*/,
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                   ),
                 ),
@@ -726,8 +784,8 @@ class _SaveActivityState extends State<SaveActivity> {
                 items: (String? filter, _) => HiddenDetails,
                 suffixProps: DropdownSuffixProps(
                     dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
                     )
                 ),
                 popupProps: const PopupProps.menu(
@@ -739,34 +797,34 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.white),
+                  baseStyle: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white24,
+                    fillColor: AppColor.bgTile,
                     // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: /*SvgPicture.asset(AppImageSvg.run, )*/Icon(Icons.remove_red_eye_outlined, color: Colors.white),
+                      child: /*SvgPicture.asset(AppImageSvg.run, )*/Icon(Icons.remove_red_eye_outlined, color: Colors.black),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                      borderSide: const BorderSide(color: Colors.transparent),
                     ),
                   ),
                 ),
               ),
               SizedBox(height: 25,),
 
-              const Text("Mute Activity", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text("Mute Activity", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
               SizedBox(height: 25,),
 
               /// don't publish
@@ -791,12 +849,12 @@ class _SaveActivityState extends State<SaveActivity> {
                       height: 24,
                       width: 24,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
+                        border: Border.all(color: Colors.black),
                         borderRadius: BorderRadius.circular(5),
-                        color: isPublish ? AppColor.bgRed : Colors.black
+                        color: isPublish ? AppColor.bgRed : Colors.white
                       ),
                       child: Center(
-                        child: Icon(Icons.check, color: isPublish ? Colors.white : Colors.black,),
+                        child: Icon(Icons.check, color: isPublish ? Colors.white : Colors.white,),
                       ),
                     ),
                   )
@@ -814,7 +872,7 @@ class _SaveActivityState extends State<SaveActivity> {
                   borderRadius: BorderRadius.circular(12)
                 ),
                 child: Center(
-                  child: Text('Discard unsaved changes', style: CustomTextStyles.bold(fontSize: 14, textColor: AppColor.bgRed),),
+                  child: Text('Discard Activity', style: CustomTextStyles.bold(fontSize: 14, textColor: AppColor.bgRed),),
                 ),
               )
 
@@ -829,7 +887,8 @@ class _SaveActivityState extends State<SaveActivity> {
         child: CustomButton(
           text: 'Save Activity',
           callback: () {
-            saveActivity();
+            uploadActivity();
+            // saveActivity();
             // Navigator.push(context, MaterialPageRoute(builder: (context) => Endurance()));
           },
         ),

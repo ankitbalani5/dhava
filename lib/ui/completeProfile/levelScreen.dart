@@ -1,5 +1,7 @@
+import 'package:coherent_endurance/data/createProfileData.dart';
 import 'package:coherent_endurance/ui/completeProfile/reasonScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../resources/color/appColor.dart';
 import '../../resources/style/textStyle.dart';
@@ -133,7 +135,13 @@ class _LevelScreenState extends State<LevelScreen> {
           textColor: Colors.white,
           callback: () {
 
-            (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(ReasonScreen());
+            if(isSelect.isNotEmpty){
+              CreateProfileData.fitnessLevel = isSelect;
+              print(CreateProfileData.fitnessLevel);
+              (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(ReasonScreen());
+            }else{
+              Fluttertoast.showToast(msg: 'please select your fitness level');
+            }
             // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
           },
         ),

@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/models/profileModel.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
@@ -7,14 +8,18 @@ import 'package:coherent_endurance/ui/profileScreens/editProfileScreen.dart';
 import 'package:coherent_endurance/ui/profileScreens/settingScreen.dart';
 import 'package:coherent_endurance/ui/profileScreens/statisticsScreen.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../constant/constant.dart';
 import '../../resources/color/appColor.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  String path;
+  ProfileScreen({this.path = 'user', super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,6 +32,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     {"image": AppImageOthers.milestone, "title": "December 5K",},
     {"image": AppImageOthers.milestone, "title": "December 5K"},
   ];
+
+  ProfileModel? profileData;
+
+  @override
+  void initState() {
+    profileData = Constant.getProfile;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Row(
                             children: [
                               Container(
-                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                margin: EdgeInsets.symmetric(horizontal: 10),
                                   height: 55,
                                   width: 55,
                                   child: GestureDetector(
@@ -68,11 +82,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Row(
                               children: [
-                                GestureDetector(
+                                widget.path == 'user' ? GestureDetector(
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
                                     },
-                                    child: Image.asset('assets/image/others/profileSearch.png', height: 28,)),
+                                    child: Image.asset('assets/image/others/profileSearch.png', height: 28,)
+                                ) : SizedBox(),
                                 SizedBox(width: 10,),
                                 GestureDetector(
                                     onTap: () {
@@ -82,11 +97,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 // SizedBox(width: 10,),
                                 // SvgPicture.asset(AppImageSvg.option),
                                 SizedBox(width: 10,),
-                                GestureDetector(
+
+                                widget.path == 'user' ? GestureDetector(
                                     onTap: () {
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
                                     },
-                                    child: Icon(Icons.settings, color: Colors.white,)/*SvgPicture.asset(AppImageSvg.setting)*/),
+                                    child: Icon(Icons.settings, color: Colors.white,)/*SvgPicture.asset(AppImageSvg.setting)*/
+                                ) : IconButton(
+                                  icon: Icon(Icons.more_vert, color: Colors.white,),
+                                  onPressed: () => _showCupertinoMenu(context),
+                                ),
 
                               ],
                             ),
@@ -127,9 +147,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           bottom: 0,
                           left: 0,
                           right: 0,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.asset(AppImageOthers.profilePic, height: 90,),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: CachedNetworkImage(
+                                  imageUrl: profileData!.data!.profilePhoto.toString(),
+                                  width: 90.0,
+                                  height: 90.0,
+                                  fit: BoxFit.cover,
+                                  placeholder:
+                                      (context, url) =>
+                                      Padding(
+                                        padding:
+                                        EdgeInsets.all(
+                                            40.0),
+                                        child:
+                                        CircularProgressIndicator(
+                                          color: AppColor.bgRed,
+                                          strokeWidth: 1,
+                                        ),
+                                      ),
+                                  errorWidget: (context,
+                                      url, error) =>
+                                      Image.asset(AppImageOthers.profilePic, height: 90,),
+                                )
+                              ),
+                            ),
                           ),
                         )
 
@@ -143,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: AppColor.bgRed,
                     ),
                 ),
-                Positioned(
+                widget.path == 'user' ? Positioned(
                   right: 15,
                     bottom: 20,
                     child: GestureDetector(
@@ -158,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: Icon(Icons.edit, size: 18, color: Colors.white,)),
                     )
-                )
+                ) : SizedBox()
 
                 // Positioned(
                 //   bottom: 10,
@@ -177,18 +226,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 30.0),
                   child: Column(
                     children: [
-                      Text('Adam Smith', style: CustomTextStyles.bold(fontSize: 26 ),),
+                      Text('${profileData!.data!.firstName ?? 'User'} ${profileData!.data!.lastName ?? ''}', style: CustomTextStyles.bold(fontSize: 26 ),),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.location_on,),
-                          Text('Jaipur, India', style: CustomTextStyles.medium(fontSize: 17),),
+                          Text('${profileData!.data!.city ?? ''} ${profileData!.data!.state ?? ''}'
+                              ' ${profileData!.data!.country ?? ''}',
+                            style: CustomTextStyles.medium(fontSize: 17),),
                         ],
                       ),
                       SizedBox(height: 12,),
-                      Text('Weekend warrior chasing miles and smiles. From 5Ks to marathons,'
-                          ' I run for the joy, the challenge, and the community.'
-                          ' Always chasing that next PR — and the perfect sunrise run.',
+                      Text(profileData!.data!.bio ?? 'No Bio',
                         style: TextStyle(fontSize: 11/*, color: Colors.grey,*/ ), textAlign: TextAlign.center,),
                     ],
                   ),
@@ -202,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Column(
                       children: [
-                        Text('500', style: CustomTextStyles.bold(fontSize: 14, textColor: Colors.black),),
+                        Text(profileData!.data!.totalFollowers.toString(), style: CustomTextStyles.bold(fontSize: 14, textColor: Colors.black),),
                         Text('Follower', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey),),
                       ],
                     )
@@ -216,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Column(
                       children: [
-                        Text('500', style: CustomTextStyles.bold(fontSize: 14, textColor: Colors.black),),
+                        Text(profileData!.data!.totalFollowing.toString(), style: CustomTextStyles.bold(fontSize: 14, textColor: Colors.black),),
                         Text('Following', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey),),
                       ],
                     )
@@ -224,17 +273,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 20,),
-            Container(
-              height: 25,
-              width: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: AppColor.bgRed
-              ),
-              child: Center(
-                child: Text('Follow', style: TextStyle(color: Colors.white),),
-              ),
+            widget.path == 'user' ? SizedBox() : Column(
+              children: [
+                SizedBox(height: 20,),
+                Container(
+                  height: 25,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColor.bgRed
+                  ),
+                  child: Center(
+                    child: Text('Follow', style: TextStyle(color: Colors.white),),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 20,),
             Padding(
@@ -290,7 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: const EdgeInsets.all(8),
                               child: LineChart(
                                 LineChartData(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: AppColor.bgTile,
                                   gridData: FlGridData(show: false), // grid lines hide
                                   titlesData: FlTitlesData(
                                     leftTitles: AxisTitles(
@@ -583,4 +636,117 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Column(children: rows);
   }
+
+  void _showCupertinoMenu(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              // ✅ Report Profile logic
+            },
+            isDefaultAction: true,
+            child: Text(
+              "Report Profile",
+              style: TextStyle(color: Colors.blue, fontSize: 16),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              // ✅ Block logic
+            },
+            isDestructiveAction: true,
+            child: Text(
+              "Block",
+              style: TextStyle(color: Colors.red, fontSize: 16),
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.blue, fontSize: 16),
+          ),
+        ),
+      ),
+    );
+  }
+  // void _showMenu(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Colors.transparent, // ✅ gray bg
+  //     builder: (context) {
+  //       return Container(
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+  //           borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             ListTile(
+  //               title: Center(
+  //                 child: Text(
+  //                   "Report Profile",
+  //                   style: TextStyle(
+  //                     color: Colors.blue,
+  //                     fontSize: 16,
+  //                     fontWeight: FontWeight.w500,
+  //                   ),
+  //                 ),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 // ✅ Report profile logic
+  //               },
+  //             ),
+  //             Divider(height: 1),
+  //             ListTile(
+  //               title: Center(
+  //                 child: Text(
+  //                   "Block",
+  //                   style: TextStyle(
+  //                     color: Colors.red,
+  //                     fontSize: 16,
+  //                     fontWeight: FontWeight.w500,
+  //                   ),
+  //                 ),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 // ✅ Block logic
+  //               },
+  //             ),
+  //             Divider(height: 8, color: Colors.transparent),
+  //             Container(
+  //               color: Colors.white,
+  //               child: ListTile(
+  //                 title: Center(
+  //                   child: Text(
+  //                     "Cancel",
+  //                     style: TextStyle(
+  //                       color: Colors.blue,
+  //                       fontSize: 16,
+  //                       fontWeight: FontWeight.w600,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 onTap: () {
+  //                   Navigator.pop(context);
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
 }

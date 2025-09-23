@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,9 @@ class _KudosScreenState extends State<KudosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -26,7 +27,7 @@ class _KudosScreenState extends State<KudosScreen> {
       body: Container(
         height: 40,
         width: MediaQuery.of(context).size.width,
-        color: Colors.white24,
+        color: AppColor.bgTile,
         child: Center(child: Text('This activity currently does not have any kudos',
           style: CustomTextStyles.regular(fontSize: 14),)
         ),

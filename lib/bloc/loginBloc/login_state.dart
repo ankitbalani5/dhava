@@ -7,10 +7,16 @@ final class LoginInitial extends LoginState {}
 final class LoginLoading extends LoginState {}
 final class SendOtpLoading extends LoginState {}
 final class VerifyOtpLoading extends LoginState {}
-// final class LoginSuccess extends LoginState {
-//   final LoginResponse loginModel;
-//   LoginSuccess(this.loginModel);
-// }
+final class ForgotPasswordLoading extends LoginState {}
+final class CreatePasswordLoading extends LoginState {}
+final class LoginSuccess extends LoginState {
+  final LoginResponse loginModel;
+  LoginSuccess(this.loginModel);
+}
+final class ForgotPasswordSuccess extends LoginState {
+  final SendOtpModel sendOtpModel;
+  ForgotPasswordSuccess(this.sendOtpModel);
+}
 // final class RegisterSuccess extends LoginState {
 //   final LoginResponse loginModel;
 //   RegisterSuccess(this.loginModel);
@@ -19,14 +25,18 @@ final class VerifyOtpLoading extends LoginState {}
 //   final CommonResponseModel commonResponseModel;
 //   ResetPasswordSuccess(this.commonResponseModel);
 // }
-// final class SendOtpSuccess extends LoginState {
-//   final CommonResponseModel commonResponseModel;
-//   SendOtpSuccess(this.commonResponseModel);
-// }
-// final class VerifyOtpSuccess extends LoginState {
-//   final CommonResponseModel commonResponseModel;
-//   VerifyOtpSuccess(this.commonResponseModel);
-// }
+final class SendOtpSuccess extends LoginState {
+  final SendOtpModel sendOtpModel;
+  SendOtpSuccess(this.sendOtpModel);
+}
+final class VerifyOtpSuccess extends LoginState {
+  final LoginResponse loginResponse;
+  VerifyOtpSuccess(this.loginResponse);
+}
+final class CreatePasswordSuccess extends LoginState {
+  final CreatePasswordModel createPasswordModel;
+  CreatePasswordSuccess(this.createPasswordModel);
+}
 // final class ChangePasswordSuccess extends LoginState {
 //   final CommonResponseModel commonResponseModel;
 //   ChangePasswordSuccess(this.commonResponseModel);
@@ -35,6 +45,10 @@ final class LoginError extends LoginState {
   final String error;
   LoginError(this.error);
 }
+final class ForgotPasswordError extends LoginState {
+  final String error;
+  ForgotPasswordError(this.error);
+}
 final class SendOtpError extends LoginState {
   final String error;
   SendOtpError(this.error);
@@ -42,4 +56,8 @@ final class SendOtpError extends LoginState {
 final class VerifyOtpError extends LoginState {
   final String error;
   VerifyOtpError(this.error);
+}
+final class CreatePasswordError extends LoginState {
+  final String error;
+  CreatePasswordError(this.error);
 }

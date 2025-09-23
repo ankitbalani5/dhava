@@ -109,7 +109,7 @@ class _NewsDetailState extends State<NewsDetail> {
                 /// Description
                 Text(news["description"],
                     style: CustomTextStyles.regular(
-                        fontSize: 10, textColor: Colors.grey)),
+                        fontSize: 11, textColor: Colors.black)),
               ],
             ),
           );
