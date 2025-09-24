@@ -22,6 +22,7 @@ class ClubScreen extends StatefulWidget {
   State<ClubScreen> createState() => ClubScreenState();
 }
 
+
 class ClubScreenState extends State<ClubScreen> {
   String activeKey = 'Active';
   String challengesKey = 'Challenges';
