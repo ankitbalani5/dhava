@@ -32,6 +32,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       'Content-Type': 'application/json'
     };
     if(feedModel != null){
+
       final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
       final result = feed.FeedModel.fromJson(response);
       if(event.isPagination == true){
