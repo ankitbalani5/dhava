@@ -9,7 +9,6 @@ final class FeedSuccess extends ActivityState {
   final feed.FeedModel feedModel;
   FeedSuccess(this.feedModel);
 }
-
 final class FeedError extends ActivityState {
   final String error;
   FeedError(this.error);
