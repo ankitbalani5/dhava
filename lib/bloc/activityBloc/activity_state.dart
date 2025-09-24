@@ -33,7 +33,6 @@ final class MyFeedError extends ActivityState {
   MyFeedError(this.error);
 }
 
-
 final class GetSuggestedChallengesLoading extends ActivityState {
   GetSuggestedChallengesLoading() : super();
 }
