@@ -6,7 +6,7 @@ sealed class ActivityState {}
 final class ActivityInitial extends ActivityState {}
 final class FeedLoading extends ActivityState {}
 final class FeedSuccess extends ActivityState {
-  final FeedModel feedModel;
+  final feed.FeedModel feedModel;
   FeedSuccess(this.feedModel);
 }
 final class FeedError extends ActivityState {
@@ -25,7 +25,7 @@ final class LikeFeedError extends ActivityState {
 
 final class MyFeedLoading extends ActivityState {}
 final class MyFeedSuccess extends ActivityState {
-  final FeedModel feedModel;
+  final feed.FeedModel feedModel;
   MyFeedSuccess(this.feedModel);
 }
 final class MyFeedError extends ActivityState {

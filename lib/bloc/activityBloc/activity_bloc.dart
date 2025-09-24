@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:coherent_endurance/models/activityLikeModel.dart';
-import 'package:coherent_endurance/models/feedModel.dart';
+import 'package:coherent_endurance/models/feedModel.dart' as feed;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
+import 'package:coherent_endurance/models/activityLikeModel.dart' as like;
 
 import '../../repository/api.dart';
 
@@ -13,8 +14,8 @@ part 'activity_event.dart';
 part 'activity_state.dart';
 
 class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
-  FeedModel? feedModel;
-  FeedModel? myFeedModel;
+  feed.FeedModel? feedModel;
+  feed.FeedModel? myFeedModel;
   ActivityBloc() : super(ActivityInitial()) {
     on<GetFeedEvent>(_getFeed);
     on<GetMyFeedEvent>(_getMyFeed);
@@ -32,7 +33,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     };
     if(feedModel != null){
       final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
-      final result = FeedModel.fromJson(response);
+      final result = feed.FeedModel.fromJson(response);
       if(event.isPagination == true){
         feedModel!.data!.data!.addAll(result.data!.data!);
         emit(FeedSuccess(feedModel!));
@@ -47,7 +48,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       try{
 
         final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
-        final result = FeedModel.fromJson(response);
+        final result = feed.FeedModel.fromJson(response);
 
         if(result.statusCode == 200){
           feedModel = result;
@@ -79,7 +80,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
     };
     if(myFeedModel != null){
       final response = await Api.getApiWithQuery(ApiEndPoint.getMyFeed, body, headers, event.context);
-      final result = FeedModel.fromJson(response);
+      final result = feed.FeedModel.fromJson(response);
       if(event.isPagination == true){
         myFeedModel!.data!.data!.addAll(result.data!.data!);
         emit(MyFeedSuccess(myFeedModel!));
@@ -94,7 +95,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       try{
 
         final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
-        final result = FeedModel.fromJson(response);
+        final result = feed.FeedModel.fromJson(response);
 
         if(result.statusCode == 200){
           myFeedModel = result;
@@ -128,7 +129,22 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       final result = ActivityLikeModel.fromJson(response);
 
       if(result.statusCode == 200){
-        emit(LikeFeedSuccess(result));
+        // ✅ पुराना data copy करो
+        var feedModelCopy = feed.FeedModel(
+          data: feed.Data(
+            data: List<feed.InnerData>.from(feedModel?.data?.data ?? []),
+          ),
+        );
+
+        // ✅ जिस activity को like किया, उसे update करो
+        for (var item in feedModelCopy.data!.data!) {
+          if (item.activityId == event.activityId) {
+            item.isLiked = true;   // 👉 liked flag
+            item.totalLike = (item.totalLike ?? 0) + 1; // 👉 likes count बढ़ा दो
+            break;
+          }
+        }
+        emit(FeedSuccess(feedModelCopy));
       }else{
         emit(LikeFeedError(result.message.toString()));
       }

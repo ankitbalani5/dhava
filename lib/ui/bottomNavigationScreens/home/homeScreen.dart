@@ -500,7 +500,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               children: [
                                                 GestureDetector(
                                                     onTap: () {
-                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                                      context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
                                                     },
                                                     child: SizedBox(
                                                         height: 30,

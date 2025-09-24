@@ -89,11 +89,12 @@ class InnerData {
   String? categoryId;
   String? activityId;
   String? categoryName;
+  String? categoryIcon;
   String? title;
   String? description;
   String? photo;
-  String? distance;
-  String? pace;
+  double? distance;
+  double? pace;
   int? movingTime;
   String? location;
   double? elavationGain;
@@ -104,7 +105,7 @@ class InnerData {
   String? runType;
   String? typeOfRun;
   String? feeling;
-  String? privateNote;
+  Null? privateNote;
   String? gear;
   String? visibility;
   String? hiddenDetails;
@@ -114,6 +115,8 @@ class InnerData {
   double? elapsedTime;
   double? maxSpeed;
   int? totalLike;
+  bool? isLiked;
+  String? createdDate;
   List<LikedUsers>? likedUsers;
 
   InnerData(
@@ -124,6 +127,7 @@ class InnerData {
         this.categoryId,
         this.activityId,
         this.categoryName,
+        this.categoryIcon,
         this.title,
         this.description,
         this.photo,
@@ -149,6 +153,8 @@ class InnerData {
         this.elapsedTime,
         this.maxSpeed,
         this.totalLike,
+        this.isLiked,
+        this.createdDate,
         this.likedUsers});
 
   InnerData.fromJson(Map<String, dynamic> json) {
@@ -159,11 +165,12 @@ class InnerData {
     categoryId = json['category_id'];
     activityId = json['activity_id'];
     categoryName = json['category_name'];
+    categoryIcon = json['category_icon'];
     title = json['title'];
     description = json['description'];
     photo = json['photo'];
-    distance = json['distance'].toString();
-    pace = json['pace'].toString();
+    distance = json['distance'];
+    pace = json['pace'];
     movingTime = json['moving_time'];
     location = json['location'];
     elavationGain = json['elavation_gain'];
@@ -189,6 +196,8 @@ class InnerData {
     elapsedTime = json['elapsed_time'];
     maxSpeed = json['max_speed'];
     totalLike = json['total_like'];
+    isLiked = json['is_liked'];
+    createdDate = json['created_date'];
     if (json['liked_users'] != null) {
       likedUsers = <LikedUsers>[];
       json['liked_users'].forEach((v) {
@@ -206,6 +215,7 @@ class InnerData {
     data['category_id'] = this.categoryId;
     data['activity_id'] = this.activityId;
     data['category_name'] = this.categoryName;
+    data['category_icon'] = this.categoryIcon;
     data['title'] = this.title;
     data['description'] = this.description;
     data['photo'] = this.photo;
@@ -233,6 +243,8 @@ class InnerData {
     data['elapsed_time'] = this.elapsedTime;
     data['max_speed'] = this.maxSpeed;
     data['total_like'] = this.totalLike;
+    data['is_liked'] = this.isLiked;
+    data['created_date'] = this.createdDate;
     if (this.likedUsers != null) {
       data['liked_users'] = this.likedUsers!.map((v) => v.toJson()).toList();
     }
@@ -264,21 +276,21 @@ class LikedUsers {
   String? lastName;
   String? profilePic;
   String? userId;
-  bool? isLike;
+  bool? isActive;
 
   LikedUsers(
       {this.firstName,
         this.lastName,
         this.profilePic,
         this.userId,
-        this.isLike});
+        this.isActive});
 
   LikedUsers.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
     lastName = json['last_name'];
     profilePic = json['profile_pic'];
     userId = json['user_id'];
-    isLike = json['is_like'];
+    isActive = json['is_active'];
   }
 
   Map<String, dynamic> toJson() {
@@ -287,7 +299,7 @@ class LikedUsers {
     data['last_name'] = this.lastName;
     data['profile_pic'] = this.profilePic;
     data['user_id'] = this.userId;
-    data['is_like'] = this.isLike;
+    data['is_active'] = this.isActive;
     return data;
   }
 }
