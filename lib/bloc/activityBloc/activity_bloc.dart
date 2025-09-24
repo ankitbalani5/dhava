@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:coherent_endurance/models/activityLikeModel.dart';
 import 'package:coherent_endurance/models/feedModel.dart' as feed;
+import 'package:coherent_endurance/models/getAllChallengesResponse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
