@@ -1,24 +1,25 @@
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:coherent_endurance/models/activityLikeModel.dart';
-import 'package:coherent_endurance/models/feedModel.dart';
-import 'package:coherent_endurance/models/getAllChallengesResponse.dart';
+import 'package:coherent_endurance/models/feedModel.dart' as feed;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
+import 'package:coherent_endurance/models/activityLikeModel.dart' as like;
+
 import '../../repository/api.dart';
+
 part 'activity_event.dart';
 part 'activity_state.dart';
 
 class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
-  FeedModel? feedModel;
-  FeedModel? myFeedModel;
-  GetAllChallengesResponse? suggestedModel;
+  feed.FeedModel? feedModel;
+  feed.FeedModel? myFeedModel;
   ActivityBloc() : super(ActivityInitial()) {
     on<GetFeedEvent>(_getFeed);
     on<GetMyFeedEvent>(_getMyFeed);
     on<ActivityLikeEvent>(_likeFeed);
-    on<GetSuggestedChallengesEvent>(_getSuggestedChallenges);
   }
 
   Future<void> _getFeed(GetFeedEvent event, Emitter<ActivityState> emit) async {
@@ -31,8 +32,9 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       'Content-Type': 'application/json'
     };
     if(feedModel != null){
-      final response = await Api.postApi(ApiEndPoint.getFeed, body, headers, event.context);
-      final result = FeedModel.fromJson(response);
+
+      final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
+      final result = feed.FeedModel.fromJson(response);
       if(event.isPagination == true){
         feedModel!.data!.data!.addAll(result.data!.data!);
         emit(FeedSuccess(feedModel!));
@@ -46,8 +48,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       emit(FeedLoading());
       try{
 
-        final response = await Api.postApi(ApiEndPoint.getFeed, body, headers, event.context);
-        final result = FeedModel.fromJson(response);
+        final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
+        final result = feed.FeedModel.fromJson(response);
 
         if(result.statusCode == 200){
           feedModel = result;
@@ -78,8 +80,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       'Content-Type': 'application/json'
     };
     if(myFeedModel != null){
-      final response = await Api.postApi(ApiEndPoint.getMyFeed, body, headers, event.context);
-      final result = FeedModel.fromJson(response);
+      final response = await Api.getApiWithQuery(ApiEndPoint.getMyFeed, body, headers, event.context);
+      final result = feed.FeedModel.fromJson(response);
       if(event.isPagination == true){
         myFeedModel!.data!.data!.addAll(result.data!.data!);
         emit(MyFeedSuccess(myFeedModel!));
@@ -93,8 +95,8 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       emit(MyFeedLoading());
       try{
 
-        final response = await Api.postApi(ApiEndPoint.getFeed, body, headers, event.context);
-        final result = FeedModel.fromJson(response);
+        final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
+        final result = feed.FeedModel.fromJson(response);
 
         if(result.statusCode == 200){
           myFeedModel = result;
@@ -128,7 +130,22 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       final result = ActivityLikeModel.fromJson(response);
 
       if(result.statusCode == 200){
-        emit(LikeFeedSuccess(result));
+        // ✅ पुराना data copy करो
+        var feedModelCopy = feed.FeedModel(
+          data: feed.Data(
+            data: List<feed.InnerData>.from(feedModel?.data?.data ?? []),
+          ),
+        );
+
+        // ✅ जिस activity को like किया, उसे update करो
+        for (var item in feedModelCopy.data!.data!) {
+          if (item.activityId == event.activityId) {
+            item.isLiked = true;   // 👉 liked flag
+            item.totalLike = (item.totalLike ?? 0) + 1; // 👉 likes count बढ़ा दो
+            break;
+          }
+        }
+        emit(FeedSuccess(feedModelCopy));
       }else{
         emit(LikeFeedError(result.message.toString()));
       }
@@ -141,56 +158,5 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       emit(LikeFeedError(e.toString()));
     }
   }
-
-  Future<void> _getSuggestedChallenges(GetSuggestedChallengesEvent event, Emitter<ActivityState> emit,) async {
-    emit(GetSuggestedChallengesLoading());
-    try {
-      var header = {
-        'Content-Type': 'application/json',
-      };
-      var context = event.context;
-
-      final response = await Api.getApi(ApiEndPoint.getRecommendedChallenges, header, context);
-
-      final result = GetAllChallengesResponse.fromJson(response);
-
-      if (kDebugMode) {
-        print('_getSuggestedChallenges:::$response');
-      }
-
-      if(result.statusCode == 200){
-        suggestedModel = result;
-        emit(GetSuggestedChallengesLoaded(result));
-      }else{
-        emit(GetSuggestedChallengesError(result.message.toString()));
-      }
-      // if (response != null) {
-      //   if (response['status_code'] == 200 && response['status'] == true) {
-      //
-      //     final parsedResponse = GetAllChallengesResponse.fromJson(response);
-      //     print(parsedResponse.data?.length);
-      //
-      //     emit(GetSuggestedChallengesLoaded(parsedResponse));
-      //   } else {
-      //     emit(GetSuggestedChallengesError(response['message'].toString()));
-      //   }
-      // } else {
-      //   emit(
-      //     GetSuggestedChallengesError(
-      //       "Response not available, Please try again after some time",
-      //     ),
-      //   );
-      // }
-    } on SocketException {
-      emit(GetSuggestedChallengesError('Please check your internet connection'));
-    } catch (e, stacktrace) {
-      if (kDebugMode) {
-        print(stacktrace);
-      }
-      emit(GetSuggestedChallengesError(e.toString()));
-    }
-  }
-
-
 
 }
