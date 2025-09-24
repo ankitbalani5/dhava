@@ -3,7 +3,7 @@ class CategoryModel {
   int? statusCode;
   String? message;
   Null? errorMessage;
-  List<Data>? data;
+  List<CategoryModelData>? data;
 
   CategoryModel(
       {this.status,
@@ -18,9 +18,9 @@ class CategoryModel {
     message = json['message'];
     errorMessage = json['error_message'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <CategoryModelData>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new CategoryModelData.fromJson(v));
       });
     }
   }
@@ -38,7 +38,7 @@ class CategoryModel {
   }
 }
 
-class Data {
+class CategoryModelData {
   String? categoryId;
   String? categoryName;
   String? uniqueCode;
@@ -46,7 +46,7 @@ class Data {
   String? backgroundImage;
   String? tips;
 
-  Data(
+  CategoryModelData(
       {this.categoryId,
         this.categoryName,
         this.uniqueCode,
@@ -54,7 +54,7 @@ class Data {
         this.backgroundImage,
         this.tips});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  CategoryModelData.fromJson(Map<String, dynamic> json) {
     categoryId = json['category_id'];
     categoryName = json['category_name'];
     uniqueCode = json['unique_code'];

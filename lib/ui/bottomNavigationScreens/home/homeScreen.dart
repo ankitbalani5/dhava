@@ -1,26 +1,21 @@
+import 'package:coherent_endurance/bloc/activityBloc/challenges_bloc.dart';
+import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
+import 'package:coherent_endurance/bloc/activityBloc/challenges_state.dart';
 import 'package:coherent_endurance/models/feedModel.dart';
+import 'package:coherent_endurance/repository/api.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/profileScreens/editProfileScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coherent_endurance/ui/trophyCase.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
-import 'package:coherent_endurance/ui/bottomNavigationScreens/home/discussion.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
-import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
-import 'package:coherent_endurance/ui/completeProfile/uploadPhotoScreen.dart';
-import 'package:coherent_endurance/ui/milestone.dart';
-import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
-import 'package:coherent_endurance/constant/constant.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../bloc/activityBloc/activity_bloc.dart';
 import '../../../bloc/profileBloc/profile_bloc.dart';
-import '../../../widgets/backButton.dart';
-import '../../completeProfile/weightScreen.dart';
 import '../../notification/notificationScreen.dart';
 import '../../profileScreens/profileScreen.dart';
 import 'feedDetails.dart';
@@ -40,12 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final RefreshController _refreshController = RefreshController();
   @override
   void initState() {
-    context.read<ActivityBloc>().add(GetFeedEvent(
-        context: context,
-        perPage: '2',
-        page: '1',
-        categoryId: null,
-    ));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: '1', categoryId: null,));
+    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context, ));
     super.initState();
   }
   void _onRefresh() {
@@ -53,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: page.toString(), categoryId: null,));
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
+    context.read<ActivityBloc>().add(GetSuggestedChallengesEvent( context: context));
     _refreshController.refreshCompleted();
   }
 
@@ -285,70 +277,149 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                    Container(
-                      color: AppColor.bgTile,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 20,),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
+                    // Suggested Challenges Section
+                    BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
+                      // bloc: GetAllChallengesBloc(),
+                      listener: (context, state) {},
+                      builder: (context, state) {
+                        if(state is GetAllChallengesLoading){
+                          return Center(
+                            child: LoadingAnimationWidget.inkDrop(
+                              color: AppColor.bgRed,
+                              size: 20,
+                            ),
+                          );
+                        }
+
+                        if (state is GetAllChallengesError){
+
+                          return Text(state.error.toString());
+                        }
+                        if (state is GetAllChallengesLoaded) {
+                          var suggestedData = state.responseData.data;
+
+                          if (suggestedData == null || suggestedData.isEmpty) {
+                            return SizedBox.shrink();
+                          }
+
+                          return Container(
+                            color: AppColor.bgTile,
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
+                                SizedBox(height: 20),
+                                SizedBox(
                                   height: 210,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    shrinkWrap: true,
-                                    itemCount: 3,
+                                    itemCount: suggestedData.length,
                                     itemBuilder: (context, index) {
+                                      var challenge = suggestedData[index];
+                                      Widget categoryIconWidget(String? icon) {
+                                        // Null ya empty check
+                                        if (icon == null || icon.isEmpty) {
+                                          return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
+                                        }
+
+                                        // Relative path ko absolute URL me convert karo
+                                        final url = icon.startsWith("http") ? icon : "${Api.BaseUrl}$icon";
+
+                                        // Web safe check
+                                        Uri? uri;
+                                        try {
+                                          uri = Uri.parse(url);
+                                          if (!uri.hasScheme || !uri.hasAuthority) {
+                                            throw FormatException("Invalid URI");
+                                          }
+                                        } catch (_) {
+                                          return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
+                                        }
+
+                                        return CachedNetworkImage(
+                                          imageUrl: url,
+                                          height: 24,
+                                          width: 24,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => SizedBox(
+                                            height: 24,
+                                            width: 24,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                          errorWidget: (context, url, error) => SvgPicture.asset(AppImageSvg.run, color: Colors.black),
+                                        );
+                                      }
+
+
                                       return Container(
                                         width: 160,
-                                        padding: EdgeInsets.all(15),
                                         margin: EdgeInsets.symmetric(horizontal: 5),
+                                        padding: EdgeInsets.all(15),
                                         decoration: BoxDecoration(
-                                          // color: Colors.white,
-                                          // borderRadius: BorderRadius.circular(12),
-                                            image: DecorationImage(image: AssetImage('assets/image/others/bgChallenge.png'))
+                                          image: DecorationImage(
+                                            image: AssetImage('assets/image/others/bgChallenge.png'),
+                                            fit: BoxFit.cover,
+                                          ),
+                                          borderRadius: BorderRadius.circular(15),
                                         ),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text('July Run 100K \nChallenge', style: CustomTextStyles.semiBold(fontSize: 16)),
-                                            SizedBox(height: 4,),
+                                            Text(
+                                              challenge.title ?? "N/A",
+                                              style: CustomTextStyles.semiBold(fontSize: 16),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(height: 4),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                SvgPicture.asset(AppImageSvg.run, color: Colors.black,),
+                                               categoryIconWidget(challenge.categoryIcon),
                                                 Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
-                                                        width: 100,
-                                                        child: Text('Run a total of 100 km(62.1 mi) in a month.', style: CustomTextStyles.regular(fontSize: 12))),
-
+                                                      width: 100,
+                                                      child: Text(
+                                                        challenge.description ?? "N/A",
+                                                        style: CustomTextStyles.regular(fontSize: 12),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
                                                     SizedBox(
-                                                        width: 100,
-                                                        child: Text('Jul 1 to Jul31, 2025', style: CustomTextStyles.regular(fontSize: 12))),
+                                                      width: 100,
+                                                      child: Text(
+                                                        challenge.startDate ?? "N/A",
+                                                        style: CustomTextStyles.regular(fontSize: 12),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(height: 15,),
+                                            SizedBox(height: 15),
+                                            Spacer(),
                                             Center(
                                               child: Container(
                                                 width: 100,
                                                 height: 30,
                                                 decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color: AppColor.bgRed
+                                                  borderRadius: BorderRadius.circular(15),
+                                                  color: AppColor.bgRed,
                                                 ),
                                                 child: Center(
-                                                  child: Text('Join Now', style: CustomTextStyles.bold(fontSize: 14, textColor: Colors.white)),
+                                                  child: Text(
+                                                    'Join Now',
+                                                    style: CustomTextStyles.bold(
+                                                      fontSize: 14,
+                                                      textColor: Colors.white,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            )
+                                            ),
                                           ],
                                         ),
                                       );
@@ -357,19 +428,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ],
                             ),
-                          ),
-                          SizedBox(height: 20,),
+                          );
+                        }
+                        return SizedBox.shrink();
 
-                          GestureDetector(
-                              onTap: () {
 
-                                bottomNavKey.currentState?.changeTab(3);
-                              },
-                              child: Center(child: Text('Explore all Challenges', style: CustomTextStyles.bold(textColor: AppColor.bgRed),))),
-                          SizedBox(height: 20,),
-                        ],
-                      ),
+                      },
                     ),
+
+
 
                     SizedBox(height: 10,),
 
@@ -662,5 +729,5 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-  
+
 }

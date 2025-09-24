@@ -14,7 +14,7 @@ import 'clubWidgets/challenges/challengesWidget.dart';
 import 'clubWidgets/club/clubsWidget.dart';
 
 class ClubScreen extends StatefulWidget {
-  final String? initialTab; // ✅ नया parameter
+  final String? initialTab;
 
   const ClubScreen({super.key, this.initialTab});
 
@@ -23,10 +23,10 @@ class ClubScreen extends StatefulWidget {
 }
 
 class ClubScreenState extends State<ClubScreen> {
-  String activeKey = 'active';
-  String challengesKey = 'challenges';
-  String clubsKey = 'clubs';
-  String tabStatus = 'active';
+  String activeKey = 'Active';
+  String challengesKey = 'Challenges';
+  String clubsKey = 'Clubs';
+  String tabStatus = 'Active';
 
 
   @override

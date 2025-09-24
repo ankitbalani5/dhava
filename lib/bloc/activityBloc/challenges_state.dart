@@ -14,7 +14,7 @@ class GetAllChallengesLoading extends GetAllChallengesState {
 }
 
 class GetAllChallengesLoaded extends GetAllChallengesState {
-  final List<GetAllChallengesResponse> responseData;
+  final GetAllChallengesResponse responseData;
   GetAllChallengesLoaded(this.responseData) : super();
 }
 

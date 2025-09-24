@@ -282,7 +282,7 @@ class _SaveActivityState extends State<SaveActivity> {
     final matchedCategory = Constant.getCategory!.data!
         .firstWhere(
           (element) => element.categoryId == widget.trackingData["runType"],
-      orElse: () => Data(categoryId: ''), // fallback अगर न मिले
+      orElse: () => CategoryModelData(categoryId: ''), // fallback अगर न मिले
     );
 
     selectedRunType = matchedCategory.categoryName ?? "";

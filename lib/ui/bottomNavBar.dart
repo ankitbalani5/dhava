@@ -218,15 +218,16 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
                     icon: AppImageSvg.record,
                   ),
                   bottomNavItem(
-                    label: 'Club',
-                    index: 3,
-                    icon: AppImageSvg.club,
-                  ),
-                  bottomNavItem(
                     label: 'Tips',
-                    index: 4,
+                    index: 3,
                     icon: AppImageSvg.tips,
                   ),
+                  bottomNavItem(
+                    label: 'Club',
+                    index: 4,
+                    icon: AppImageSvg.club,
+                  ),
+
                   // bottomNavItem(
                   //   label: 'Profile',
                   //   index: 4,

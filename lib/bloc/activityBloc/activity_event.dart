@@ -29,3 +29,8 @@ class GetMyFeedEvent extends ActivityEvent{
   final bool isPagination;
   GetMyFeedEvent({required this.context, required this.perPage, required this.page, required this.categoryId, this.userId, this.isPagination = false});
 }
+
+class GetSuggestedChallengesEvent extends ActivityEvent {
+  final  BuildContext context;
+  GetSuggestedChallengesEvent({required this.context});
+}
