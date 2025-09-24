@@ -13,6 +13,7 @@ final class FeedError extends ActivityState {
   final String error;
   FeedError(this.error);
 }
+
 final class LikeFeedLoading extends ActivityState {}
 final class LikeFeedSuccess extends ActivityState {
   final ActivityLikeModel activityLikeModel;
