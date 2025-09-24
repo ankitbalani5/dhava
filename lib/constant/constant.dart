@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../resources/image/appImages.dart';
 import '../resources/style/textStyle.dart';
+import '../ui/bottomNavBar.dart';
 import '../widgets/customButton.dart';
 import '../widgets/loadingAnimation.dart';
 import 'errorDialog.dart';
@@ -215,7 +216,7 @@ class Constant {
   }
 
 
-  void showCongratulationDialog(BuildContext context) {
+  static void showCongratulationDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -258,6 +259,8 @@ class Constant {
               CustomButton(
                 text: 'Continue',
                 callback: () {
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar()), (route) => false,);
+
                   // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
                 },
               )

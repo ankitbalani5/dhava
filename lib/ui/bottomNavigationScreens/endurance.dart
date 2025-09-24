@@ -1,4 +1,5 @@
 
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -18,6 +19,7 @@ class _EnduranceState extends State<Endurance> {
   int selectedIndex = 1; // Default: Run
 
   final List<String> labels = ['Walk', 'Run', 'Cycle'];
+  String categoryId = '';
   // final List<IconData> icons = [
   //   Icons.directions_walk,
   //   Icons.directions_run,
@@ -35,6 +37,18 @@ class _EnduranceState extends State<Endurance> {
     AppImageOthers.runEndurance,
     AppImageOthers.cycleEndurance, // 👈 create this asset
   ];
+
+  @override
+  void initState() {
+
+    final defaultCategory = Constant.getCategory?.data?.firstWhere(
+          (e) => e.categoryName?.toLowerCase() == "walk",
+      // orElse: () => Constant.getCategory?.data.first, // fallback पहला element
+    );
+
+    categoryId = defaultCategory!.categoryId!;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +111,9 @@ class _EnduranceState extends State<Endurance> {
             right: 0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(3, (index) {
+              children: List.generate(
+                  Constant.getCategory!.data!.length,
+                      (index) {
                 final isSelected = selectedIndex == index;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6.0),
@@ -105,6 +121,7 @@ class _EnduranceState extends State<Endurance> {
                     onTap: () {
                       setState(() {
                         selectedIndex = index;
+                        categoryId = Constant.getCategory!.data![index].categoryId.toString();
                       });
                     },
                     child: Container(
@@ -120,9 +137,9 @@ class _EnduranceState extends State<Endurance> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Icon(icons[index] , color: !isSelected ? Colors.black : Colors.white,),
-                            SvgPicture.asset(icons[index] , height: 20, width: 20, color: isSelected ? Colors.white : Colors.black,),
+                            Image.network(Constant.getCategory!.data![index].categoryIcon.toString() , height: 20, width: 20, color: isSelected ? Colors.white : Colors.black,),
                             SizedBox(width: 10,),
-                            Text(labels[index], style: TextStyle(color: !isSelected ? Colors.black : Colors.white),),
+                            Text(Constant.getCategory!.data![index].categoryName.toString(), style: TextStyle(color: !isSelected ? Colors.black : Colors.white),),
                           ],
                         ),
                       ),
@@ -167,7 +184,7 @@ class _EnduranceState extends State<Endurance> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingScreen(categoryId)));
                   },
                   child: Container(
                     width: 260,

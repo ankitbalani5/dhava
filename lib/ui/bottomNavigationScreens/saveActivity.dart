@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:coherent_endurance/models/categoryModel.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -30,6 +31,7 @@ class SaveActivity extends StatefulWidget {
 }
 
 class _SaveActivityState extends State<SaveActivity> {
+  var _formKey = GlobalKey<FormState>();
   String selectedRunType = '';
   List<String> runTypes = ["Run", "Walk", "Cycle"];
   List<String> TypeOfRun = ["Long Run", "Tempo Run", "Intervals", "Recovery Run"];
@@ -61,10 +63,10 @@ class _SaveActivityState extends State<SaveActivity> {
       "distance": widget.trackingData["distance"],
       "pace": widget.trackingData["avgPace"],
       "moving_time": widget.trackingData["time"],
-      "city": "Demo City",
-      "state": "Demo State",
-      "country": "Demo Country",
-      "address": "Demo Address",
+      "city": widget.trackingData["city"],
+      "state": widget.trackingData["state"],
+      "country": widget.trackingData["country"],
+      "address": widget.trackingData["address"],
       "elavation_gain": widget.trackingData["elevationGain"],
       "max_elavation": widget.trackingData["maxElevation"],
       "steps": widget.trackingData["steps"],
@@ -82,7 +84,7 @@ class _SaveActivityState extends State<SaveActivity> {
       "avg_elapsed_pace": widget.trackingData["avgPace"],
       "elapsed_time": widget.trackingData["time"],
       "max_speed": widget.trackingData["maxSpeed"] ?? 0,
-      "mapImage": widget.trackingData["mapImage"],
+      "photo": widget.trackingData["photo"],
     }, context);
 
     // try {
@@ -292,7 +294,7 @@ class _SaveActivityState extends State<SaveActivity> {
 
   @override
   Widget build(BuildContext context) {
-    Uint8List? image = widget.trackingData["mapImage"];
+    // Uint8List? image = widget.trackingData["mapImage"];
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -309,578 +311,581 @@ class _SaveActivityState extends State<SaveActivity> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // if (image != null)
-              //   Image.memory(image, height: 200, fit: BoxFit.cover)
-              // else
-              //   const Text("No image captured"),
-              // ElevatedButton(
-              //   onPressed: isUploading ? null : uploadActivity,
-              //   child: isUploading
-              //       ? CircularProgressIndicator()
-              //       : Text("Upload Activity"),
-              // ),
-              /// title
-              TextFormField(
-                controller: titleController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                // keyboardType: TextInputType.number,
-                cursorColor: Colors.black,
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.digitsOnly
-                // ],
-                style: TextStyle(color: Colors.black),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColor.bgTile,
-                  hintText: 'Afternoon Run',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixStyle: TextStyle(
-                    color: AppColor.textBackgroundGrey,
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.red)),
-                  focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.red)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                ),
-                // controller: controller,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }else {
-                    return null;
-                  }
-                },
-              ),
-              SizedBox(height: 15,),
-
-              /// description
-              TextFormField(
-                controller: descriptionController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                // keyboardType: TextInputType.number,
-                cursorColor: Colors.black,
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.digitsOnly
-                // ],
-                style: TextStyle(color: Colors.black),
-                maxLines: 3,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColor.bgTile,
-                  hintText: "How'd it go? Share more about your activity and use @ to tag someone.",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixStyle: TextStyle(
-                    color: AppColor.textBackgroundGrey,
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.red)),
-                  focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.red)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                ),
-                // controller: controller,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }else {
-                    return null;
-                  }
-                },
-              ),
-              SizedBox(height: 15,),
-
-              /// type of run
-              DropdownSearch<String>(
-                selectedItem: selectedRunType,
-                onChanged: (value) {
-                  setState(() {
-                    selectedRunType = value.toString();
-                    // selected category object find करो
-                    final selectedCategory = Constant.getCategory?.data
-                        ?.firstWhere((element) => element.categoryName == selectedRunType);
-
-                    // categoryId assign करो
-                    categoryId = selectedCategory?.categoryId ?? "";
-                  });
-                },
-                items: (String? filter, _) => Constant.getCategory?.data
-                    ?.map((e) => e.categoryName ?? "")
-                    .toList() ?? [],
-                suffixProps: DropdownSuffixProps(
-                    dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
-                    )
-                ),
-                popupProps: const PopupProps.menu(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(maxHeight: 200),
-                  showSelectedItems: true,
-                  menuProps: MenuProps(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.black),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // if (image != null)
+                //   Image.memory(image, height: 200, fit: BoxFit.cover)
+                // else
+                //   const Text("No image captured"),
+                // ElevatedButton(
+                //   onPressed: isUploading ? null : uploadActivity,
+                //   child: isUploading
+                //       ? CircularProgressIndicator()
+                //       : Text("Upload Activity"),
+                // ),
+                /// title
+                TextFormField(
+                  controller: titleController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // keyboardType: TextInputType.number,
+                  cursorColor: Colors.black,
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.digitsOnly
+                  // ],
+                  style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: AppColor.bgTile,
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.directions_run, color: Colors.black),
+                    hintText: 'Afternoon Run',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    prefixStyle: TextStyle(
+                      color: AppColor.textBackgroundGrey,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
+                    errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.red)),
+                    focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.red)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
                   ),
+                  // controller: controller,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter title';
+                    }else {
+                      return null;
+                    }
+                  },
                 ),
-              ),
-              const SizedBox(height: 20),
+                SizedBox(height: 15,),
 
-              /// Map & Photo Row
-              Container(
-                height: 128,
-                width: double.infinity,
-                child: Image.asset(AppImageOthers.sampleMap, fit: BoxFit.fill, width: double.maxFinite,),
-              ),
-              const SizedBox(height: 16),
-
-              Image.asset(AppImageOthers.addPhoto),
-              // /// Change Map Type Button
-              // SizedBox(
-              //   height: 50,
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.transparent,
-              //       side: const BorderSide(color: AppColor.bgRed),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(10),
-              //       ),
-              //     ),
-              //     onPressed: () {},
-              //     child: const Text("Change Map Type", style: TextStyle(color: AppColor.bgRed)),
-              //   ),
-              // ),
-              const SizedBox(height: 24),
-
-              /// Details Section
-              const Text("Details", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
-
-              /// Type of Run dropdown
-              DropdownSearch<String>(
-                selectedItem: selectedTypeOfRun,
-                onChanged: (value) {
-                  setState(() {
-                    selectedTypeOfRun = value.toString();
-                  });
-                },
-                items: (String? filter, _) => TypeOfRun,
-                suffixProps: DropdownSuffixProps(
-                    dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
-                    )
-                ),
-                popupProps: const PopupProps.menu(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(maxHeight: 200),
-                  showSelectedItems: true,
-                  menuProps: MenuProps(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.black),
+                /// description
+                TextFormField(
+                  controller: descriptionController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // keyboardType: TextInputType.number,
+                  cursorColor: Colors.black,
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.digitsOnly
+                  // ],
+                  style: TextStyle(color: Colors.black),
+                  maxLines: 3,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: AppColor.bgTile,
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Icon(Icons.waves, color: Colors.black),
+                    hintText: "How'd it go? Share more about your activity and use @ to tag someone.",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    prefixStyle: TextStyle(
+                      color: AppColor.textBackgroundGrey,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              /// How did that activity feel? dropdown
-              DropdownSearch<String>(
-                selectedItem: selectedFeeling,
-                onChanged: (value) {
-                  setState(() {
-                    selectedFeeling = value.toString();
-                  });
-                },
-                items: (String? filter, _) => Feeling,
-                suffixProps: DropdownSuffixProps(
-                    dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
-                    )
-                ),
-                popupProps: const PopupProps.menu(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(maxHeight: 200),
-                  showSelectedItems: true,
-                  menuProps: MenuProps(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColor.bgTile,
-                    // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: SvgPicture.asset(AppImageSvg.time)/*Icon(Icons.emoji_emotions_outlined, color: Colors.black)*/,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
+                    errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.red)),
+                    focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.red)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  // controller: controller,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter description';
+                    }else {
+                      return null;
+                    }
+                  },
+                ),
+                SizedBox(height: 15,),
+
+                /// type of run
+                DropdownSearch<String>(
+                  selectedItem: selectedRunType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedRunType = value.toString();
+                      // selected category object find करो
+                      final selectedCategory = Constant.getCategory?.data
+                          ?.firstWhere((element) => element.categoryName == selectedRunType);
+
+                      // categoryId assign करो
+                      categoryId = selectedCategory?.categoryId ?? "";
+                    });
+                  },
+                  items: (String? filter, _) => Constant.getCategory?.data
+                      ?.map((e) => e.categoryName ?? "")
+                      .toList() ?? [],
+                  suffixProps: DropdownSuffixProps(
+                      dropdownButtonProps: DropdownButtonProps(
+                          iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                          iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
+                      )
+                  ),
+                  popupProps: const PopupProps.menu(
+                    fit: FlexFit.loose,
+                    constraints: BoxConstraints(maxHeight: 200),
+                    showSelectedItems: true,
+                    menuProps: MenuProps(
+                      backgroundColor: Colors.white,
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 15,),
-
-              /// private note
-              TextFormField(
-                controller: privateNoteController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                // keyboardType: TextInputType.number,
-                cursorColor: AppColor.textBackgroundGrey,
-                // inputFormatters: [
-                //   FilteringTextInputFormatter.digitsOnly
-                // ],
-                style: TextStyle(color: Colors.black),
-                maxLines: 3,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColor.bgTile,
-                  hintText: "Jot down private notes here. Only you can see these.",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  prefixStyle: TextStyle(
-                    color: Colors.black,
-                  ),
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Icon(Icons.lock, color: Colors.black),
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide:
-                      BorderSide(color: Colors.transparent)),
-                  errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.red)),
-                  focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.red)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                ),
-                // controller: controller,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }else {
-                    return null;
-                  }
-                },
-              ),
-              // SizedBox(height: 15,),
-              //
-              // /// new gear
-              // DropdownSearch<String>(
-              //   selectedItem: selectedGear,
-              //   onChanged: (value) {
-              //     setState(() {
-              //       selectedGear = value.toString();
-              //     });
-              //   },
-              //   items: (String? filter, _) => Gear,
-              //   suffixProps: DropdownSuffixProps(
-              //       dropdownButtonProps: DropdownButtonProps(
-              //           iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
-              //           iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
-              //       )
-              //   ),
-              //   popupProps: const PopupProps.menu(
-              //     fit: FlexFit.loose,
-              //     constraints: BoxConstraints(maxHeight: 200),
-              //     showSelectedItems: true,
-              //     menuProps: MenuProps(
-              //       backgroundColor: Colors.white,
-              //     ),
-              //   ),
-              //   decoratorProps: DropDownDecoratorProps(
-              //     baseStyle: TextStyle(color: Colors.white),
-              //     decoration: InputDecoration(
-              //       filled: true,
-              //       fillColor: Colors.white24,
-              //       // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
-              //       prefixIcon: Padding(
-              //         padding: const EdgeInsets.all(12.0),
-              //         child: SvgPicture.asset(AppImageSvg.run, )/*Icon(Icons.run, color: Colors.white)*/,
-              //       ),
-              //       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              //       border: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(14),
-              //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
-              //       ),
-              //       enabledBorder: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(14),
-              //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
-              //       ),
-              //       focusedBorder: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(14),
-              //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              SizedBox(height: 25,),
-
-              const Text("Visibility", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 15,),
-
-              Text('Who can see', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-              SizedBox(height: 5,),
-
-              /// who can see
-              DropdownSearch<String>(
-                selectedItem: selectedVisibility,
-                onChanged: (value) {
-                  setState(() {
-                    selectedVisibility = value.toString();
-                  });
-                },
-                items: (String? filter, _) => Visibility,
-                suffixProps: DropdownSuffixProps(
-                    dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
-                    )
-                ),
-                popupProps: const PopupProps.menu(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(maxHeight: 200),
-                  showSelectedItems: true,
-                  menuProps: MenuProps(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColor.bgTile,
-                    // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: SvgPicture.asset(AppImageSvg.earth, )/*Icon(Icons.wordpress, color: Colors.black)*/,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 15,),
-
-              Text('Hidden Details', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-              SizedBox(height: 5,),
-
-              /// hidden details
-              DropdownSearch<String>(
-                selectedItem: selectedHiddenDetails,
-                onChanged: (value) {
-                  setState(() {
-                    selectedHiddenDetails = value.toString();
-                  });
-                },
-                items: (String? filter, _) => HiddenDetails,
-                suffixProps: DropdownSuffixProps(
-                    dropdownButtonProps: DropdownButtonProps(
-                        iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
-                        iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
-                    )
-                ),
-                popupProps: const PopupProps.menu(
-                  fit: FlexFit.loose,
-                  constraints: BoxConstraints(maxHeight: 200),
-                  showSelectedItems: true,
-                  menuProps: MenuProps(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                decoratorProps: DropDownDecoratorProps(
-                  baseStyle: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColor.bgTile,
-                    // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: /*SvgPicture.asset(AppImageSvg.run, )*/Icon(Icons.remove_red_eye_outlined, color: Colors.black),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 25,),
-
-              const Text("Mute Activity", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 25,),
-
-              /// don't publish
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Don't publish to Home or Club feeds", style: CustomTextStyles.regular(fontSize: 14),),
-                      Text("This activity will still be visible on your profile", style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      isPublish = !isPublish;
-                      setState(() {
-
-                      });
-                    },
-                    child: Container(
-                      height: 24,
-                      width: 24,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(5),
-                        color: isPublish ? AppColor.bgRed : Colors.white
+                  decoratorProps: DropDownDecoratorProps(
+                    baseStyle: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.bgTile,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Icon(Icons.directions_run, color: Colors.black),
                       ),
-                      child: Center(
-                        child: Icon(Icons.check, color: isPublish ? Colors.white : Colors.white,),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
                       ),
                     ),
-                  )
-                ],
-              ),
-              SizedBox(height: 10,),
-
-              /// discard unsaved changes
-              Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColor.bgRed,
                   ),
-                  borderRadius: BorderRadius.circular(12)
                 ),
-                child: Center(
-                  child: Text('Discard Activity', style: CustomTextStyles.bold(fontSize: 14, textColor: AppColor.bgRed),),
+                const SizedBox(height: 20),
+
+                /// Map & Photo Row
+                Container(
+                  height: 128,
+                  width: double.infinity,
+                  child: Image.asset(AppImageOthers.sampleMap, fit: BoxFit.fill, width: double.maxFinite,),
                 ),
-              )
+                const SizedBox(height: 16),
+
+                Image.asset(AppImageOthers.addPhoto),
+                // /// Change Map Type Button
+                // SizedBox(
+                //   height: 50,
+                //   width: double.infinity,
+                //   child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.transparent,
+                //       side: const BorderSide(color: AppColor.bgRed),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //     ),
+                //     onPressed: () {},
+                //     child: const Text("Change Map Type", style: TextStyle(color: AppColor.bgRed)),
+                //   ),
+                // ),
+                const SizedBox(height: 24),
+
+                /// Details Section
+                const Text("Details", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+
+                /// Type of Run dropdown
+                DropdownSearch<String>(
+                  selectedItem: selectedTypeOfRun,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedTypeOfRun = value.toString();
+                    });
+                  },
+                  items: (String? filter, _) => TypeOfRun,
+                  suffixProps: DropdownSuffixProps(
+                      dropdownButtonProps: DropdownButtonProps(
+                          iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                          iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
+                      )
+                  ),
+                  popupProps: const PopupProps.menu(
+                    fit: FlexFit.loose,
+                    constraints: BoxConstraints(maxHeight: 200),
+                    showSelectedItems: true,
+                    menuProps: MenuProps(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  decoratorProps: DropDownDecoratorProps(
+                    baseStyle: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.bgTile,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Icon(Icons.waves, color: Colors.black),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                /// How did that activity feel? dropdown
+                DropdownSearch<String>(
+                  selectedItem: selectedFeeling,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFeeling = value.toString();
+                    });
+                  },
+                  items: (String? filter, _) => Feeling,
+                  suffixProps: DropdownSuffixProps(
+                      dropdownButtonProps: DropdownButtonProps(
+                          iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                          iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
+                      )
+                  ),
+                  popupProps: const PopupProps.menu(
+                    fit: FlexFit.loose,
+                    constraints: BoxConstraints(maxHeight: 200),
+                    showSelectedItems: true,
+                    menuProps: MenuProps(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  decoratorProps: DropDownDecoratorProps(
+                    baseStyle: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.bgTile,
+                      // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SvgPicture.asset(AppImageSvg.time)/*Icon(Icons.emoji_emotions_outlined, color: Colors.black)*/,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15,),
+
+                /// private note
+                TextFormField(
+                  controller: privateNoteController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // keyboardType: TextInputType.number,
+                  cursorColor: AppColor.textBackgroundGrey,
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.digitsOnly
+                  // ],
+                  style: TextStyle(color: Colors.black),
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColor.bgTile,
+                    hintText: "Jot down private notes here. Only you can see these.",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    prefixStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 2.0, bottom: 45.0),
+                      child: Icon(Icons.lock, color: Colors.black),
+                    ),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+                        BorderSide(color: Colors.transparent)),
+                    errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.red)),
+                    focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.red)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  // controller: controller,
+                  // validator: (value) {
+                  //   if (value == null || value.isEmpty) {
+                  //     return 'Please enter your phone number';
+                  //   }else {
+                  //     return null;
+                  //   }
+                  // },
+                ),
+                // SizedBox(height: 15,),
+                //
+                // /// new gear
+                // DropdownSearch<String>(
+                //   selectedItem: selectedGear,
+                //   onChanged: (value) {
+                //     setState(() {
+                //       selectedGear = value.toString();
+                //     });
+                //   },
+                //   items: (String? filter, _) => Gear,
+                //   suffixProps: DropdownSuffixProps(
+                //       dropdownButtonProps: DropdownButtonProps(
+                //           iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,),
+                //           iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white,)
+                //       )
+                //   ),
+                //   popupProps: const PopupProps.menu(
+                //     fit: FlexFit.loose,
+                //     constraints: BoxConstraints(maxHeight: 200),
+                //     showSelectedItems: true,
+                //     menuProps: MenuProps(
+                //       backgroundColor: Colors.white,
+                //     ),
+                //   ),
+                //   decoratorProps: DropDownDecoratorProps(
+                //     baseStyle: TextStyle(color: Colors.white),
+                //     decoration: InputDecoration(
+                //       filled: true,
+                //       fillColor: Colors.white24,
+                //       // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+                //       prefixIcon: Padding(
+                //         padding: const EdgeInsets.all(12.0),
+                //         child: SvgPicture.asset(AppImageSvg.run, )/*Icon(Icons.run, color: Colors.white)*/,
+                //       ),
+                //       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                //       ),
+                //       enabledBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                //       ),
+                //       focusedBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide: const BorderSide(color: AppColor.textBackgroundGrey),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: 25,),
+
+                const Text("Visibility", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+                SizedBox(height: 15,),
+
+                Text('Who can see', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+                SizedBox(height: 5,),
+
+                /// who can see
+                DropdownSearch<String>(
+                  selectedItem: selectedVisibility,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedVisibility = value.toString();
+                    });
+                  },
+                  items: (String? filter, _) => Visibility,
+                  suffixProps: DropdownSuffixProps(
+                      dropdownButtonProps: DropdownButtonProps(
+                          iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                          iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
+                      )
+                  ),
+                  popupProps: const PopupProps.menu(
+                    fit: FlexFit.loose,
+                    constraints: BoxConstraints(maxHeight: 200),
+                    showSelectedItems: true,
+                    menuProps: MenuProps(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  decoratorProps: DropDownDecoratorProps(
+                    baseStyle: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.bgTile,
+                      // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SvgPicture.asset(AppImageSvg.earth, )/*Icon(Icons.wordpress, color: Colors.black)*/,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15,),
+
+                Text('Hidden Details', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+                SizedBox(height: 5,),
+
+                /// hidden details
+                DropdownSearch<String>(
+                  selectedItem: selectedHiddenDetails,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedHiddenDetails = value.toString();
+                    });
+                  },
+                  items: (String? filter, _) => HiddenDetails,
+                  suffixProps: DropdownSuffixProps(
+                      dropdownButtonProps: DropdownButtonProps(
+                          iconOpened: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,),
+                          iconClosed: Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black,)
+                      )
+                  ),
+                  popupProps: const PopupProps.menu(
+                    fit: FlexFit.loose,
+                    constraints: BoxConstraints(maxHeight: 200),
+                    showSelectedItems: true,
+                    menuProps: MenuProps(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  decoratorProps: DropDownDecoratorProps(
+                    baseStyle: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.bgTile,
+                      // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: /*SvgPicture.asset(AppImageSvg.run, )*/Icon(Icons.remove_red_eye_outlined, color: Colors.black),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25,),
+
+                const Text("Mute Activity", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+                SizedBox(height: 25,),
+
+                /// don't publish
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Don't publish to Home or Club feeds", style: CustomTextStyles.regular(fontSize: 14),),
+                        Text("This activity will still be visible on your profile", style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        isPublish = !isPublish;
+                        setState(() {
+
+                        });
+                      },
+                      child: Container(
+                        height: 24,
+                        width: 24,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(5),
+                          color: isPublish ? AppColor.bgRed : Colors.white
+                        ),
+                        child: Center(
+                          child: Icon(Icons.check, color: isPublish ? Colors.white : Colors.white,),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 10,),
+
+                /// discard unsaved changes
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColor.bgRed,
+                    ),
+                    borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: Center(
+                    child: Text('Discard Activity', style: CustomTextStyles.bold(fontSize: 14, textColor: AppColor.bgRed),),
+                  ),
+                )
 
 
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -894,9 +899,7 @@ class _SaveActivityState extends State<SaveActivity> {
               // Loader show करो
             } else if (state is SaveActivitySuccess) {
               Constant.closeLoadingDialog(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Activity Saved Successfully")),
-              );
+              Constant.showCongratulationDialog(context);
             } else if (state is SaveActivityError) {
               Constant.closeLoadingDialog(context);
               ScaffoldMessenger.of(context).showSnackBar(
@@ -908,24 +911,26 @@ class _SaveActivityState extends State<SaveActivity> {
             return CustomButton(
               text: 'Save Activity',
               callback: () {
+                if(_formKey.currentState!.validate()){
+                  context.read<SaveActivityBloc>().add(
+                    SaveActivityPressed(
+                      trackingData: widget.trackingData,
+                      categoryId: categoryId,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      runType: selectedRunType,
+                      typeOfRun: selectedTypeOfRun,
+                      feeling: selectedFeeling,
+                      privateNote: privateNoteController.text,
+                      gear: selectedGear,
+                      visibility: selectedVisibility,
+                      hiddenDetails: selectedHiddenDetails,
+                      isPublish: isPublish, context: context,
 
-                context.read<SaveActivityBloc>().add(
-                  SaveActivityPressed(
-                    trackingData: widget.trackingData,
-                    categoryId: categoryId,
-                    title: titleController.text,
-                    description: descriptionController.text,
-                    runType: selectedRunType,
-                    typeOfRun: selectedTypeOfRun,
-                    feeling: selectedFeeling,
-                    privateNote: privateNoteController.text,
-                    gear: selectedGear,
-                    visibility: selectedVisibility,
-                    hiddenDetails: selectedHiddenDetails,
-                    isPublish: isPublish, context: context,
+                    ),
+                  );
+                }
 
-                  ),
-                );
                 // uploadActivity();
                 // saveActivity();
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => Endurance()));

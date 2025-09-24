@@ -22,10 +22,13 @@ import 'package:screenshot/screenshot.dart';
 import '../../../data/localDBModel/WorkoutModel.dart';
 import '../../defaultScreen/defaultScreen.dart';
 import '../mapSetting.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 
 class TrackingScreen extends StatefulWidget {
-  const TrackingScreen({super.key});
+  String categoryId;
+  TrackingScreen(this.categoryId, {super.key});
 
   @override
   State<TrackingScreen> createState() => _TrackingScreenState();
@@ -43,24 +46,29 @@ class _TrackingScreenState extends State<TrackingScreen> {
   Timer? _timer;
   Duration elapsed = Duration.zero;
   double avgPace = 0.0;
-  double elevationGain = 0.0;
-  double maxElevation = 0.0;
+  int elevationGain = 0;
+  int maxElevation = 0;
   double lastElevation = 0.0;
   int steps = 0;
   Stream<StepCount>? stepStream;
   String? runType;
+  String address = '';
+  String city = '';
+  String state = '';
+  String country = '';
 
 
   @override
   void initState() {
     super.initState();
     // अगर Constant.getCategory में "Run" category है तो उसे default assign करो
-    final defaultCategory = Constant.getCategory?.data?.firstWhere(
-          (e) => e.categoryName?.toLowerCase() == "run",
-      // orElse: () => Constant.getCategory?.data.first, // fallback पहला element
-    );
-
-    runType = defaultCategory?.categoryId;
+    // final defaultCategory = Constant.getCategory?.data?.firstWhere(
+    //       (e) => e.categoryName?.toLowerCase() == "run",
+    //   // orElse: () => Constant.getCategory?.data.first, // fallback पहला element
+    // );
+    //
+    // runType = defaultCategory?.categoryId;
+    runType = widget.categoryId;
     print('runtype::: $runType');
 
     initTracking();
@@ -159,7 +167,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
         // ✅ Smoothed Elevation Calculation (Strava Style)
         if (lastElevation != 0.0) {
-          double diff = position.altitude - lastElevation;
+          int diff = position.altitude.round() - lastElevation.round();
 
           // Ignore small fluctuations (<3m)
           if (diff > 3) {
@@ -169,8 +177,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
         // ✅ Update lastElevation & maxElevation
         lastElevation = position.altitude;
-        if (position.altitude > maxElevation) {
-          maxElevation = position.altitude;
+        if (position.altitude.round() > maxElevation) {
+          maxElevation = position.altitude.round();
         }
         
         // // Calculate Elevation Gain
@@ -285,28 +293,67 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
 
-
+/*
   Map<String, dynamic> calculateResults() {
     List<Map<String, dynamic>> splits = calculateSplits();
 
-    // Get fastest split pace
-    String fastestSplitPace = "0:00";
+    // // Get fastest split pace
+    // String fastestSplitPace = "0:00";
+    // if (splits.isNotEmpty) {
+    //   double fastest = double.infinity;
+    //   for (var split in splits) {
+    //     final pace = split['pace'];
+    //     final parts = pace.split(':');
+    //     final seconds = int.parse(parts[0]) * 60 + int.parse(parts[1]);
+    //     if (seconds < fastest) fastest = double.parse(seconds.toString());
+    //   }
+    //   fastestSplitPace = formatPace(fastest);
+    // }
+
+    // Get fastest split pace as double
+    double fastestSplit = double.infinity;
     if (splits.isNotEmpty) {
-      double fastest = double.infinity;
       for (var split in splits) {
         final pace = split['pace'];
         final parts = pace.split(':');
         final seconds = int.parse(parts[0]) * 60 + int.parse(parts[1]);
-        if (seconds < fastest) fastest = double.parse(seconds.toString());
+        if (seconds < fastestSplit) fastestSplit = seconds.toDouble();
       }
-      fastestSplitPace = formatPace(fastest);
+    } else {
+      fastestSplit = 0.0;
     }
 
     return {
       "totalDistance": (totalDistance / 1000).toStringAsFixed(2),
       "elapsedTime": elapsed.inSeconds,
       "avgPace": formatPace(avgPace),
-      "fastestSplit": fastestSplitPace,
+      "fastestSplit": fastestSplit*//*fastestSplitPace*//*,
+      "segments": splits.length,
+      "splits": splits,
+    };
+  }*/
+
+  Map<String, dynamic> calculateResults() {
+    List<Map<String, dynamic>> splits = calculateSplits();
+
+    // Get fastest split pace as double (seconds/km)
+    double fastestSplit = double.infinity;
+    if (splits.isNotEmpty) {
+      for (var split in splits) {
+        final pace = split['pace'];
+        final parts = pace.split(':');
+        final seconds = int.parse(parts[0]) * 60 + int.parse(parts[1]);
+        if (seconds < fastestSplit) fastestSplit = seconds.toDouble();
+      }
+    } else {
+      fastestSplit = 0.0;
+    }
+
+    return {
+      "totalDistance": (totalDistance / 1000).toStringAsFixed(2), // km में string (UI के लिए)
+      "elapsedTime": elapsed.inSeconds,                          // total seconds
+      "avgPace": avgPace,                                        // ✅ raw double (API के लिए)
+      "fastestSplit": fastestSplit,                              // ✅ raw double (API के लिए)
       "segments": splits.length,
       "splits": splits,
     };
@@ -368,13 +415,26 @@ class _TrackingScreenState extends State<TrackingScreen> {
     }
   }
 
-
   String formatPace(double paceInSec) {
-    if (paceInSec.isInfinite || paceInSec.isNaN) return "0:00";
+    if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
     int min = (paceInSec / 60).floor();
     int sec = (paceInSec % 60).floor();
     return "$min:${sec.toString().padLeft(2, '0')}";
   }
+
+  // String formatPace(double paceInSec) {
+  //   if (paceInSec.isNaN || paceInSec.isInfinite || paceInSec == 0) {
+  //     return "0.00"; // Minimum valid value to avoid API rejection
+  //   }
+  //   return paceInSec.toStringAsFixed(2); // API wants number
+  // }
+
+  // String formatPace(double paceInSec) {
+  //   if (paceInSec.isInfinite || paceInSec.isNaN) return "0:00";
+  //   int min = (paceInSec / 60).floor();
+  //   int sec = (paceInSec % 60).floor();
+  //   return "$min:${sec.toString().padLeft(2, '0')}";
+  // }
 
 
   double _calculateDistance(LatLng start, LatLng end) {
@@ -750,7 +810,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
               onTap: () => _showRunTypeBottomSheet(context),
               child: Image.asset(AppImageOthers.runType, height: 50,)),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               // showCongratulationDialog(context);
 
               start = true;
@@ -758,6 +818,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
               pause = false;
 
               startTime = DateTime.now();
+              // ✅ Get current location & set address/city/state/country
+              await getCurrentAddress();
               startLocationStream();
               startTimer(); // ⬅️ Start timer
               setState(() {
@@ -784,6 +846,44 @@ class _TrackingScreenState extends State<TrackingScreen> {
         ],
       ),
     );
+  }
+  Future<void> getCurrentAddress() async {
+    try {
+      // Step 1: Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception("Location permissions are denied");
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception("Location permissions are permanently denied");
+      }
+
+      // Step 2: Get current position
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      print("📍 Lat: ${position.latitude}, Lng: ${position.longitude}");
+
+      // Step 3: Reverse geocode
+      List<Placemark> placemarks =
+      await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+
+        address = "${place.street}, ${place.subLocality}";
+        city = place.locality ?? "";
+        state = place.administrativeArea ?? "";
+        country = place.country ?? "";
+
+        print("✅ Address: $address, City: $city, State: $state, Country: $country");
+      }
+    } catch (e) {
+      print("❌ Error getting location: $e");
+    }
   }
 
   Widget pauseWidget(){
@@ -921,6 +1021,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
     final image = await screenshotController.capture();
     if (image != null) {
+      final base64Image = base64Encode(image);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -942,7 +1043,11 @@ class _TrackingScreenState extends State<TrackingScreen> {
                     "lat": p.latitude,
                     "lng": p.longitude
                   }).toList(),
-                  "mapImage": image,
+                  "photo": base64Image,
+                  "city": city,
+                  "state": state,
+                  "country": country,
+                  "address": address
                 },
               ),
         ),

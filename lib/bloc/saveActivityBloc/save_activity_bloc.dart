@@ -47,7 +47,7 @@ class SaveActivityBloc extends Bloc<SaveActivityEvent, SaveActivityState> {
         "avg_elapsed_pace": event.trackingData["avgPace"],
         "elapsed_time": event.trackingData["time"],
         "max_speed": event.trackingData["maxSpeed"] ?? 0,
-        "mapImage": event.trackingData["mapImage"],
+        "photo": event.trackingData["photo"],
       }, event.context);
 
       final result = SaveActivityModel.fromJson(response);

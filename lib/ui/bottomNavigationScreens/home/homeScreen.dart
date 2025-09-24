@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   void _onRefresh() {
     page = 1;
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: page.toString(), categoryId: null,));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: null,));
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
     context.read<ActivityBloc>().add(GetSuggestedChallengesEvent( context: context));
@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     page++;
     context.read<ActivityBloc>().add(GetFeedEvent(
       context: context,
-      perPage: '2',
+      perPage: '10',
       page: page.toString(),
       categoryId: null,
       isPagination: true
@@ -567,7 +567,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               children: [
                                                 GestureDetector(
                                                     onTap: () {
-                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                                      context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
                                                     },
                                                     child: SizedBox(
                                                         height: 30,

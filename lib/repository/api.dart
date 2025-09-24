@@ -115,42 +115,110 @@ class Api {
     }
   }
 
-  static Future saveActivityApi(Map<String, dynamic> body, BuildContext context,) async {
+  // static Future saveActivityApi(Map<String, dynamic> body, BuildContext context,) async {
+  //   try {
+  //     var request = http.MultipartRequest(
+  //       'POST',
+  //       Uri.parse(BaseUrl + '/api/v1/activity/save'), // तुम्हारा endpoint
+  //     );
+  //
+  //     // headers
+  //     request.headers['authorization'] = 'Bearer ${Constant.access_token}';
+  //     request.headers['Content-Type'] = 'multipart/form-data';
+  //
+  //     // अगर mapImage है तो MultipartFile में add करो
+  //     if (body['mapImage'] != null && body['mapImage'] is Uint8List) {
+  //       request.files.add(await http.MultipartFile.fromBytes(
+  //         'mapImage',
+  //         body['mapImage'],
+  //         filename: "tracking_map.png",
+  //         contentType: MediaType('image', 'png'),
+  //       ));
+  //     }
+  //
+  //
+  //     // if (body['mapImage'] != null && body['mapImage'] ) {
+  //     //   request.files.add(http.MultipartFile.fromBytes(
+  //     //     'mapImage',
+  //     //     body['mapImage'],
+  //     //     filename: "tracking_map.png",
+  //     //     contentType: MediaType('image', 'png'),
+  //     //   ));
+  //     // }
+  //
+  //     // बाकी normal fields add करो
+  //     body.forEach((key, value) {
+  //       if (key != 'mapImage') {
+  //         if (value is List || value is Map) {
+  //           // JSON stringify for objects/arrays
+  //           request.fields[key] = jsonEncode(value);
+  //         } else {
+  //           request.fields[key] = value.toString();
+  //         }
+  //       }
+  //     });
+  //
+  //     var streamedResponse = await request.send();
+  //     var response = await http.Response.fromStream(streamedResponse);
+  //
+  //     if (response.statusCode == 200) {
+  //       final jsonString = jsonDecode(response.body);
+  //       print('saveActivityApi::::$jsonString');
+  //       return jsonString;
+  //     } else if (response.statusCode == 401) {
+  //       // Token expired, try refreshing
+  //       bool success = await _refreshToken(context);
+  //       if (success) {
+  //         return saveActivityApi(body, context); // Retry
+  //       } else {
+  //         return null;
+  //       }
+  //     } else {
+  //       print("Error saveActivityApi: ${response.statusCode}, Response: ${response.body}");
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print('Error saveActivityApi: $e');
+  //     return null;
+  //   }
+  // }
+  static Future saveActivityApi(
+      Map<String, dynamic> body, BuildContext context) async {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse(BaseUrl + '/api/v1/activity/save'), // तुम्हारा endpoint
+        Uri.parse(BaseUrl + '/api/v1/activity/save'),
       );
 
       // headers
       request.headers['authorization'] = 'Bearer ${Constant.access_token}';
-      request.headers['Content-Type'] = 'multipart/form-data';
+      // Content-Type automatically set by MultipartRequest
 
-      // अगर mapImage है तो MultipartFile में add करो
-      if (body['mapImage'] != null && body['mapImage'] is Uint8List) {
+      // ✅ Handle mapImage / Base64 / Uint8List
+      if (body['photo'] != null) {
+        Uint8List imageBytes;
+
+        if (body['photo'] is String) {
+          // If it's Base64 string
+          imageBytes = base64Decode(body['photo']);
+        } else if (body['photo'] is Uint8List) {
+          imageBytes = body['photo'];
+        } else {
+          imageBytes = Uint8List(0);
+        }
+
         request.files.add(await http.MultipartFile.fromBytes(
-          'mapImage',
-          body['mapImage'],
+          'photo', // API expects "photo"
+          imageBytes,
           filename: "tracking_map.png",
           contentType: MediaType('image', 'png'),
         ));
       }
 
-
-      // if (body['mapImage'] != null && body['mapImage'] ) {
-      //   request.files.add(http.MultipartFile.fromBytes(
-      //     'mapImage',
-      //     body['mapImage'],
-      //     filename: "tracking_map.png",
-      //     contentType: MediaType('image', 'png'),
-      //   ));
-      // }
-
-      // बाकी normal fields add करो
+      // Add other fields
       body.forEach((key, value) {
-        if (key != 'mapImage') {
+        if (key != 'photo') {
           if (value is List || value is Map) {
-            // JSON stringify for objects/arrays
             request.fields[key] = jsonEncode(value);
           } else {
             request.fields[key] = value.toString();
@@ -158,6 +226,7 @@ class Api {
         }
       });
 
+      // Send request
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
@@ -174,7 +243,8 @@ class Api {
           return null;
         }
       } else {
-        print("Error saveActivityApi: ${response.statusCode}, Response: ${response.body}");
+        print(
+            "Error saveActivityApi: ${response.statusCode}, Response: ${response.body}");
         return null;
       }
     } catch (e) {
@@ -182,7 +252,6 @@ class Api {
       return null;
     }
   }
-
 
   static Future updateProfileApi(String endPoint, Map<String, dynamic> body, Map<String, String> header, BuildContext context) async {
     try {
