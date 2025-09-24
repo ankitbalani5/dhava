@@ -31,7 +31,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       'Content-Type': 'application/json'
     };
     if(feedModel != null){
-      final response = await Api.postApi(ApiEndPoint.getFeed, body, headers, event.context);
+      final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
       final result = FeedModel.fromJson(response);
       if(event.isPagination == true){
         feedModel!.data!.data!.addAll(result.data!.data!);
@@ -46,7 +46,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       emit(FeedLoading());
       try{
 
-        final response = await Api.postApi(ApiEndPoint.getFeed, body, headers, event.context);
+        final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
         final result = FeedModel.fromJson(response);
 
         if(result.statusCode == 200){
@@ -78,7 +78,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       'Content-Type': 'application/json'
     };
     if(myFeedModel != null){
-      final response = await Api.postApi(ApiEndPoint.getMyFeed, body, headers, event.context);
+      final response = await Api.getApiWithQuery(ApiEndPoint.getMyFeed, body, headers, event.context);
       final result = FeedModel.fromJson(response);
       if(event.isPagination == true){
         myFeedModel!.data!.data!.addAll(result.data!.data!);
@@ -93,7 +93,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       emit(MyFeedLoading());
       try{
 
-        final response = await Api.postApi(ApiEndPoint.getFeed, body, headers, event.context);
+        final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
         final result = FeedModel.fromJson(response);
 
         if(result.statusCode == 200){

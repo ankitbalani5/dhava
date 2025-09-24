@@ -58,7 +58,7 @@ class SearchCubit extends Cubit<SearchState> {
         };
 
         final response =
-        await Api.postApi(ApiEndPoint.userFind, body, headers, context);
+        await Api.getApi('${ApiEndPoint.userFind}?per_page=${perPage}&page=${page}&search_keyword=${query}', headers, context);
         final result = FindUserModel.fromJson(response);
 
         if (!_isSearchActive) return; // ✅ अगर बीच में बंद कर दिया तो response ignore

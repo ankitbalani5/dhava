@@ -96,8 +96,8 @@ class InnerData {
   String? pace;
   int? movingTime;
   String? location;
-  int? elavationGain;
-  int? maxElavation;
+  double? elavationGain;
+  double? maxElavation;
   int? steps;
   double? fastestSplit;
   List<Path>? path;

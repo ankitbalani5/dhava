@@ -88,6 +88,9 @@ class InnerData {
   String? latitude;
   String? longitude;
   String? location;
+  String? profilePhoto;
+  bool? isFollowed;
+  bool? isFollowRequested;
 
   InnerData(
       {this.userId,
@@ -95,7 +98,10 @@ class InnerData {
         this.lastName,
         this.latitude,
         this.longitude,
-        this.location});
+        this.location,
+        this.profilePhoto,
+        this.isFollowed,
+        this.isFollowRequested});
 
   InnerData.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -104,6 +110,9 @@ class InnerData {
     latitude = json['latitude'];
     longitude = json['longitude'];
     location = json['location'];
+    profilePhoto = json['profile_photo'];
+    isFollowed = json['is_followed'];
+    isFollowRequested = json['is_follow_requested'];
   }
 
   Map<String, dynamic> toJson() {
@@ -114,6 +123,9 @@ class InnerData {
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
     data['location'] = this.location;
+    data['profile_photo'] = this.profilePhoto;
+    data['is_followed'] = this.isFollowed;
+    data['is_follow_requested'] = this.isFollowRequested;
     return data;
   }
 }
