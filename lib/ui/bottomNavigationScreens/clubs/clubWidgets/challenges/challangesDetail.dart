@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/models/postSuggestedModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -5,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChallangesDetailScreen extends StatefulWidget {
-  const ChallangesDetailScreen({super.key});
+  final isAlreadyJoined;
+  const ChallangesDetailScreen( {super.key,required this.isAlreadyJoined});
 
   @override
   State<ChallangesDetailScreen> createState() => _ChallangesActiveDetailState();
@@ -125,7 +127,7 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
               ),
                SizedBox(height: 20),
 
-              Center(
+              widget.isAlreadyJoined == false ?  Center(
                 child: SizedBox(
                   width: 250,
                   child: ElevatedButton(
@@ -142,7 +144,7 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                             fontSize: 14, textColor: Colors.white)),
                   ),
                 ),
-              ),
+              ):SizedBox(),
           
               const SizedBox(height: 10),
           

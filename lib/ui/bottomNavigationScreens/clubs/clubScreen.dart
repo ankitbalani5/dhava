@@ -109,60 +109,63 @@ class ClubScreenState extends State<ClubScreen> {
       ),
       body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  tabStatus = activeKey;
-                  setState(() {
+          Padding(
+            padding:  EdgeInsets.symmetric(vertical: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    tabStatus = activeKey;
+                    setState(() {
 
-                  });
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: tabStatus == activeKey ? AppColor.bgRed : AppColor.bgTile
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: tabStatus == activeKey ? AppColor.bgRed : AppColor.bgTile
+                    ),
+                    child: Center(child: Text(activeKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == activeKey ? Colors.white : Colors.black),)),
                   ),
-                  child: Center(child: Text(activeKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == activeKey ? Colors.white : Colors.black),)),
                 ),
-              ),
-              SizedBox(width: 10,),
-              GestureDetector(
-                onTap: () {
-                  tabStatus = challengesKey;
-                  setState(() {
+                SizedBox(width: 10,),
+                GestureDetector(
+                  onTap: () {
+                    tabStatus = challengesKey;
+                    setState(() {
 
-                  });
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: tabStatus == challengesKey ? AppColor.bgRed : AppColor.bgTile
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: tabStatus == challengesKey ? AppColor.bgRed : AppColor.bgTile
+                    ),
+                    child: Center(child: Text(challengesKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == challengesKey ? Colors.white : Colors.black),)),
                   ),
-                  child: Center(child: Text(challengesKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == challengesKey ? Colors.white : Colors.black),)),
                 ),
-              ),
-              SizedBox(width: 10,),
-              GestureDetector(
-                onTap: () {
-                  tabStatus = clubsKey;
-                  setState(() {
+                SizedBox(width: 10,),
+                GestureDetector(
+                  onTap: () {
+                    tabStatus = clubsKey;
+                    setState(() {
 
-                  });
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: tabStatus == clubsKey ? AppColor.bgRed : AppColor.bgTile
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: tabStatus == clubsKey ? AppColor.bgRed : AppColor.bgTile
+                    ),
+                    child: Center(child: Text(clubsKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == clubsKey ? Colors.white : Colors.black),)),
                   ),
-                  child: Center(child: Text(clubsKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == clubsKey ? Colors.white : Colors.black),)),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           tabStatus == activeKey ?
           Expanded(child: ActiveWidget()) : SizedBox(),
@@ -177,8 +180,7 @@ class ClubScreenState extends State<ClubScreen> {
                 saveJoinClub(value);
               },
             ),
-          )
-              : const SizedBox(),
+          ) : const SizedBox(),
           // tabStatus == clubsKey ?
           // Expanded(child: clubsWidget()) : SizedBox()
         ],
