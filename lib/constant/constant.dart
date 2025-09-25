@@ -13,6 +13,7 @@ import '../ui/bottomNavBar.dart';
 import '../widgets/customButton.dart';
 import '../widgets/loadingAnimation.dart';
 import 'errorDialog.dart';
+import 'package:intl/intl.dart';
 
 class PrefKey {
   static String isLogin = 'isLogin';
@@ -216,9 +217,9 @@ class Constant {
   }
 
 
-  static void showCongratulationDialog(BuildContext context) {
+  static void showCongratulationDialog(BuildContext parentContext) {
     showDialog(
-      context: context,
+      context: parentContext,
       barrierDismissible: false,
       builder: (_) => Dialog(
         shape: RoundedRectangleBorder(
@@ -259,34 +260,9 @@ class Constant {
               CustomButton(
                 text: 'Continue',
                 callback: () {
-                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar()), (route) => false,);
-
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
+                    Navigator.push(parentContext, MaterialPageRoute(builder: (context) => BottomNavBar()));
                 },
               )
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.orangeAccent, // Button color
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(30),
-              //       ),
-              //       padding: const EdgeInsets.symmetric(vertical: 14),
-              //     ),
-              //     onPressed: () {
-              //       Navigator.of(context).pop(); // Close the dialog
-              //     },
-              //     child: const Text(
-              //       'Continue',
-              //       style: TextStyle(
-              //         color: Colors.white,
-              //         fontWeight: FontWeight.bold,
-              //         fontSize: 16,
-              //       ),
-              //     ),
-              //   ),
-              // )
             ],
           ),
         ),
@@ -294,7 +270,14 @@ class Constant {
     );
   }
 
-
+  static String formatDob(String dobString) {
+    try {
+      DateTime dob = DateTime.parse(dobString); // 2000-04-04T00:00:00
+      return DateFormat('dd/MM/yyyy').format(dob); // 04/04/2000
+    } catch (e) {
+      return dobString; // fallback
+    }
+  }
 
 
   static Widget expandTimeWidget(){

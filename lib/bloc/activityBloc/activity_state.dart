@@ -24,15 +24,6 @@ final class LikeFeedError extends ActivityState {
   LikeFeedError(this.error);
 }
 
-final class MyFeedLoading extends ActivityState {}
-final class MyFeedSuccess extends ActivityState {
-  final feed.FeedModel feedModel;
-  MyFeedSuccess(this.feedModel);
-}
-final class MyFeedError extends ActivityState {
-  final String error;
-  MyFeedError(this.error);
-}
 
 final class GetSuggestedChallengesLoading extends ActivityState {
   GetSuggestedChallengesLoading() : super();
