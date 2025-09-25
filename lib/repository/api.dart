@@ -498,5 +498,6 @@ class ApiEndPoint {
   static const String postAllChallenges = '/api/v1/challenges/all';
   static const String getRecommendedChallenges = '/api/v1/challenges/recommended';
   static const String joinChallenges = '/api/v1/challenge/join';
+  static const String otherProfile = '/api/v1/user/profile';
 
 }
