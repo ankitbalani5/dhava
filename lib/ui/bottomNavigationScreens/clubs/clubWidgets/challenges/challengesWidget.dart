@@ -306,6 +306,7 @@ class _challengesWidgetState extends State<challengesWidget> {
               setState(() {
                 challenge.isJoined = true;
               });
+
             }
 
             if (state is PostJoinchallengesError && state.challengeId == challengesId.toString()) {
