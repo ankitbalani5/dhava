@@ -14,6 +14,7 @@ final class FeedError extends ActivityState {
   FeedError(this.error);
 }
 
+
 final class LikeFeedLoading extends ActivityState {}
 final class LikeFeedSuccess extends ActivityState {
   final ActivityLikeModel activityLikeModel;
