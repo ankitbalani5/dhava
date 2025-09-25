@@ -469,8 +469,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                               border: Border.all(color: Colors.red, width: 1), // 🔴 red border
                                             ),
                                             child: ClipOval(
-                                              child: CachedNetworkImage(imageUrl: feed.profilePic.toString()
-                                                /*AppImageOthers.userImg*/, height: 30, width: 30, fit: BoxFit.fill,
+                                              child: CachedNetworkImage(
+                                                imageUrl: feed.profilePic.toString()
+                                                /*AppImageOthers.userImg*/,
+                                                height: 30, width: 30, fit: BoxFit.fill,
                                                 errorWidget: (context,
                                                     url, error) =>
                                                     Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
@@ -573,7 +575,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     child: SizedBox(
                                                         height: 30,
                                                         width: 30,
-                                                        child: Icon(Icons.thumb_up, color: Colors.black,))),
+                                                        child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
 
                                                 SizedBox(width: 10,),
                                                 GestureDetector(
@@ -664,11 +666,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return const SizedBox();
           }
 
-          // max 4 users ही दिखाने हैं
           final visibleUsers = likedUsers.take(4).toList();
 
           return SizedBox(
-            width: feed.totalLike == 1 ? 32 : feed.totalLike == 2 ? 58 : feed.totalLike == 3 ? 84 : 110, // थोड़ा चौड़ा container ताकि overlap handle हो सके
+            width: feed.totalLike == 1 ? 32 : feed.totalLike == 2 ? 58 : feed.totalLike == 3 ? 84 : 110,
             height: 40,
             child: Stack(
               children: List.generate(
@@ -680,7 +681,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                        border: Border.all(color: Colors.red, width: 1),
                       ),
                       child: ClipOval(
                         child: CachedNetworkImage(imageUrl:

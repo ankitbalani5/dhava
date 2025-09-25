@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:coherent_endurance/models/MyFeedModel.dart';
 import 'package:coherent_endurance/models/activityLikeModel.dart';
 import 'package:coherent_endurance/models/feedModel.dart' as feed;
 import 'package:coherent_endurance/models/getAllChallengesResponse.dart';
@@ -16,10 +17,8 @@ part 'activity_state.dart';
 
 class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
   feed.FeedModel? feedModel;
-  feed.FeedModel? myFeedModel;
   ActivityBloc() : super(ActivityInitial()) {
     on<GetFeedEvent>(_getFeed);
-    on<GetMyFeedEvent>(_getMyFeed);
     on<ActivityLikeEvent>(_likeFeed);
   }
 
@@ -70,55 +69,9 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
 
   }
 
-  Future<void> _getMyFeed(GetMyFeedEvent event, Emitter<ActivityState> emit) async {
-    var body = {
-      'per_page': event.perPage,
-      'page': event.page,
-      'category_id': event.categoryId,
-      'user_id': event.userId
-    };
-    final headers = {
-      'Content-Type': 'application/json'
-    };
-    if(myFeedModel != null){
-      final response = await Api.getApiWithQuery(ApiEndPoint.getMyFeed, body, headers, event.context);
-      final result = feed.FeedModel.fromJson(response);
-      if(event.isPagination == true){
-        myFeedModel!.data!.data!.addAll(result.data!.data!);
-        emit(MyFeedSuccess(myFeedModel!));
-      }else{
-        myFeedModel = result;
-        emit(MyFeedSuccess(myFeedModel!));
-      }
-
-    }else{
-
-      emit(MyFeedLoading());
-      try{
-
-        final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
-        final result = feed.FeedModel.fromJson(response);
-
-        if(result.statusCode == 200){
-          myFeedModel = result;
-          emit(MyFeedSuccess(result));
-        }else{
-          emit(MyFeedError(result.message.toString()));
-        }
-      }on SocketException{
-        emit(MyFeedError('Please check your internet connection'));
-      }catch(e, stacktrace){
-        if (kDebugMode) {
-          print(stacktrace);
-        }
-        emit(MyFeedError(e.toString()));
-      }
-    }
-
-  }
 
   Future<void> _likeFeed(ActivityLikeEvent event, Emitter<ActivityState> emit) async {
-    emit(LikeFeedLoading());
+    // emit(LikeFeedLoading());
     try{
 
       var body = {
@@ -138,11 +91,17 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           ),
         );
 
-        // ✅ जिस activity को like किया, उसे update करो
         for (var item in feedModelCopy.data!.data!) {
           if (item.activityId == event.activityId) {
-            item.isLiked = true;   // 👉 liked flag
-            item.totalLike = (item.totalLike ?? 0) + 1; // 👉 likes count बढ़ा दो
+            if(item.isLiked == false){
+
+              item.isLiked = !item.isLiked!;   // 👉 liked flag
+              item.totalLike = (item.totalLike ?? 0) + 1; // 👉 likes count बढ़ा दो
+            }else{
+
+              item.isLiked = !item.isLiked!;   // 👉 liked flag
+              item.totalLike = (item.totalLike ?? 0) - 1; // 👉 likes count बढ़ा दो
+            }
             break;
           }
         }

@@ -77,6 +77,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         'fitness_level': event.fitnessLevel,
         'plan_to_use': event.planToUse,
         'category_str': event.categoryIds,
+        'primary_category_id': event.primaryCategoryId
       };
       var headers = {
         'authorization' : 'Bearer ${Constant.access_token}'

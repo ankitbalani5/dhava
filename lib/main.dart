@@ -7,6 +7,7 @@ import 'package:coherent_endurance/ui/introScreens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/MyFeedBloc/my_feed_bloc.dart';
 import 'bloc/activityBloc/challenges_bloc.dart';
 import 'bloc/loginBloc/login_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<SaveActivityBloc>(create: (context) => SaveActivityBloc()),
         BlocProvider<GetAllChallengesBloc>(create: (context) => GetAllChallengesBloc()),
         BlocProvider<SuggestedBloc>(create: (context) => SuggestedBloc()),
+        BlocProvider<MyFeedBloc>(create: (context) => MyFeedBloc()),
     ],
       child:
       MaterialApp(

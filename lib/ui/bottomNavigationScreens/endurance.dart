@@ -18,13 +18,7 @@ class Endurance extends StatefulWidget {
 class _EnduranceState extends State<Endurance> {
   int selectedIndex = 1; // Default: Run
 
-  final List<String> labels = ['Walk', 'Run', 'Cycle'];
   String categoryId = '';
-  // final List<IconData> icons = [
-  //   Icons.directions_walk,
-  //   Icons.directions_run,
-  //   Icons.directions_bike
-  // ];
   final List<String> icons = [
     AppImageSvg.walk,
     AppImageSvg.run,

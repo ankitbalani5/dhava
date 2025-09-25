@@ -30,11 +30,13 @@ class UpdateProfileEvent extends ProfileEvent{
   final String fitnessLevel;
   final String planToUse;
   final String categoryIds;
+  final String primaryCategoryId;
   UpdateProfileEvent({required this.context, required this.firstName, required this.lastName,
     this.profilePic = '', this.city = '', this.state = '', this.country = '',
     this.address = '', this.bio = '', required this.dob , this.height = '', this.heightUnitId = '',
     this.weight = '', this.weightUnitId = '', required this.gender , this.latitude = '',
     this.longitude = '', required this.fitnessLevel , required this.planToUse , this.categoryIds = '',
+    this.primaryCategoryId = ''
   });
 }
 
