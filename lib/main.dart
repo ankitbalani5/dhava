@@ -1,6 +1,8 @@
 
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
+import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/suggested_Bloc.dart';
+import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/bloc/saveActivityBloc/save_activity_bloc.dart';
 import 'package:coherent_endurance/ui/introScreens/splashScreen.dart';
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<GetAllChallengesBloc>(create: (context) => GetAllChallengesBloc()),
         BlocProvider<SuggestedBloc>(create: (context) => SuggestedBloc()),
         BlocProvider<MyFeedBloc>(create: (context) => MyFeedBloc()),
+        BlocProvider<JoinChalllengesBloc>(create: (context) => JoinChalllengesBloc()),
+        BlocProvider<OtherProfileBloc>(create: (context) => OtherProfileBloc()),
     ],
       child:
       MaterialApp(

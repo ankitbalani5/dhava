@@ -31,27 +31,34 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime? currentBackPressTime;
   SharedPreferences? sharedPreferences = Constant.sharedPreferences;
+  String? _clubInitialTab;
 
-  final List<Widget> _baseScreens = [
+  List<Widget> get _baseScreens => [
     HomeScreen(),
     NewsScreen(),
-    /*TrackingScreen()*/Endurance(),
-    ClubScreen(),
-    TipScreen()
-    // DefaultScreen(isToolBar: false,)
-    //TrackingScreen(),
+    Endurance(),
+    TipScreen(),
+    ClubScreen(initialTab: _clubInitialTab),
   ];
 
   @override
   void initState() {
+    super.initState();
     _currentIndex = widget.i;
     _initializePreferences();
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
-    super.initState();
   }
 
-  // 🔹 यह function index change करेगा
+  void openClubChallenges() {
+    setState(() {
+      _clubInitialTab = "Challenges";
+      _currentIndex = 4;
+      _overlayStack.clear();
+    });
+  }
+
+
   void changeTab(int index) {
     setState(() {
       _currentIndex = index;
@@ -247,7 +254,11 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
 
     return InkWell(
       onTap: () {
-
+        if (index != 4) {
+          _clubInitialTab = null;
+        } else {
+          _clubInitialTab = null;
+        }
         // if (index == 2) {
         //   // ✅ Navigate to TrackingScreen when clicking on Record tab
         //   Navigator.push(

@@ -365,6 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
+
                                             Text(
                                               challenge.title ?? "N/A",
                                               style: CustomTextStyles.semiBold(fontSize: 16),
@@ -420,10 +421,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               ),
                                             ),
+
                                           ],
                                         ),
                                       );
                                     },
+                                  ),
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        bottomNavKey.currentState?.openClubChallenges();
+                                      },
+                                      child: Text(
+                                        "Explore all Challenges",
+                                        style: CustomTextStyles.semiBold(textColor:AppColor.bgRed,fontSize: 16),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
