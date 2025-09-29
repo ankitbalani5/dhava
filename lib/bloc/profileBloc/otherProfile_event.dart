@@ -12,9 +12,4 @@ class OtherProfileDataEvent extends OtherProfileEvent{
     required this.userId, });
 }
 
-class FollowRequestDataEvent extends OtherProfileEvent{
-  final BuildContext context;
-  final String toUserId;
-  FollowRequestDataEvent({required this.context,
-    required this.toUserId, });
-}
+

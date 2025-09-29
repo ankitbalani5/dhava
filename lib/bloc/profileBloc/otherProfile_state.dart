@@ -19,16 +19,7 @@ final class OtherProfileError extends OtherProfileState {
 }
 
 
-final class FollowRequestInitial extends OtherProfileState {}
-final class FollowRequestLoading extends OtherProfileState {}
-final class FollowRequestSuccess extends OtherProfileState {
-  final FollowRequestModel followRequestModel;
-  FollowRequestSuccess(this.followRequestModel);
-}
-final class FollowRequestError extends OtherProfileState {
-  final String error;
-  FollowRequestError(this.error);
-}
+
 
 
 

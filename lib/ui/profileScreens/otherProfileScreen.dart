@@ -1,3 +1,6 @@
+import 'package:coherent_endurance/bloc/profileBloc/followRequest_bloc.dart';
+import 'package:coherent_endurance/bloc/profileBloc/followRequest_event.dart';
+import 'package:coherent_endurance/bloc/profileBloc/followRequest_state.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_event.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_state.dart';
@@ -62,15 +65,15 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
           if (state is OtherProfileSuccess) {
             var profileData = state.otherProfileModel.data;
             var photoUrl = profileData?.profilePhoto ?? "N/A";
-            var firstName = profileData?.firstName?? "N/A";
-            var lastName = profileData?.lastName?? "N/A";
-            var bio = profileData?.bio?? "N/A";
-            var address = profileData?.address?? "N/A";
-            var city = profileData?.city?? "N/A";
-            var country = profileData?.country?? "N/A";
-            var stateName = profileData?.state?? "N/A";
-            var totalFollowers = profileData?.totalFollowers?? "";
-            var totalFollowing = profileData?.totalFollowing?? "";
+            var firstName = profileData?.firstName ?? "N/A";
+            var lastName = profileData?.lastName ?? "N/A";
+            var bio = profileData?.bio ?? "N/A";
+            var address = profileData?.address ?? "N/A";
+            var city = profileData?.city ?? "N/A";
+            var country = profileData?.country ?? "N/A";
+            var stateName = profileData?.state ?? "N/A";
+            var totalFollowers = profileData?.totalFollowers ?? "";
+            var totalFollowing = profileData?.totalFollowing ?? "";
 
             return SingleChildScrollView(
               child: Column(
@@ -382,7 +385,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                     ],
                   ),
 
-                  BlocConsumer<OtherProfileBloc, OtherProfileState>(
+                  BlocConsumer<FollowRequestBloc, FollowRequestState>(
                     listener: (context, state) {
                       if (state is FollowRequestLoading) {
                         Center(
@@ -392,19 +395,19 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           ),
                         );
                       }
-
                       if (state is FollowRequestSuccess) {
-                        var message =
-                            state.followRequestModel.message.toString();
+                        var message = state.followRequestModel.message.toString();
 
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(message)));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(message)),
+                        );
 
                         setState(() {
                           profileData?.isFollowRequested = true;
                         });
                       }
+
+
 
                       if (state is FollowRequestError) {
                         ScaffoldMessenger.of(
@@ -413,73 +416,92 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       }
                     },
                     builder: (context, state) {
-                      //  Already Following
+                      // Followed
                       if (profileData?.isFollowed == true) {
-                        return Container(
-                          height: 25,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppColor.bgRed,
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Following",
-                              style: TextStyle(color: Colors.white),
+                        return Padding(
+                          padding:  EdgeInsets.all(8.0),
+                          child: Container(
+                            height: 35,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColor.bgRed,
+                            ),
+                            child:  Padding(
+                              padding:  EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  "Following",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
                           ),
                         );
                       }
 
-                      //  Follow Request already sent
+                      // Requested
                       if (profileData?.isFollowRequested == true) {
-                        return Container(
-                          height: 25,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppColor.bgRed,
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Requested",
-                              style: TextStyle(color: Colors.white),
+                        return Padding(
+                          padding:  EdgeInsets.all(8.0),
+                          child: Container(
+                            height: 35,
+                            width:100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColor.bgRed,
+                            ),
+                            child:  Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  "Requested",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
                           ),
                         );
                       }
 
+                      // Default: Follow button
                       return GestureDetector(
                         onTap: () {
-                          context.read<OtherProfileBloc>().add(
+                          context.read<FollowRequestBloc>().add(
                             FollowRequestDataEvent(
                               context: context,
                               toUserId: profileData?.userId ?? "",
                             ),
                           );
                         },
-                        child: Container(
-                          height: 25,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppColor.bgRed,
-                          ),
-                          child: Center(
-                            child:
-                                state is FollowRequestLoading
-                                    ? const SizedBox(
-                                      height: 12,
-                                      width: 12,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
+                        child: Padding(
+                          padding:  EdgeInsets.all(8.0),
+                          child: Container(
+                            height: 35,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColor.bgRed,
+                            ),
+                            child: Center(
+                              child:
+                                  state is FollowRequestLoading
+                                      ?  SizedBox(
+                                        height: 12,
+                                        width: 12,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                      :  Padding(
+                                        padding:  EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Follow",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                       ),
-                                    )
-                                    : const Text(
-                                      "Follow",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
+                            ),
                           ),
                         ),
                       );
@@ -488,7 +510,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
                   SizedBox(height: 20),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                    padding: EdgeInsets.symmetric(horizontal: 0.0),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Column(
@@ -497,9 +519,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           Container(
                             color: AppColor.bgTile,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 20.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

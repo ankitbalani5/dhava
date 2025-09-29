@@ -3,14 +3,12 @@ import 'dart:math';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../data/localDBModel/WorkoutModel.dart';
-import 'package:coherent_endurance/constant/constant.dart';
 
 
 class FeedDetails extends StatefulWidget {
@@ -32,23 +30,43 @@ class _FeedDetailsState extends State<FeedDetails> {
     super.initState();
     initTracking();
   }
-
   Future<void> initTracking() async {
-    await Geolocator.requestPermission();
-    Position pos = await Geolocator.getCurrentPosition();
-    LatLng initial = LatLng(pos.latitude, pos.longitude);
 
-    setState(() {
-      pathPoints.add(initial);
-      startTime = DateTime.now();
-    });
+    LocationPermission permission = await Geolocator.requestPermission();
 
-    startLocationStream();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text("Location permission is required to track.")),
+        );
+      }
+      Navigator.pop(context);
+      return;
+    }
+
+    try {
+      Position pos = await Geolocator.getCurrentPosition();
+      LatLng initial = LatLng(pos.latitude, pos.longitude);
+
+      setState(() {
+        pathPoints.add(initial);
+        startTime = DateTime.now();
+      });
+
+      startLocationStream();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to get location: $e")),
+        );
+      }
+    }
   }
 
   void startLocationStream() {
     positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
+      locationSettings:  LocationSettings(
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: 10,
       ),
@@ -65,6 +83,7 @@ class _FeedDetailsState extends State<FeedDetails> {
       mapController?.animateCamera(CameraUpdate.newLatLng(newPos));
     });
   }
+
 
   double _calculateDistance(LatLng start, LatLng end) {
     const R = 6371000; // Earth radius in meters

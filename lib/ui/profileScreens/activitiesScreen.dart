@@ -195,14 +195,15 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                     onRefresh: _onRefresh,
                     onLoading: _onLoading,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 20.0),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
 
                             SizedBox(height: 10,),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                              padding:  EdgeInsets.symmetric(horizontal: 0.0),
                               child: ListView.builder(
                                 itemCount: feedData!.length,
                                 shrinkWrap: true,
@@ -215,7 +216,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                     },
                                     child: Container(
                                       color: Colors.white24,
-                                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                      padding:  EdgeInsets.symmetric(vertical: 10.0),
                                       child: Column(
                                         children: [
                                           Column(
@@ -227,7 +228,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                                   Container(
                                                     decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
-                                                      border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                                                      border: Border.all(color: Colors.red, width: 1),
                                                     ),
                                                     child: ClipOval(
                                                       child: CachedNetworkImage(
@@ -353,7 +354,6 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 20,),
-
                                               ],
                                             ),
                                           ),
@@ -397,7 +397,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
           final likedUsers = feed.likedUsers ?? [];
 
           if (likedUsers.isEmpty) {
-            return const SizedBox();
+            return  SizedBox();
           }
 
           final visibleUsers = likedUsers.take(4).toList();
