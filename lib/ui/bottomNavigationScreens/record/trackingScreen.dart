@@ -5,24 +5,18 @@ import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/saveActivity.dart';
-import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hive/hive.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:http/http.dart' as http;
 import 'package:screenshot/screenshot.dart';
-import '../../../data/localDBModel/WorkoutModel.dart';
-import '../../defaultScreen/defaultScreen.dart';
 import '../mapSetting.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
 
@@ -56,6 +50,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
   String city = '';
   String state = '';
   String country = '';
+  int initialSteps = 0;
+  List<DateTime> pointTimestamps = [];
 
 
   @override
@@ -89,20 +85,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     // startLocationStream();
   }
 
-  // void initStepTracking() {
-  //   stepStream = Pedometer.stepCountStream;
-  //   stepStream?.listen((StepCount event) {
-  //     setState(() {
-  //       steps = event.steps;
-  //     });
-  //   }, onError: (error) {
-  //     print("Step count error: $error");
-  //   });
-  // }
-
-  int initialSteps = 0;
-  List<DateTime> pointTimestamps = [];
-
   void initStepTracking() {
     stepStream = Pedometer.stepCountStream;
     stepStream?.listen((StepCount event) {
@@ -116,28 +98,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       print("Step count error: $error");
     });
   }
-
-
-
-  // void startLocationStream() {
-  //   positionStream = Geolocator.getPositionStream(
-  //     locationSettings: const LocationSettings(
-  //       accuracy: LocationAccuracy.bestForNavigation,
-  //       distanceFilter: 10,
-  //     ),
-  //   ).listen((position) {
-  //     LatLng newPos = LatLng(position.latitude, position.longitude);
-  //     if (pathPoints.isNotEmpty) {
-  //       totalDistance += _calculateDistance(pathPoints.last, newPos);
-  //     }
-  //
-  //     setState(() {
-  //       pathPoints.add(newPos);
-  //     });
-  //
-  //     mapController?.animateCamera(CameraUpdate.newLatLng(newPos));
-  //   });
-  // }
 
   void startLocationStream() {
     positionStream?.cancel();
@@ -205,42 +165,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     });
   }
 
-  // List<Map<String, dynamic>> calculateSplits() {
-  //   List<Map<String, dynamic>> splits = [];
-  //   double distanceCovered = 0.0;
-  //   Duration splitDuration = Duration.zero;
-  //   double splitDistance = 1000.0; // 1km split
-  //
-  //   LatLng? lastPoint;
-  //   DateTime? lastTime = startTime;
-  //
-  //   for (int i = 0; i < pathPoints.length; i++) {
-  //     if (lastPoint != null && lastTime != null) {
-  //       double distance = _calculateDistance(lastPoint, pathPoints[i]);
-  //       distanceCovered += distance;
-  //       Duration duration = DateTime.now().difference(lastTime);
-  //       splitDuration += duration;
-  //
-  //       if (distanceCovered >= splitDistance) {
-  //         // Pace = seconds per km
-  //         double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
-  //         splits.add({
-  //           "split": splits.length + 1,
-  //           "distance": (distanceCovered / 1000).toStringAsFixed(2),
-  //           "pace": formatPace(paceSec),
-  //           "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
-  //         });
-  //
-  //         // Reset for next split
-  //         distanceCovered = 0.0;
-  //         splitDuration = Duration.zero;
-  //       }
-  //     }
-  //     lastPoint = pathPoints[i];
-  //     lastTime = DateTime.now();
-  //   }
-  //   return splits;
-  // }
   List<Map<String, dynamic>> calculateSplits() {
     List<Map<String, dynamic>> splits = [];
     double distanceCovered = 0.0;
@@ -292,47 +216,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return splits;
   }
 
-
-/*
-  Map<String, dynamic> calculateResults() {
-    List<Map<String, dynamic>> splits = calculateSplits();
-
-    // // Get fastest split pace
-    // String fastestSplitPace = "0:00";
-    // if (splits.isNotEmpty) {
-    //   double fastest = double.infinity;
-    //   for (var split in splits) {
-    //     final pace = split['pace'];
-    //     final parts = pace.split(':');
-    //     final seconds = int.parse(parts[0]) * 60 + int.parse(parts[1]);
-    //     if (seconds < fastest) fastest = double.parse(seconds.toString());
-    //   }
-    //   fastestSplitPace = formatPace(fastest);
-    // }
-
-    // Get fastest split pace as double
-    double fastestSplit = double.infinity;
-    if (splits.isNotEmpty) {
-      for (var split in splits) {
-        final pace = split['pace'];
-        final parts = pace.split(':');
-        final seconds = int.parse(parts[0]) * 60 + int.parse(parts[1]);
-        if (seconds < fastestSplit) fastestSplit = seconds.toDouble();
-      }
-    } else {
-      fastestSplit = 0.0;
-    }
-
-    return {
-      "totalDistance": (totalDistance / 1000).toStringAsFixed(2),
-      "elapsedTime": elapsed.inSeconds,
-      "avgPace": formatPace(avgPace),
-      "fastestSplit": fastestSplit*//*fastestSplitPace*//*,
-      "segments": splits.length,
-      "splits": splits,
-    };
-  }*/
-
   Map<String, dynamic> calculateResults() {
     List<Map<String, dynamic>> splits = calculateSplits();
 
@@ -350,7 +233,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
     }
 
     return {
-      "totalDistance": (totalDistance / 1000).toStringAsFixed(2), // km में string (UI के लिए)
+      "totalDistance": totalDistance,
       "elapsedTime": elapsed.inSeconds,                          // total seconds
       "avgPace": avgPace,                                        // ✅ raw double (API के लिए)
       "fastestSplit": fastestSplit,                              // ✅ raw double (API के लिए)
@@ -358,31 +241,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       "splits": splits,
     };
   }
-
-
-  // Future<void> sendTrackingData() async {
-  //   final url = Uri.parse("https://yourapi.com/save-activity");
-  //   final body = {
-  //     "distance": /*totalDistance*/(totalDistance / 1000).toStringAsFixed(2),
-  //     "time": elapsed.inSeconds,
-  //     "avgPace": /*avgPace*/formatPace(avgPace),
-  //     "elevationGain": elevationGain,
-  //     "maxElevation": maxElevation,
-  //     "steps": steps,
-  //     "path": pathPoints.map((p) => {"lat": p.latitude, "lng": p.longitude}).toList(),
-  //   };
-  //
-  //   final response = await http.post(url,
-  //     body: json.encode(body),
-  //     headers: {"Content-Type": "application/json"},
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     print("Data sent successfully");
-  //   } else {
-  //     print("Error: ${response.body}");
-  //   }
-  // }
 
   Future<void> sendTrackingData() async {
     final url = Uri.parse("https://yourapi.com/save-activity");
@@ -422,21 +280,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return "$min:${sec.toString().padLeft(2, '0')}";
   }
 
-  // String formatPace(double paceInSec) {
-  //   if (paceInSec.isNaN || paceInSec.isInfinite || paceInSec == 0) {
-  //     return "0.00"; // Minimum valid value to avoid API rejection
-  //   }
-  //   return paceInSec.toStringAsFixed(2); // API wants number
-  // }
-
-  // String formatPace(double paceInSec) {
-  //   if (paceInSec.isInfinite || paceInSec.isNaN) return "0:00";
-  //   int min = (paceInSec / 60).floor();
-  //   int sec = (paceInSec % 60).floor();
-  //   return "$min:${sec.toString().padLeft(2, '0')}";
-  // }
-
-
   double _calculateDistance(LatLng start, LatLng end) {
     const R = 6371000; // Earth radius in meters
     double dLat = _degToRad(end.latitude - start.latitude);
@@ -464,20 +307,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     double durationSeconds = endTime.difference(startTime!).inSeconds.toDouble();
     double averageSpeed = totalDistance / durationSeconds; // m/s
 
-    // final workout = WorkoutModel(
-    //   path: pathPoints,
-    //   totalDistance: totalDistance,
-    //   averageSpeed: averageSpeed,
-    //   startTime: startTime!,
-    //   endTime: endTime,
-    // );
-    //
-    // final box = Hive.box<WorkoutModel>('workouts');
-    // await box.add(workout);
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text("Workout saved!")),
-    // );
   }
 
   Set<Polyline> getPolyline() {

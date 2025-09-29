@@ -37,7 +37,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
 
   void _onRefresh() {
     page = 1;
-    context.read<MyFeedBloc>().add(GetMyFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
+    context.read<MyFeedBloc>().add(GetMyFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: categoryId,));
     _refreshController.refreshCompleted();
   }
 
@@ -47,7 +47,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         context: context,
         perPage: '10',
         page: page.toString(),
-        categoryId: '',
+        categoryId: categoryId,
         isPagination: true
     ));
     _refreshController.loadComplete();
@@ -117,6 +117,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
+                            page = 1;
                             selectedIndex = index;
                             categoryId = category.categoryId ?? '';
                             context.read<MyFeedBloc>().add(GetMyFeedEvent(perPage: '10', page: '1', categoryId: categoryId, context: context));
@@ -194,181 +195,183 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                     enablePullUp: true,
                     onRefresh: _onRefresh,
                     onLoading: _onLoading,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
+                    child: ListView.builder(
+                      itemCount: feedData!.length,
+                      shrinkWrap: true,
+                      // physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var feed = feedData[index];
+                        print('feedData::::$feed');
+                        var feedData1 = state.feedModel.data!.data ?? [];
 
-                            SizedBox(height: 10,),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                              child: ListView.builder(
-                                itemCount: feedData!.length,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  var feed = feedData[index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails()));
-                                    },
-                                    child: Container(
-                                      color: Colors.white24,
-                                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                      child: Column(
+                        if (feedData1.isEmpty) {
+                          return Expanded(
+                            child: Center(
+                              child: Text(
+                                "No data available",
+                                style: CustomTextStyles.semiBold(fontSize: 14),
+                              ),
+                            ),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails()));
+                            },
+                            child: Container(
+                              color: Colors.white24,
+                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                              child: Column(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                                            ),
+                                            child: ClipOval(
+                                              child: CachedNetworkImage(
+                                                imageUrl: feed.profilePic.toString()
+                                                /*AppImageOthers.userImg*/,
+                                                height: 30, width: 30, fit: BoxFit.fill,
+                                                errorWidget: (context,
+                                                    url, error) =>
+                                                    Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
+                                              SizedBox(
+                                                width: MediaQuery.of(context).size.width*.75,
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Image.asset(AppImageOthers.feedRun, height: 16,),
+                                                    SizedBox(width: 5,),
+                                                    Expanded(
+                                                      child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
+                                                          // maxLines: 2,
+                                                          style: CustomTextStyles.regular(fontSize: 11,
+                                                              textColor: Colors.grey)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(height: 20,),
+                                      Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
+                                      SizedBox(height: 15,),
+                                      Row(
                                         children: [
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border: Border.all(color: Colors.red, width: 1), // 🔴 red border
-                                                    ),
-                                                    child: ClipOval(
-                                                      child: CachedNetworkImage(
-                                                        imageUrl: feed.profilePic.toString()
-                                                        /*AppImageOthers.userImg*/,
-                                                        height: 30, width: 30, fit: BoxFit.fill,
-                                                        errorWidget: (context,
-                                                            url, error) =>
-                                                            Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
-                                                      SizedBox(
-                                                        width: MediaQuery.of(context).size.width*.75,
-                                                        child: Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Image.asset(AppImageOthers.feedRun, height: 16,),
-                                                            SizedBox(width: 5,),
-                                                            Expanded(
-                                                              child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
-                                                                  // maxLines: 2,
-                                                                  style: CustomTextStyles.regular(fontSize: 11,
-                                                                      textColor: Colors.grey)),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(height: 20,),
-                                              Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
-                                              SizedBox(height: 15,),
-                                              Row(
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                                      // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
-                                                      Text(
-                                                        (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
-                                                            ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
-                                                            : '${feed.distance} m',
-                                                        style: CustomTextStyles.regular(fontSize: 16),
-                                                      )                                          ],
-                                                  ),
-                                                  SizedBox(width: 20,),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                                      Text('${feed.pace} /km', style: CustomTextStyles.regular(fontSize: 16)),
-                                                    ],
-                                                  ),
-                                                  SizedBox(width: 20,),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                                      Text(feed.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
-                                                    ],
-                                                  ),
-
-                                                ],
-                                              )
+                                              Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                              // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text(
+                                                (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
+                                                    ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
+                                                    : '${feed.distance} m',
+                                                style: CustomTextStyles.regular(fontSize: 16),
+                                              )                                          ],
+                                          ),
+                                          SizedBox(width: 20,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                              Text('${feed.pace} /km', style: CustomTextStyles.regular(fontSize: 16)),
                                             ],
                                           ),
-                                          SizedBox(height: 10,),
-                                          ClipRRect(
-                                              borderRadius: BorderRadius.circular(12),
-                                              child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
-                                                fit: BoxFit.fill, height: 260,)),
+                                          SizedBox(width: 20,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                              Text(feed.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
+                                            ],
+                                          ),
 
-                                          SizedBox(height: 10,),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
-                                            child: Column(
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: 10,),
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
+                                        fit: BoxFit.fill, height: 260,)),
+
+                                  SizedBox(height: 10,),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        likeImageWidget(feed),
-                                                        SizedBox(width: 10,),
-                                                        Text('${feed.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-
-                                                      ],
-                                                    ),
-
-                                                    Row(
-                                                      children: [
-                                                        GestureDetector(
-                                                            onTap: () {
-                                                              context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
-                                                              // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
-                                                            },
-                                                            child: SizedBox(
-                                                                height: 30,
-                                                                width: 30,
-                                                                child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
-
-                                                        SizedBox(width: 10,),
-                                                        GestureDetector(
-                                                            onTap: () {
-                                                              // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                                              // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
-                                                            },
-                                                            child: SizedBox(
-                                                                height: 30,
-                                                                width: 30,
-                                                                child: Icon(Icons.share, color: Colors.black,))),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 20,),
+                                                likeImageWidget(feed),
+                                                SizedBox(width: 10,),
+                                                Text('${feed.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
 
                                               ],
                                             ),
-                                          ),
-                                          // SizedBox(height: 20,),
-                                          // Divider(color: Colors.black,)
-                                        ],
-                                      ),
+
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      context.read<MyFeedBloc>().add(MyFeedLikeEvent(context: context, activityId: feed.activityId.toString()));
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                                    },
+                                                    child: SizedBox(
+                                                        height: 30,
+                                                        width: 30,
+                                                        child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
+
+                                                SizedBox(width: 10,),
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
+                                                    },
+                                                    child: SizedBox(
+                                                        height: 30,
+                                                        width: 30,
+                                                        child: Icon(Icons.share, color: Colors.black,))),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 20,),
+
+                                      ],
                                     ),
-                                  );
-                                },
-                              )
+                                  ),
+                                  // SizedBox(height: 20,),
+                                  // Divider(color: Colors.black,)
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 );
@@ -387,12 +390,12 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
   }
 
   static Widget likeImageWidget (MyFeedModelData feed){
-    return BlocConsumer<ActivityBloc, ActivityState>(
+    return BlocConsumer<MyFeedBloc, MyFeedState>(
       listener: (context, state) {
         // TODO: implement listener
       },
       builder: (context, state) {
-        if (state is FeedSuccess) {
+        if (state is MyFeedSuccess) {
           // final feed = state.feedModel.data!;
           final likedUsers = feed.likedUsers ?? [];
 
@@ -403,7 +406,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
           final visibleUsers = likedUsers.take(4).toList();
 
           return SizedBox(
-            width: feed.totalLike == 1 ? 32 : feed.totalLike == 2 ? 58 : feed.totalLike == 3 ? 84 : 110,
+            width: feed.likedUsers?.length == 1 ? 32 : feed.likedUsers?.length == 2 ? 58 : feed.likedUsers?.length == 3 ? 84 : 110,
             height: 40,
             child: Stack(
               children: List.generate(

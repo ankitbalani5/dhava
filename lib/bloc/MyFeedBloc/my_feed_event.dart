@@ -12,3 +12,9 @@ class GetMyFeedEvent extends MyFeedEvent{
   final bool isPagination;
   GetMyFeedEvent({required this.context, required this.perPage, required this.page, required this.categoryId, this.userId, this.isPagination = false});
 }
+
+class MyFeedLikeEvent extends MyFeedEvent{
+  final BuildContext context;
+  final String activityId;
+  MyFeedLikeEvent({required this.context, required this.activityId});
+}
