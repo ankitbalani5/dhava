@@ -688,7 +688,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final visibleUsers = likedUsers.take(4).toList();
 
           return SizedBox(
-            width: feed.totalLike == 1 ? 32 : feed.totalLike == 2 ? 58 : feed.totalLike == 3 ? 84 : 110,
+            width: feed.likedUsers?.length == 1 ? 32 : feed.likedUsers?.length == 2 ? 58 : feed.likedUsers?.length == 3 ? 84 : 110,
             height: 40,
             child: Stack(
               children: List.generate(

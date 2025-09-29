@@ -14,3 +14,12 @@ final class MyFeedError extends MyFeedState {
   final String error;
   MyFeedError(this.error);
 }
+final class LikeFeedLoading extends MyFeedState {}
+final class LikeFeedSuccess extends MyFeedState {
+  final ActivityLikeModel activityLikeModel;
+  LikeFeedSuccess(this.activityLikeModel);
+}
+final class LikeFeedError extends MyFeedState {
+  final String error;
+  LikeFeedError(this.error);
+}
