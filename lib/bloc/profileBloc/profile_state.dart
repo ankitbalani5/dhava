@@ -6,8 +6,9 @@ sealed class ProfileState {}
 final class ProfileInitial extends ProfileState {}
 final class ProfileLoading extends ProfileState {}
 final class ProfileSuccess extends ProfileState {
-  final ProfileModel profileModel;
-  ProfileSuccess(this.profileModel);
+  final ProfileModel? profileModel;
+  final SummaryModel? summaryModel;
+  ProfileSuccess(this.profileModel, this.summaryModel);
 }
 final class ProfileError extends ProfileState {
   final String error;

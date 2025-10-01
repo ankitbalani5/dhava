@@ -488,9 +488,12 @@ class ApiEndPoint {
   static const String verifyOtp = '/api/v1/auth/verify-otp';
   static const String forgotPassword = '/api/v1/auth/forgot-password';
   static const String createPassword = '/api/v1/auth/create-password';
+
   static const String getProfile = '/api/v1/get-profile';
   static const String getCategory = '/api/v1/category';
+
   static const String updateProfile = '/api/v1/update-profile';
+
   static const String getFeed = '/api/v1/activity/feed';
   static const String getMyFeed = '/api/v1/activity/my-feed';
   static const String activityLike = '/api/v1/activity/like';
@@ -499,6 +502,14 @@ class ApiEndPoint {
   static const String getRecommendedChallenges = '/api/v1/challenges/recommended';
   static const String joinChallenges = '/api/v1/challenge/join';
   static const String otherProfile = '/api/v1/user/profile';
+  static const String profileSummary = '/api/v1/user/summary';
+
+  static const String notification = '/api/v1/notifications';
+  static const String notificationMarkRead = '/api/v1/notification/mark-read';
+
   static const String followRequest = '/api/v1/follow/request';
+  static const String followApprove = '/api/v1/follow/approve';
+  static const String followCancel = '/api/v1/follow/cancel';
+  static const String unfollow = '/api/v1/unfollow';
 
 }

@@ -117,6 +117,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
+                            page = 1;
                             selectedIndex = index;
                             categoryId = category.categoryId ?? '';
                             context.read<MyFeedBloc>().add(GetMyFeedEvent(perPage: '10', page: '1', categoryId: categoryId, context: context));

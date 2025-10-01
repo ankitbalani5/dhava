@@ -2,6 +2,7 @@
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/suggested_Bloc.dart';
+import 'package:coherent_endurance/bloc/notificationBloc/notification_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/followRequest_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<MyFeedBloc>(create: (context) => MyFeedBloc()),
         BlocProvider<JoinChalllengesBloc>(create: (context) => JoinChalllengesBloc()),
         BlocProvider<OtherProfileBloc>(create: (context) => OtherProfileBloc()),
+        BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()),
         BlocProvider<FollowRequestBloc>(create: (context) => FollowRequestBloc()),
     ],
       child:

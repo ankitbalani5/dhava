@@ -1,6 +1,7 @@
 import 'package:coherent_endurance/bloc/activityBloc/challenges_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_state.dart';
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/models/feedModel.dart';
 import 'package:coherent_endurance/repository/api.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
@@ -117,11 +118,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   },
-                  child: Image.asset(
-                    AppImageOthers.defaultImage,
-                    // Replace with your back icon path
-                    width: 30,
-                    height: 30,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColor.bgRed)
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CachedNetworkImage(imageUrl:
+                        Constant.getProfile?.data?.profilePhoto ?? '',
+                        // Replace with your back icon path
+                        width: 30,
+                        height: 30,
+                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage),
+                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -671,7 +683,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
   
-  static Widget likeImageWidget (InnerData feed){
+  static Widget likeImageWidget (FeedModelData feed){
     return BlocConsumer<ActivityBloc, ActivityState>(
       listener: (context, state) {
         // TODO: implement listener

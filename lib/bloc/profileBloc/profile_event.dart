@@ -44,3 +44,9 @@ class CategoryEvent extends ProfileEvent{
   final BuildContext context;
   CategoryEvent(this.context);
 }
+
+class GetProfileSummary extends ProfileEvent{
+  final BuildContext context;
+  final String categoryId;
+  GetProfileSummary(this.context, this.categoryId);
+}
