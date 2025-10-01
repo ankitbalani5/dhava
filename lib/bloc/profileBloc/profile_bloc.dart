@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:coherent_endurance/models/profileModel.dart';
+import 'package:coherent_endurance/models/summaryModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
@@ -14,10 +15,13 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+  ProfileModel? profileModel;
+  SummaryModel? summaryModel;
   ProfileBloc() : super(ProfileInitial()) {
     on<UpdateProfileEvent>(_updateProfile);
     on<GetProfileEvent>(_getProfile);
     on<CategoryEvent>(_getCategory);
+    on<GetProfileSummary>(_getProfileSummary);
   }
 
   Future<void> _getProfile(GetProfileEvent event, Emitter<ProfileState> emit) async {
@@ -38,7 +42,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       if(result.statusCode == 200){
         Constant.getProfile = result;
-        emit(ProfileSuccess(result));
+        profileModel = result;
+        emit(ProfileSuccess(profileModel, summaryModel));
+      }else{
+        emit(ProfileError(result.message.toString()));
+      }
+    }on SocketException{
+      emit(ProfileError('Please check your internet connection'));
+    }catch(e, stacktrace){
+      if (kDebugMode) {
+        print(stacktrace);
+      }
+      emit(ProfileError(e.toString()));
+    }
+  }
+
+  Future<void> _getProfileSummary(GetProfileSummary event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+
+    try{
+      final headers = {
+        'Content-Type': 'application/json'
+      };
+      final response = await Api.getApi('${ApiEndPoint.profileSummary}?category_id=${event.categoryId}', headers, event.context);
+      final result = SummaryModel.fromJson(response);
+      if (kDebugMode) {
+        print('_summaryResponse:::$result');
+      }
+      if(result.statusCode == 200){
+        summaryModel = result;
+        emit(ProfileSuccess(profileModel, summaryModel));
       }else{
         emit(ProfileError(result.message.toString()));
       }
@@ -102,16 +135,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-
   Future<void> _getCategory(CategoryEvent event, Emitter<ProfileState> emit) async {
     emit(CategoryLoading());
     try{
 
-      // var body = {
-      //   'email': event.email,
-      //   'password': event.password,
-      //   'confirm_password': event.confirmPassword,
-      // };
       final headers = {
         'Content-Type': 'application/json'
       };

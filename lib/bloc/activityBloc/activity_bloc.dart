@@ -87,7 +87,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
         // ✅ पुराना data copy करो
         var feedModelCopy = feed.FeedModel(
           data: feed.Data(
-            data: List<feed.InnerData>.from(feedModel?.data?.data ?? []),
+            data: List<feed.FeedModelData>.from(feedModel?.data?.data ?? []),
           ),
         );
 
