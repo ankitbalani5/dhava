@@ -148,28 +148,14 @@ class Constant {
                   fontSize: 16,
                   text: 'Skip For Now',
                   callback: () {
-                    Navigator.pop(context);
-                },)
-                // OutlinedButton(
-                //   style: OutlinedButton.styleFrom(
-                //     backgroundColor: Colors.white,
-                //     side: BorderSide.none,
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(30),
-                //     ),
-                //     minimumSize: const Size(double.infinity, 45),
-                //   ),
-                //   onPressed: () {
-                //     Navigator.pop(context);
-                //   },
-                //   child: const Text(
-                //     "Skip For Now",
-                //     style: TextStyle(
-                //       color: Colors.redAccent,
-                //       fontSize: 16,
-                //     ),
-                //   ),
-                // ),
+                    if (Navigator.canPop(context)) {
+                      Constant.closeLoadingDialog(context); // close loading if open
+                      Navigator.pop(context); // close current dialog
+                    }
+                  },
+
+                )
+
               ],
             ),
           ),
@@ -217,58 +203,7 @@ class Constant {
   }
 
 
-  static void showCongratulationDialog(BuildContext parentContext) {
-    showDialog(
-      context: parentContext,
-      barrierDismissible: false,
-      builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        backgroundColor: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 🏆 Trophy Image
-              Image.asset(
-                AppImageOthers.trophy, // <-- Replace with your actual image path
-                height: 180,
-              ),
 
-              const SizedBox(height: 20),
-
-              // 🎉 Bold Title
-              Text(
-                  'Congratulation!',
-                  style: CustomTextStyles.bold(fontSize: 26, textColor: Colors.black)
-              ),
-
-              const SizedBox(height: 10),
-
-              // ✨ Subtitle
-              Text(
-                'You did a great job in the test!',
-                style: CustomTextStyles.regular(textColor: Colors.black, fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: 25),
-
-              // 🔘 Continue Button
-              CustomButton(
-                text: 'Continue',
-                callback: () {
-                    Navigator.push(parentContext, MaterialPageRoute(builder: (context) => BottomNavBar()));
-                },
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   static String formatDob(String dobString) {
     try {

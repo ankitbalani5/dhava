@@ -570,8 +570,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Icon(Icons.arrow_forward_ios, color: Colors.white, size: 15,)
                                   ],
                                 ),
+                                SizedBox(height: 10,),
 
-                                SizedBox(height: 20,),
+                                Divider(height: 20,color: AppColor.bgTile,thickness: 2,),
+
+                                SizedBox(height: 10,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -604,7 +607,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
                                   ],
                                 ),
-                                SizedBox(height: 20,),
+                                SizedBox(height: 10,),
+
+                                Divider(height: 20,color: AppColor.bgTile,thickness: 2,),
+
+                                SizedBox(height: 10,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [

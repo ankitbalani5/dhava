@@ -4,6 +4,6 @@ abstract class AllChallengesEvent {}
 
 class GetAllChallengesEvent extends AllChallengesEvent {
   BuildContext context;
-  GetAllChallengesEvent(this.context);
+  GetAllChallengesEvent({required this.context});
 }
 

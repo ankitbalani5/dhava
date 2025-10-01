@@ -81,6 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontSize: 18,
           ),
         ),
+        titleSpacing: 0,
         actions: [
           TextButton(
             onPressed: () {

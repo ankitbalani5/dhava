@@ -46,6 +46,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     super.initState();
     _currentIndex = widget.i;
     _initializePreferences();
+
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
   }
@@ -126,16 +127,16 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // ✅ अगर current index 0 नहीं है → पहले Home tab पर जाओ
+
         if (_currentIndex != 0) {
           setState(() {
             _currentIndex = 0;
-            _overlayStack.clear(); // अगर overlay open है तो उसे भी बंद करो
+            _overlayStack.clear();
           });
-          return false; // App exit नहीं होगा
+          return false;
         }
 
-        // ✅ अगर पहले से ही Home tab पर हो → Double back press से exit
+
         DateTime now = DateTime.now();
         if (currentBackPressTime == null ||
             now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
@@ -147,10 +148,9 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
               duration: Duration(seconds: 2),
             ),
           );
-          return false; // पहली बार back press → सिर्फ message दिखेगा
+          return false;
         }
 
-        // ✅ 2 सेकंड के अंदर फिर से back press → App exit होगा
         return true;
       },
       child: Scaffold(
@@ -160,7 +160,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
               Constant.loadingDialog(context);
             }
             if(state is ProfileSuccess){
-              Constant.closeLoadingDialog(context);
+           Constant.closeLoadingDialog(context);
               Constant.getProfile = state.profileModel;
 
               if(Constant.getProfile!.data!.isProfileCompleted == false){
@@ -175,7 +175,9 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
               }
             }
             if(state is CategorySuccess){
+
               Constant.getCategory = state.categoryModel;
+
             }
           },
           builder: (context, state) {

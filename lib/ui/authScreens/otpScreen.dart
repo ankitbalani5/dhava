@@ -220,7 +220,7 @@ class _OtpScreenState extends State<OtpScreen> {
             BlocConsumer<LoginBloc, LoginState>(
               listener: (context, state) async {
                 if(state is VerifyOtpSuccess){
-
+                 // Constant.closeLoadingDialog(context);
                   SharedPreferences pref = await SharedPreferences.getInstance();
                   pref.setBool(PrefKey.isLogin, true);
                   pref.setString(PrefKey.accessToken, state.loginResponse.data!.accessToken.toString());

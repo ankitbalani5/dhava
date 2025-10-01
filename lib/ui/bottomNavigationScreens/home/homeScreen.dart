@@ -1,26 +1,25 @@
+import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_state.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/models/feedModel.dart';
 import 'package:coherent_endurance/repository/api.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/notification/notificationScreen.dart';
 import 'package:coherent_endurance/ui/profileScreens/editProfileScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
+import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../bloc/activityBloc/activity_bloc.dart';
-import '../../../bloc/profileBloc/profile_bloc.dart';
-import '../../notification/notificationScreen.dart';
-import '../../profileScreens/profileScreen.dart';
 import 'feedDetails.dart';
-import 'kudosScreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,9 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final RefreshController _refreshController = RefreshController();
   @override
   void initState() {
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: '1', categoryId: null,));
-    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context, ));
     super.initState();
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: '1', categoryId: null,));
+    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context));
+
+
   }
   void _onRefresh() {
     page = 1;
@@ -221,19 +222,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           GestureDetector(
                             onTap: () {
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar(i: 2,)));
-
                               bottomNavKey.currentState?.changeTab(2);
                             },
+
                             child: Container(
                               decoration: BoxDecoration(
-                                color: AppColor.bgTile, // 👈 Yaha color diya
-                                borderRadius: BorderRadius.circular(20), // 👈 Proper rounded corners
+                                color: AppColor.bgTile,
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: ListTile(
-                                // tileColor: AppColor.bgTile,
 
-                                // contentPadding: EdgeInsets.zero,
                                 leading: SvgPicture.asset(AppImageSvg.run, color: Colors.black, height: 42, width: 42,),
                                 title: Text('Upload your first activity', style: CustomTextStyles.semiBold(fontSize: 14),),
                                 subtitle: Text('You can record it right in the app.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
@@ -268,12 +266,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: AppColor.bgTile, // 👈 Yaha color diya
-                                borderRadius: BorderRadius.circular(20), // 👈 Proper rounded corners
+                                color: AppColor.bgTile,
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: ListTile(
-                                // tileColor: AppColor.bgTile,
-                                // contentPadding: EdgeInsets.zero,
                                 leading: SvgPicture.asset(AppImageSvg.person, color: Colors.black, height: 42, width: 42,),
                                 title: Text('Add your profile photo', style: CustomTextStyles.semiBold(fontSize: 14),),
                                 subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
@@ -308,6 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Text(state.error.toString());
                         }
                         if (state is GetAllChallengesLoaded) {
+
                           var suggestedData = state.responseData.data;
 
                           if (suggestedData == null || suggestedData.isEmpty) {
@@ -462,12 +459,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                         return SizedBox.shrink();
-
-
                       },
                     ),
-
-
 
                     SizedBox(height: 10,),
 
@@ -624,36 +617,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         SizedBox(height: 20,),
 
-                                        // Row(
-                                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        //   children: [
-                                        //     GestureDetector(
-                                        //         onTap: () {
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
-                                        //         },
-                                        //         child: SizedBox(
-                                        //             height: 30,
-                                        //             width: 30,
-                                        //             child: Icon(Icons.thumb_up, color: Colors.white,))),
-                                        //     GestureDetector(
-                                        //         onTap: () {
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => Discussion()));
-                                        //         },
-                                        //         child: SizedBox(
-                                        //             height: 30,
-                                        //             width: 30,
-                                        //             child: Icon(Icons.message, color: Colors.white,))),
-                                        //     GestureDetector(
-                                        //         onTap: () {
-                                        //           // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
-                                        //         },
-                                        //         child: SizedBox(
-                                        //             height: 30,
-                                        //             width: 30,
-                                        //             child: Icon(Icons.share, color: Colors.white,))),
-                                        //   ],
-                                        // )
                                       ],
                                     ),
                                   ),
@@ -692,7 +655,6 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is FeedSuccess) {
           // final feed = state.feedModel.data!;
           final likedUsers = feed.likedUsers ?? [];
-
           if (likedUsers.isEmpty) {
             return const SizedBox();
           }
@@ -733,30 +695,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-        /*if(state is FeedSuccess){
-          // var feed = state.feedModel.data!.data;
-          return feed.totalLike! > 0 ?
-            Stack(
-            children: [
-              Container(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(AppImageOthers.userImg, height: 30,),
-                  ],
-                ),
-              ),
-
-              Positioned(
-                  right: 25,
-                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
-              Positioned(
-                  right: 50,
-                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
-            ],
-          ) : SizedBox();
-        }*/
         return SizedBox();
 
       },

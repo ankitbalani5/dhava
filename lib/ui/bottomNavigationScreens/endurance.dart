@@ -49,16 +49,7 @@ class _EnduranceState extends State<Endurance> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        // leading: Container(
-        //   margin: const EdgeInsets.all(8),
-        //   decoration: BoxDecoration(
-        //       borderRadius: BorderRadius.circular(30), color: Colors.white24),
-        //   child: const Center(
-        //       child: Padding(
-        //         padding: EdgeInsets.only(left: 8.0),
-        //         child: Icon(Icons.arrow_back_ios, color: Colors.black),
-        //       )),
-        // ),
+
         title: Text(
           'Endurance',
           style: CustomTextStyles.bold(fontSize: 18),
@@ -139,27 +130,6 @@ class _EnduranceState extends State<Endurance> {
                       ),
                     ),
                   )
-                  /*ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      isSelected ? AppColor.bgRed : Colors.white,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                            color:
-                            isSelected ? Colors.transparent : Colors.black),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: Icon(icons[index], size: 20 , color: !isSelected ? Colors.black : Colors.white,),
-                    label: Text(labels[index], style: TextStyle(color: !isSelected ? Colors.black : Colors.white),),
-
-                  ),*/
                 );
               }),
             ),
@@ -199,23 +169,6 @@ class _EnduranceState extends State<Endurance> {
                     ),
                   ),
                 )
-                /*ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingScreen()));
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => ProgressScreen()));
-                  },
-                  icon: const Icon(Icons.camera_alt),
-                  label: Text('Start', style: CustomTextStyles.bold(textColor: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.bgRed,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                ),*/
               ],
             ),
           ),

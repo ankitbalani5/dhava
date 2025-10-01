@@ -343,31 +343,42 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: isShort ? Text('Tracking', style: CustomTextStyles.bold(),) : SizedBox(),
-        leading: isShort ? GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios, color: Colors.black,)) : SizedBox(),
+        titleSpacing: 0,
+        title: isShort
+            ? Text(
+          'Tracking',
+          style: CustomTextStyles.bold(),
+        )
+            : SizedBox(),
+        leading: isShort
+            ? GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back_ios, color: Colors.black),
+        )
+            : SizedBox(),
         backgroundColor: Colors.white,
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: isShort ? GestureDetector(
+            child: isShort
+                ? GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MapSetting()));
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => MapSetting()));
                 },
-                child: Icon(Icons.settings)) : GestureDetector(
+                child: Icon(Icons.settings))
+                : GestureDetector(
                 onTap: () {
                   isShort = !isShort;
-                  setState(() {
-
-                  });
+                  setState(() {});
                 },
-                child: Image.asset(AppImageOthers.expand2, height: 24,)),
+                child: Image.asset(AppImageOthers.expand2, height: 24)),
           )
         ],
       ),
+
       body: pathPoints.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : isShort ? Screenshot(
@@ -494,7 +505,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
           child: expandTimeWidget()
       ),
       bottomNavigationBar: SizedBox(
-        height: isShort ? 70 : 70,
+        height: isShort ? 100 : 100,
         child: isShort ? Column(
           children: [
             Row(
@@ -656,10 +667,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
               });
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
             },
-            child: Container(
-              height: 60,
+            child: SizedBox(height: 100,width: 100,
               child: Center(
-                  child: SvgPicture.asset(AppImageSvg.play)
+                  child: SvgPicture.asset(AppImageSvg.play,height: 100,width: 100,)
               ),
             ),
           ),
