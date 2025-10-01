@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -152,40 +153,79 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
   //
-  Future<void> _verifyOtp(VerifyOtpEvent event, Emitter<LoginState> emit) async {
+  Future<void> _verifyOtp(
+      VerifyOtpEvent event,
+      Emitter<LoginState> emit,
+      ) async {
     emit(VerifyOtpLoading());
-    try{
 
+    try {
       var body = {
-        // 'otp': event.otp,
         "email": event.email,
         "otp": event.otp,
         "device_id": event.deviceId,
         "fcm_token": event.fcmToken,
-        "device_type": event.deviceType
+        "device_type": event.deviceType,
       };
-      final headers = {
-        'Content-Type': 'application/json'
-      };
-      final response = await Api.postApi(ApiEndPoint.verifyOtp, body, headers, event.context);
-      final result = LoginResponse.fromJson(response);
-      if (kDebugMode) {
-        print('_verifyOtp:::$result');
+
+      final headers = {'Content-Type': 'application/json'};
+
+      final response = await Api.postApi(
+        ApiEndPoint.verifyOtp,
+        body,
+        headers,
+        event.context,
+      );
+
+      print("VERIFY OTP RAW RESPONSE: $response");
+
+      Map<String, dynamic> decoded = {};
+
+      if (response == null) {
+
+        emit(VerifyOtpError("Otp is Required"));
+        return;
+      } else if (response is String) {
+        decoded = jsonDecode(response);
+      } else if (response is Map<String, dynamic>) {
+        decoded = response;
+      } else {
+        emit(VerifyOtpError("Unexpected response format"));
+        return;
       }
-      if(result.statusCode == 200){
+
+      print("DECODED RESPONSE: $decoded");
+
+      // 🔹 Validation error (OTP missing)
+      if (decoded.containsKey("errors") || decoded['status'] == 400) {
+        final otpError = decoded["errors"]?["otp"]?.join(", ");
+        emit(VerifyOtpError(otpError ?? decoded["title"] ?? "Validation error"));
+        return;
+      }
+
+      // 🔹 Normal success response
+      final result = LoginResponse.fromJson(decoded);
+
+      if (result.statusCode == 200 || result.status == true) {
         emit(VerifyOtpSuccess(result));
-      }else{
-        emit(VerifyOtpError(result.message.toString()));
+      } else {
+        emit(VerifyOtpError(
+          result.errorMessage ?? result.message ?? "Something went wrong",
+        ));
       }
-    }on SocketException{
-      emit(VerifyOtpError('Please check your internet connection'));
-    }catch(e, stacktrace){
+    } on SocketException {
+      emit(VerifyOtpError("Please check your internet connection"));
+    } catch (e, stacktrace) {
       if (kDebugMode) {
-        print(stacktrace);
+        print("VERIFY OTP STACKTRACE: $stacktrace");
       }
-      emit(VerifyOtpError(e.toString()));
+      emit(VerifyOtpError("Failed: $e"));
     }
   }
+
+
+
+
 
   Future<void> _createPassword(CreatePasswordEvent event, Emitter<LoginState> emit) async {
     emit(CreatePasswordLoading());

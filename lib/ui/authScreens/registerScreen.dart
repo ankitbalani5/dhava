@@ -10,6 +10,8 @@ import '../../bloc/loginBloc/login_bloc.dart';
 import '../../constant/Constant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -207,4 +209,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        Fluttertoast.showToast(msg: "Google sign-in cancelled");
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final String? accessToken = googleAuth.accessToken;
+      final String? idToken = googleAuth.idToken;
+      // Constant.access_token = accessToken;
+      print("Google Access Token: $accessToken");
+      print("Google ID Token: $idToken");
+
+
+      // context.read<LoginBloc>().add(GoogleLoginEvent(token: idToken));
+
+      Fluttertoast.showToast(msg: "Google sign-in successful");
+
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Google sign-in failed: $e");
+    }
+  }
+
 }
