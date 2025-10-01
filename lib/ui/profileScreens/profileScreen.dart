@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             }
             if(state is ProfileSuccess){
-              final summaryData = state.summaryModel!.data;
+              // final summaryData = state.summaryModel!.data;
               return Column(
                 children: [
                   Stack(
