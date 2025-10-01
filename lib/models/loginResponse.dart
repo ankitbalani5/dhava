@@ -2,7 +2,7 @@ class LoginResponse {
   bool? status;
   int? statusCode;
   String? message;
-  Null? errorMessage;
+  String? errorMessage;
   Data? data;
 
   LoginResponse(

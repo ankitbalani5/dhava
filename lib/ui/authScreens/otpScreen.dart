@@ -242,6 +242,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   callback: state is VerifyOtpLoading
                       ? () {}
                       : () {
+                    if (pinController.text.isEmpty || pinController.text.length < 5) {
+                      Fluttertoast.showToast(msg: "Enter your OTP");
+                      return; // return without calling Bloc
+                    }
                     context.read<LoginBloc>().add(VerifyOtpEvent(context: context, email: widget.email, otp: pinController.text, deviceId: '', fcmToken: '', deviceType: 'mobile'));
                     // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
                   },
