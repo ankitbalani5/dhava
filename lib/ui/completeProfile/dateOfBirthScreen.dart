@@ -1,18 +1,13 @@
 
+import 'package:coherent_endurance/constant/Constant.dart';
+import 'package:coherent_endurance/constant/preferenceKey.dart';
 import 'package:coherent_endurance/data/createProfileData.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/genderScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../constant/Constant.dart';
-import '../../constant/preferenceKey.dart';
-import '../../resources/color/appColor.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class DateOfBirthScreen extends StatefulWidget {
@@ -32,7 +27,7 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> with WidgetsBindi
 
   DateTime getDateMinus18Years() {
     final now = DateTime.now();
-    final minus18 = DateTime(2000, 1, 1, now.hour, now.minute, now.second);/*DateTime(now.year - 25, now.month, now.day, now.hour, now.minute, now.second);*/
+    final minus18 = DateTime(2000, 1, 1, now.hour, now.minute, now.second);
     return minus18;
   }
 

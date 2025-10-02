@@ -1,9 +1,3 @@
-// part of 'search_cubit.dart';
-//
-// @immutable
-// sealed class SearchState {}
-//
-// final class SearchInitial extends SearchState {}
 
 import 'package:coherent_endurance/models/findUserModel.dart';
 import 'package:equatable/equatable.dart';
@@ -13,14 +7,13 @@ abstract class SearchState extends Equatable {
   List<Object?> get props => [];
 }
 
-class SearchInitial extends SearchState {} // Default Friends/Clubs UI
+class SearchInitial extends SearchState {}
+class SearchActive extends SearchState {}
 
-class SearchActive extends SearchState {} // Show Search Result UI
-
-class SearchLoading extends SearchState {} // API call in progress
+class SearchLoading extends SearchState {}
 
 class SearchLoaded extends SearchState {
-  final List<InnerData> users; // ✅ अब सही type
+  final List<InnerData> users;
   final int page;
   final bool hasMore;
 

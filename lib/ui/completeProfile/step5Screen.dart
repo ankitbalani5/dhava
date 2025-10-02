@@ -2,8 +2,6 @@ import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
-
-import 'chooseActivity.dart';
 import 'createProfile.dart';
 import 'levelScreen.dart';
 

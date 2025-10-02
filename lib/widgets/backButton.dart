@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BackButtonWidget extends StatelessWidget {
-  Color backgroundColor;
-  Color arrowColor;
+ final Color backgroundColor;
+ final Color arrowColor;
   BackButtonWidget({this.backgroundColor = Colors.transparent , this.arrowColor = Colors.black});
 
   @override

@@ -1,12 +1,11 @@
 
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/notification/notificationScreen.dart';
+import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:flutter/material.dart';
-
-import '../../../resources/image/appImages.dart';
-import '../../../resources/style/textStyle.dart';
-import '../../notification/notificationScreen.dart';
-import '../../profileScreens/profileScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'clubWidgets/active/activeWidget.dart';
@@ -181,8 +180,7 @@ class ClubScreenState extends State<ClubScreen> {
               },
             ),
           ) : const SizedBox(),
-          // tabStatus == clubsKey ?
-          // Expanded(child: clubsWidget()) : SizedBox()
+
         ],
       ),
     );

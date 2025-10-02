@@ -2,7 +2,7 @@ class CategoryModel {
   bool? status;
   int? statusCode;
   String? message;
-  Null? errorMessage;
+  String? errorMessage;
   List<CategoryModelData>? data;
 
   CategoryModel(

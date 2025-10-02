@@ -2,7 +2,7 @@ class ActivityLikeModel {
   bool? status;
   int? statusCode;
   String? message;
-  Null? errorMessage;
+  String? errorMessage;
   Data? data;
 
   ActivityLikeModel(

@@ -42,7 +42,4 @@ class ProfileData {
   static int noOfClients = 0;
   static int noOfYearsExperience = 0;
 
-  // static String dateOfBirthFormat(DateTime date) {
-  //   return DateFormat('dd-MM-yyyy').format(date);
-  // }
 }

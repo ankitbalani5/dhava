@@ -1,15 +1,12 @@
-
 import 'package:coherent_endurance/constant/constant.dart';
+import 'package:coherent_endurance/constant/preferenceKey.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/ui/introScreens/sliderScreen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../constant/preferenceKey.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -49,12 +46,12 @@ class _SplashScreenState extends State<SplashScreen> {
       if (Theme.of(context).platform == TargetPlatform.android) {
         var androidInfo = await deviceInfo.androidInfo;
         setState(() {
-          deviceId = androidInfo.id; // Unique device ID on Android
+          deviceId = androidInfo.id;
         });
       } else if (Theme.of(context).platform == TargetPlatform.iOS) {
         var iosInfo = await deviceInfo.iosInfo;
         setState(() {
-          deviceId = iosInfo.identifierForVendor ?? ''; // Unique ID on iOS
+          deviceId = iosInfo.identifierForVendor ?? '';
         });
       }
     } catch (e) {

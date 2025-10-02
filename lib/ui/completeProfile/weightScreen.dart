@@ -1,12 +1,12 @@
 
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/heightScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart' show CustomButton;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
-import '../../resources/color/appColor.dart';
-import '../../resources/image/appImages.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class WeightScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class WeightScreen extends StatefulWidget {
 
 class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver {
   late WeightSliderController _controller;
-  // String roleName = Constant.dummyRoleName;
+
   bool isKeyboardOpen = false;
   double _weightValue = 140;
 
@@ -26,7 +26,6 @@ class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // _weightValue = ProfileData.weight.toDouble();
     _controller = WeightSliderController(initialWeight: _weightValue, minWeight: 0, interval: 1, maxWeight: 1000);
     setState(() {
 
@@ -57,10 +56,6 @@ class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
-
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -95,8 +90,7 @@ class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // 🔷 Background Circle
-                    // Image.asset(AppImageOthers.bigCircle),
+
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -142,7 +136,6 @@ class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver
                       ),
                     ),
 
-                    // 🔷 Ruler picker inside circle
                     Positioned(
                       bottom: 20,
                       child: SizedBox(
@@ -191,12 +184,8 @@ class _WeightScreenState extends State<WeightScreen> with WidgetsBindingObserver
         child: CustomButton(
           text: 'Continue',
           callback: () {
-            // if (_weightValue != 0) {
-            //   ProfileData.weight = _weightValue.toDouble();
               (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(HeightScreen());
-            // } else {
-            //   Constant.showErrorDialog(context, false,  "Select weight first", () {});
-            // }
+
           },
         ),
       ),

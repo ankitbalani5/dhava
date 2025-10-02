@@ -1,14 +1,14 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/authScreens/loginScreen.dart';
 import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
-import 'package:coherent_endurance/ui/settingScreens/changeEmail.dart';
+import 'package:coherent_endurance/ui/settingScreens/aboutScreen.dart';
+import 'package:coherent_endurance/ui/settingScreens/changeEmailScreen.dart';
 import 'package:coherent_endurance/ui/settingScreens/contactAccess.dart';
 import 'package:coherent_endurance/ui/settingScreens/dataPermission.dart';
 import 'package:coherent_endurance/ui/settingScreens/emailNotification.dart';
+import 'package:coherent_endurance/ui/settingScreens/legalScreen.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -44,7 +44,7 @@ class _SettingScreenState extends State<SettingScreen> {
           children: [
             ListTile(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmailScreen()));
               },
               title: Text('Change Email', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
@@ -89,14 +89,14 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ListTile(
               onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LegalScreen()));
               },
               title: Text('Legal', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),
             ListTile(
               onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutScreen()));
               },
               title: Text('About', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),

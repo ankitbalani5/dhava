@@ -4,6 +4,7 @@ import 'package:coherent_endurance/bloc/profileBloc/followRequest_state.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_event.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_state.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/profileScreens/settingScreen.dart';
@@ -17,13 +18,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../resources/color/appColor.dart';
 import 'activitiesScreen.dart';
 import 'editProfileScreen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OtherProfileScreen extends StatefulWidget {
-  String path;
+ final String path;
 
   OtherProfileScreen({this.path = 'user', super.key});
 
@@ -145,10 +145,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                         child: Icon(
                                           Icons.share,
                                           color: Colors.white,
-                                        ) /*SvgPicture.asset(AppImageSvg.setting)*/,
+                                        ),
                                       ),
-                                      // SizedBox(width: 10,),
-                                      // SvgPicture.asset(AppImageSvg.option),
                                       SizedBox(width: 10),
 
                                       widget.path == 'user'
@@ -166,7 +164,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                             child: Icon(
                                               Icons.settings,
                                               color: Colors.white,
-                                            ) /*SvgPicture.asset(AppImageSvg.setting)*/,
+                                            ) ,
                                           )
                                           : IconButton(
                                             icon: Icon(
@@ -285,18 +283,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                             ),
                           )
                           : SizedBox(),
-
-                      // Positioned(
-                      //   bottom: 10,
-                      //     left: 0,
-                      //     right: 0,
-                      //     child: Column(
-                      //       children: [
-                      //         Text('Adam Smith', style: CustomTextStyles.bold(fontSize: 26 ),),
-                      //         Text('Jaipur, India', style: CustomTextStyles.medium(fontSize: 17),),
-                      //       ],
-                      //     )
-                      // )
                     ],
                   ),
                   Padding(
@@ -1039,7 +1025,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               CupertinoActionSheetAction(
                 onPressed: () {
                   Navigator.pop(context);
-                  // ✅ Report Profile logic
                 },
                 isDefaultAction: true,
                 child: Text(

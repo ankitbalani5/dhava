@@ -1,16 +1,13 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
-import 'package:coherent_endurance/models/MyFeedModel.dart';
 import 'package:coherent_endurance/models/activityLikeModel.dart';
 import 'package:coherent_endurance/models/feedModel.dart' as feed;
 import 'package:coherent_endurance/models/getAllChallengesResponse.dart';
+import 'package:coherent_endurance/repository/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
-import 'package:coherent_endurance/models/activityLikeModel.dart' as like;
 
-import '../../repository/api.dart';
 
 part 'activity_event.dart';
 part 'activity_state.dart';
@@ -84,7 +81,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       final result = ActivityLikeModel.fromJson(response);
 
       if(result.statusCode == 200){
-        // ✅ पुराना data copy करो
+
         var feedModelCopy = feed.FeedModel(
           data: feed.Data(
             data: List<feed.FeedModelData>.from(feedModel?.data?.data ?? []),
@@ -95,12 +92,12 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
           if (item.activityId == event.activityId) {
             if(item.isLiked == false){
 
-              item.isLiked = !item.isLiked!;   // 👉 liked flag
-              item.totalLike = (item.totalLike ?? 0) + 1; // 👉 likes count बढ़ा दो
+              item.isLiked = !item.isLiked!;
+              item.totalLike = (item.totalLike ?? 0) + 1;
             }else{
 
-              item.isLiked = !item.isLiked!;   // 👉 liked flag
-              item.totalLike = (item.totalLike ?? 0) - 1; // 👉 likes count बढ़ा दो
+              item.isLiked = !item.isLiked!;
+              item.totalLike = (item.totalLike ?? 0) - 1;
             }
             break;
           }

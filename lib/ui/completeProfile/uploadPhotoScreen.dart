@@ -1,19 +1,15 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/genderScreen.dart';
-import 'package:coherent_endurance/widgets/backButton.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:coherent_endurance/constant/constant.dart';
-import '../../resources/color/appColor.dart';
-import '../../resources/image/appImages.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 File? _uploadImageFile;
@@ -26,8 +22,7 @@ class UploadPhotoScreen extends StatefulWidget {
 }
 
 class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBindingObserver {
-  // bool isNavigation = Constant.isNavigation;
-  // String roleName = Constant.dummyRoleName;
+
   String profileUrl = "";
   bool isKeyboardOpen = false;
 
@@ -36,8 +31,6 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // var profileData = ResponseConstant.getProfileResponse?.data;
-    // profileUrl = profileData?.profilePhoto ?? "";
   }
 
   @override
@@ -87,11 +80,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
           SizedBox(height: 20),
 
           SizedBox(
-            height: 270, // slightly taller to accommodate the button overflow
+            height: 270,
             width: 250,
             child: Stack(
               alignment: Alignment.center,
-              clipBehavior: Clip.none, // 👈 allow overflow
+              clipBehavior: Clip.none,
               children: [
                 // 🔷 Circular Image
                 Container(
@@ -141,9 +134,8 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
                 ),
 
 
-                // 🔷 Camera Button at Bottom (overlapping circle edge)
                 Positioned(
-                  bottom: -10, // 👈 half of the button height
+                  bottom: -10,
                   child: Container(
                     height: 40,
                     width: 40,
@@ -180,129 +172,10 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
         child: CustomButton(text: 'Continue', callback: () {
           (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(GenderScreen());
         },),
-        // child: BlocConsumer<UpdateProfileBloc, UpdateProfileState>(
-        //   listener: (context, state) async {
-        //     if (state is UpdateProfileSuccess) {
-        //       var message = state.commonResponseModel.message;
-        //       Constant.showErrorDialog(context, true,  message ?? "Something went wrong", () {
-        //         Navigator.pushAndRemoveUntil(
-        //           context,
-        //           MaterialPageRoute(builder: (context) => MainScreen()), (route) => false,
-        //         );
-        //       });
-        //
-        //     }
-        //     if (state is UpdateProfileError) {
-        //       var message = state.error;
-        //       Constant.showErrorDialog(context, false,  message ?? "Something went wrong", () {});
-        //     }
-        //     if (state is UpdateProfileSessionError) {
-        //       var message = state.error;
-        //       Constant.showErrorDialog(context, false,  message ?? "Something went wrong", () {});
-        //       Constant.userLogout(context);
-        //     }
-        //   },
-        //   builder: (context, state) {
-        //     return CustomButton(
-        //       text:
-        //       state is UpdatePhotoLoading
-        //           ? ''
-        //           : 'Continue',
-        //       callback:
-        //       state is UpdatePhotoLoading
-        //           ? () {}
-        //           : () {
-        //         if(isNavigation){
-        //           Constant.showErrorDialog(context, true,  "Profile has been updated successfully", () {
-        //             Navigator.pushAndRemoveUntil(
-        //               context,
-        //               MaterialPageRoute(builder: (context) => MainScreen()), (route) => false,
-        //             );
-        //           });
-        //         }
-        //         else {
-        //           debugPrint('New Sports Id : ${ProfileData.expertiseSportsId}');
-        //           if(Constant.checkUserIsAthleteOrWorkoutEnthusiast()){
-        //             updateProfileForAthleteOrWorkoutEnthusiast();
-        //           }
-        //           else if(Constant.checkUserIsTrainer()){
-        //             updateProfileForTrainerCoach();
-        //           }
-        //           else if(Constant.checkUserIsCoach()){
-        //             updateProfileForTrainerCoach();
-        //           }
-        //           else {
-        //             Constant.showErrorDialog(context, true, Constant.developmentMessage, (){
-        //               Navigator.of(context).pop();
-        //             });
-        //           }
-        //         }
-        //
-        //       },
-        //       child:
-        //       state is UpdatePhotoLoading
-        //           ? Center(
-        //         child: LoadingAnimationWidget.inkDrop(
-        //           color: Colors.white,
-        //           size: 20,
-        //         ),
-        //       )
-        //           : null,
-        //     );
-        //   },
-        // ),
       ),
     );
   }
 
-  // updateProfileForAthleteOrWorkoutEnthusiast(){
-  //   context.read<UpdateProfileBloc>().add(
-  //     UpdateAthleteProfileEvent(
-  //       context: context,
-  //
-  //       profilePhoto: _uploadImageFile,
-  //       firstName: ProfileData.firstName,
-  //       lastName: "",
-  //       gender: ProfileData.gender,
-  //       dateOfBrith: ProfileData.dateOfBirth,
-  //       height: ProfileData.height,
-  //       weight: ProfileData.weight,
-  //       stateId: ProfileData.stateId,
-  //       cityName: ProfileData.cityName,
-  //       userExpertise: ProfileData.expertiseSportsId,
-  //       schoolCollegeId: ProfileData.associateSchoolCollegeId,
-  //       userBio: ProfileData.userBio,
-  //       otherSports: ProfileData.otherSports,
-  //     ),
-  //   );
-  // }
-
-  // updateProfileForTrainerCoach(){
-  //   context.read<UpdateProfileBloc>().add(
-  //     UpdateTrainerProfileEvent(
-  //       context: context,
-  //       profilePhoto: _uploadImageFile,
-  //       firstName: ProfileData.firstName,
-  //       lastName: "",
-  //       gender: ProfileData.gender,
-  //       dateOfBrith: ProfileData.dateOfBirth,
-  //       height: ProfileData.height,
-  //       weight: ProfileData.weight,
-  //       stateId: ProfileData.stateId,
-  //       cityName: ProfileData.cityName,
-  //       userExpertise: ProfileData.expertiseSportsId,
-  //       schoolCollegeId: ProfileData.associateSchoolCollegeId,
-  //       userBio: ProfileData.userBio,
-  //       otherSports: ProfileData.otherSports,
-  //       userType: ProfileData.userType,
-  //       otherCertificateOrganization: ProfileData.certificationName,
-  //       isCertified: ProfileData.isCertified,
-  //       noOfClients: ProfileData.noOfClients.toString(),
-  //       summary: ProfileData.summary,
-  //       noOfYearsExperience: ProfileData.noOfYearsExperience.toString(),
-  //     ),
-  //   );
-  // }
 
   Future<void> handleImageSelection(BuildContext context) async {
     final deviceInfo = DeviceInfoPlugin();
@@ -342,7 +215,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
       // Permissions permanently denied
       openAppSettings();
     } else {
-      // Request permissions dynamically
+
       if (cameraStatus.isDenied) {
         await cameraPermission.request();
       }
@@ -350,7 +223,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
         await galleryPermission.request();
       }
 
-      // Check again after requesting
+
       final newCameraStatus = await cameraPermission.status;
       final newGalleryStatus = await galleryPermission.status;
 
@@ -360,7 +233,6 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen>  with WidgetsBind
       } else if (newGalleryStatus.isLimited) {
         showOptions(context);
       } else {
-        // Show appropriate message if permissions are not granted
         Constant.showErrorDialog(
           context,
           false,

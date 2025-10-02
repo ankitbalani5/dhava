@@ -1,4 +1,4 @@
-import 'package:coherent_endurance/constant/Constant.dart';
+
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/home/feedDetails.dart';

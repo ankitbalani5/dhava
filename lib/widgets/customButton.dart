@@ -1,18 +1,18 @@
 
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:flutter/material.dart';
 
-import '../resources/color/appColor.dart';
-import '../resources/style/textStyle.dart';
 
 class CustomButton extends StatefulWidget {
-  String text;
-  VoidCallback callback;
-  double? height;
-  double fontSize;
-  double? width;
-  Widget? child;
-  Color? color;
-  Color? textColor;
+ final String text;
+ final VoidCallback callback;
+ final double? height;
+ final double fontSize;
+ final double? width;
+ final  Widget? child;
+ final Color? color;
+ final Color? textColor;
 
   CustomButton(
       {super.key,

@@ -1,12 +1,10 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/news/newsDetail.dart';
+import 'package:coherent_endurance/ui/notification/notificationScreen.dart';
+import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:flutter/material.dart';
-
-import '../../../resources/style/textStyle.dart';
-import '../../../widgets/backButton.dart';
-import '../../notification/notificationScreen.dart';
-import '../../profileScreens/profileScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -24,11 +22,7 @@ class _NewsScreenState extends State<NewsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
-        // leading: GestureDetector(
-        //     onTap: () {
-        //       Navigator.pop(context);
-        //     },
-        //     child: BackButtonWidget()),
+
         title: Text('News', style: CustomTextStyles.bold(),),
         actions: [
           Padding(
@@ -46,7 +40,6 @@ class _NewsScreenState extends State<NewsScreen> {
                   },
                   child: SvgPicture.asset(
                     AppImageSvg.notification,
-                    // Replace with your back icon path
                     width: 30,
                     height: 30,
                   ),
@@ -101,35 +94,6 @@ class _NewsScreenState extends State<NewsScreen> {
                     ],
                   ),
                   SizedBox(height: 10,),
-                  // Text('Kickstart Your Journey To Wellness With Simple,'
-                  //     ' Sustainable Habits Now! Kickstart Your Journey To Wellness With Simple,'
-                  //     ' Sustainable Habits Now! Kickstart Your Journey To Wellness With Simple,'
-                  //     ' Sustainable Habits Now!', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey),),
-                  // SizedBox(height: 10,),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Row(
-                  //       children: [
-                  //         Icon(Icons.access_time_outlined, color: Colors.redAccent, size: 14,),
-                  //         SizedBox(width: 5,),
-                  //         Text('2 Mins Ago', style: CustomTextStyles.medium(fontSize: 10 )),
-                  //       ],
-                  //     ),
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //           color: Color(0xff531212),
-                  //           borderRadius: BorderRadius.circular(20)
-                  //       ),
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
-                  //         child: Center(
-                  //           child: Text('Read More', style: CustomTextStyles.medium(fontSize: 14 )),
-                  //         ),
-                  //       ),
-                  //     )
-                  //   ],
-                  // )
                 ],
               ),
             ),

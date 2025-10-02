@@ -1,25 +1,20 @@
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/authScreens/forgotPassword.dart';
 import 'package:coherent_endurance/ui/authScreens/otpScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../bloc/loginBloc/login_bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PasswordScreen extends StatefulWidget {
-  String email;
+ final String email;
   PasswordScreen({required this.email, super.key});
 
   @override
@@ -46,8 +41,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
       setState(() {
         rememberMe = true;
         passwordController.text = prefs.getString(PrefKey.savedPassword) ?? '';
-        // यहाँ email controller नहीं है, आपने ऊपर से widget.email पास किया है,
-        // अगर future में email field भी add करनी हो तो वहां भी restore कर सकते हैं।
+
       });
     }
   }
@@ -141,16 +135,16 @@ class _PasswordScreenState extends State<PasswordScreen> {
                       width: 24,
                       child: Checkbox(
                         value: rememberMe,
-                        checkColor: Colors.grey, // ✅ Tick का रंग ग्रे होगा
+                        checkColor: Colors.grey,
                         fillColor: MaterialStateProperty.resolveWith<Color>((states) {
                           if (states.contains(MaterialState.selected)) {
-                            return Colors.white; // ✅ Active होने पर background white रहेगा
+                            return Colors.white;
                           }
-                          return Colors.transparent; // ✅ Inactive होने पर transparent रहेगा
+                          return Colors.transparent;
                         }),
                         side: MaterialStateBorderSide.resolveWith((states) {
                           return const BorderSide(
-                            color: Colors.grey, // ✅ Border हमेशा grey रहेगा
+                            color: Colors.grey,
                             width: 1.5,
                           );
                         }),
@@ -175,17 +169,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
               ),
               const SizedBox(height: 20),
 
-
-              // ElevatedButton(
-              //   onPressed: () {
-              //     Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen()));
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: Colors.black,
-              //     minimumSize: const Size(double.infinity, 50),
-              //   ),
-              //   child: const Text("Log In", style: TextStyle(color: Colors.white)),
-              // ),
             ],
           ),
         ),
@@ -210,7 +193,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
         color: Colors.transparent,
         child: CustomButton(
           text: state is LoginLoading ? '' : 'Log In',
-          // width: MediaQuery.of(context).size.width,
           color: AppColor.bgTile,
           textColor: Colors.black,
           callback:
@@ -232,7 +214,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               }
             context.read<LoginBloc>().add(UserLoginEvent(context: context, email: widget.email, password: passwordController.text , fcmToken: '', deviceId: '', deviceType: 'mobile'));
             }
-            // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey), ), (route) => false,);
+
           },
           child:
           state is LoginLoading

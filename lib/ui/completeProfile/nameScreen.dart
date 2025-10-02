@@ -1,10 +1,9 @@
 import 'package:coherent_endurance/data/createProfileData.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/dateOfBirthScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
-
-import '../../resources/color/appColor.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class NameScreen extends StatefulWidget {

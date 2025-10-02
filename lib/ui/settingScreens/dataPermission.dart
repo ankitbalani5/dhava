@@ -1,8 +1,7 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
-
-import '../../resources/style/textStyle.dart';
-import '../../widgets/backButton.dart';
 
 class DataPermission extends StatefulWidget {
   const DataPermission({super.key});

@@ -19,8 +19,8 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
 
   void updateProgress(double newValue) {
     setState(() {
-      _oldProgress = _progress; // pehle value store karo
-      _progress = newValue;     // fir naya value set karo
+      _oldProgress = _progress;
+      _progress = newValue;
     });
   }
   @override

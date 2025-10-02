@@ -42,8 +42,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     lastnameController.text = profileData!.data!.lastName.toString();
     birthdayController.text = profileData!.data!.dob.toString();
     birthdayController.text = Constant.formatDob(birthdayController.text);
-    planToUse = profileData!.data!.planToUse!;
-    fitnessLevel = profileData!.data!.fitnessLevel!;
+    planToUse = profileData?.data?.planToUse ??"";
+    fitnessLevel = profileData?.data?.fitnessLevel??"";
 
     print('gender::${profileData!.data!.gender}');
     final genderValue = profileData?.data?.gender?.toLowerCase();
@@ -53,9 +53,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
     gender = a;
 
-    // final a = genderList.firstWhere((e) => e == profileData!.data?.gender?.toLowerCase().toString());
-    // gender = a.toString();
-    // .text = profileData!.data!.firstName.toString();
     super.initState();
   }
 
@@ -69,10 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         leading: GestureDetector(
             onTap: () => Navigator.pop(context),
             child: BackButtonWidget()),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-        //   onPressed: () => Navigator.pop(context),
-        // ),
+
         title: const Text(
           "Edit Profile",
           style: TextStyle(
@@ -152,9 +146,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               url, error) =>
                               Image.asset(AppImageOthers.profilePic, height: 90,),
                         ),
-                        // backgroundImage: NetworkImage(
-                        //   "https://i.pravatar.cc/300",
-                        // ),
+
                       ),
                       Positioned(
                         bottom: 0,
@@ -194,104 +186,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 const SizedBox(height: 15),
 
-                // Primary Sport Dropdown
-                // _buildDropdown("Primary Sport", "Running", ["Running", "Cycling", "Swimming"]),
                 _buildSportDropdown(),
                 const SizedBox(height: 15),
 
                 // Bio
                 _buildTextField("Bio", bioController),
-                // const SizedBox(height: 20),
 
-                // Athlete Information
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text(
-                //     "ATHLETE INFORMATION",
-                //     style: TextStyle(
-                //       fontSize: 13,
-                //       color: Colors.grey[600],
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [
-                //     Text(
-                //         "ATHLETE INFORMATION",
-                //         style: CustomTextStyles.semiBold(fontSize: 14)
-                //     ),
-                //     Text('Used To Calculate Calories, Power And More', style: CustomTextStyles.regular(fontSize: 12),),
-                //
-                //   ],
-                // ),
-                // const SizedBox(height: 20),
-                //
-                // // Google Fit Option
-                // Container(
-                //   padding: const EdgeInsets.all(12),
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(12),
-                //     border: Border.all(color: Colors.grey.shade300),
-                //   ),
-                //   child: Row(
-                //     children: const [
-                //       Icon(Icons.favorite, color: Colors.red),
-                //       SizedBox(width: 10),
-                //       Expanded(
-                //         child: Text(
-                //           "Automatically update your profile by connecting to Google Fit",
-                //           style: TextStyle(color: Colors.red, fontSize: 13),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 const SizedBox(height: 15),
 
-                // Birthday
-                // _buildDropdown("Birthday", "23/08/2000", ["01/01/2000", "23/08/2000", "10/12/2001"]),
                 _buildBirthdayField(),
                 const SizedBox(height: 15),
 
                 // Gender
                 _buildGenderDropdown(),
+
                 // _buildDropdown("Gender", gender, genderList),
                 const SizedBox(height: 15),
 
-                // Weight
+
                 _buildTextField("Weight (kg)", weightController),
                 const SizedBox(height: 20),
 
-                // Performance Potential Title
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [
-                //     Text(
-                //       "PERFORMANCE POTENTIAL",
-                //       style: CustomTextStyles.semiBold(fontSize: 14)
-                //     ),
-                //     Text('Used To Set Heart Rate And Running Pace Zones', style: CustomTextStyles.regular(fontSize: 12),),
-                //
-                //   ],
-                // ),
-                // const SizedBox(height: 20),
-                // // Max Heart Rate
-                // _buildTextField("Max Heart Rate (bpm)", bpmController),
-                // const SizedBox(height: 15),
-                //
-                // // Running Race Distance Dropdown
-                // _buildDropdown("Running Race Distance", "5K", ["5K", "10K", "Half Marathon"]),
-                // const SizedBox(height: 15),
-                //
-                // // Running Race Time Dropdown
-                // _buildDropdown("Running Race Time", "30 mins", ["30 mins", "45 mins", "1 hour"]),
-                // const SizedBox(height: 15),
-                //
-                // // Functional Threshold Power
-                // _buildTextField("Functional Threshold Power (watts)", wattsController),
-                // const SizedBox(height: 30),
               ],
             );
           },
@@ -330,7 +245,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         showSearchBox: true,
         fit: FlexFit.loose,
         menuProps: MenuProps(
-          backgroundColor: Colors.white, // ✅ popup white
+          backgroundColor: Colors.white,
         ),
       ),
       onChanged: (value) {
@@ -352,7 +267,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         showSearchBox: true,
         fit: FlexFit.loose,
         menuProps: MenuProps(
-          backgroundColor: Colors.white, // ✅ popup white
+          backgroundColor: Colors.white,
         ),
       ),
       decoratorProps: DropDownDecoratorProps(
@@ -377,23 +292,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
       ),
-      // dropdownDecoratorProps: DropDownDecoratorProps(
-      //   dropdownSearchDecoration: InputDecoration(
-      //     labelText: "Primary Sport",
-      //     contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      //     border: OutlineInputBorder(
-      //       borderRadius: BorderRadius.circular(12),
-      //       borderSide: BorderSide(color: Colors.grey.shade200),
-      //     ),
-      //   ),
-      // ),
-      // popupProps: const PopupProps.menu(
-      //   showSearchBox: true,
-      // ),
+
       onChanged: (value) {
         setState(() {
           selectedSport = value;
-          // Find selected category object
+
           final selectedCategory = Constant.getCategory?.data!.firstWhere(
                   (element) => element.categoryName == value,
               // orElse: () => CategoryModel(categoryId: "", categoryName: "")
@@ -432,13 +335,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       onTap: () async {
         final DateTime today = DateTime.now();
         final DateTime lastAllowedDate =
-        DateTime(today.year - 18, today.month, today.day); // ✅ min age 18
+        DateTime(today.year - 18, today.month, today.day);
 
         DateTime? picked = await showDatePicker(
           context: context,
           initialDate: lastAllowedDate,
-          firstDate: DateTime(1900), // कोई भी पुरानी date allow
-          lastDate: lastAllowedDate, // सिर्फ 18+ allowed
+          firstDate: DateTime(1900),
+          lastDate: lastAllowedDate,
         );
 
         if (picked != null) {
@@ -458,30 +361,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.grey),
-        // hintText: hint,
-        // filled: true,
-        // fillColor: Colors.grey[100],
+
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          // borderSide: BorderSide.none,
+
           borderSide: BorderSide(color: Colors.grey.shade200)
         ),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            // borderSide: BorderSide.none,
+
             borderSide: BorderSide(color: Colors.grey.shade200)
         ),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            // borderSide: BorderSide.none,
+
             borderSide: BorderSide(color: Colors.grey.shade200)
         ),
       ),
     );
   }
 
-  // Widget _buildDropdown(String label, String value, List<String> items){
+
   Widget _buildDropdown(String label, String value, List<String> items) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),

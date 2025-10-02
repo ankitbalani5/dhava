@@ -1,13 +1,11 @@
 
+import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../resources/image/appImages.dart';
-import '../../resources/style/textStyle.dart';
-
-
 class DefaultScreen extends StatefulWidget {
-  bool isToolBar;
+ final bool isToolBar;
 
   DefaultScreen({this.isToolBar = true, super.key});
 

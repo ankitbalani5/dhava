@@ -2,7 +2,6 @@ import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
-
 import 'memberTab/adminTab.dart';
 import 'memberTab/everyoneTab.dart';
 

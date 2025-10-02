@@ -1,12 +1,11 @@
 
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/step9Screen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../resources/color/appColor.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class FindYourFriends extends StatefulWidget {

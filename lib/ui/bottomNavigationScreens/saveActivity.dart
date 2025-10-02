@@ -92,23 +92,19 @@ class _SaveActivityState extends State<SaveActivity> {
     final body = {
       ...widget.trackingData, // Tracking data from previous screen
 
-      // ✅ Basic Info
       "title": titleController.text,
       "description": descriptionController.text,
       "runType": selectedRunType,
 
-      // ✅ Details Section
       "typeOfRun": selectedTypeOfRun,
       "feeling": selectedFeeling,
       "privateNote": privateNoteController.text,
       "gear": selectedGear,
 
-      // ✅ Visibility Section
       "visibility": selectedVisibility,
       "hiddenDetails": selectedHiddenDetails,
       "muteActivity": isPublish,
 
-      // ✅ Meta Info (Optional future use)
       "createdAt": DateTime.now().toIso8601String(),
       // "mapImage": widget.trackingData["mapImage"],
     };
@@ -150,8 +146,8 @@ class _SaveActivityState extends State<SaveActivity> {
             onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios, color: Colors.black,))/*Center(child: Text('Resume', style: CustomTextStyles.regular(),))*/,
-        // leadingWidth: 100,
+            child: Icon(Icons.arrow_back_ios, color: Colors.black,)),
+
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -209,11 +205,9 @@ class _SaveActivityState extends State<SaveActivity> {
                 TextFormField(
                   controller: descriptionController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  // keyboardType: TextInputType.number,
+
                   cursorColor: Colors.black,
-                  // inputFormatters: [
-                  //   FilteringTextInputFormatter.digitsOnly
-                  // ],
+
                   style: TextStyle(color: Colors.black),
                   maxLines: 3,
                   decoration: InputDecoration(
@@ -396,10 +390,10 @@ class _SaveActivityState extends State<SaveActivity> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: AppColor.bgTile,
-                      // icon: Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: SvgPicture.asset(AppImageSvg.time)/*Icon(Icons.emoji_emotions_outlined, color: Colors.black)*/,
+                        child: SvgPicture.asset(AppImageSvg.time),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       border: OutlineInputBorder(

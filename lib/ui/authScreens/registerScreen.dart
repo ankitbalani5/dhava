@@ -1,13 +1,9 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
-import 'package:coherent_endurance/ui/authScreens/passwordScreen.dart';
 import 'package:coherent_endurance/ui/authScreens/sendCode.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../bloc/loginBloc/login_bloc.dart';
-import '../../constant/Constant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -64,27 +60,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Image.asset(AppImageOthers.facebook, height: 24),
+
                       Image.asset(AppImageOthers.google, height: 24),
                       SizedBox(width: 10,),
                       Text("Continue With Google", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
-                // ElevatedButton.icon(
-                //   onPressed: () {},
-                //   icon: Image.asset(AppImageOthers.google, height: 24),
-                //   label: const Text("Continue With Google", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: Colors.white,
-                //     foregroundColor: Colors.black,
-                //     minimumSize: const Size(double.infinity, 50),
-                //     side: const BorderSide(color: Colors.grey),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //   ),
-                // ),
+
                 const SizedBox(height: 15),
 
                 // Facebook Register Button
@@ -132,8 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: "Email",
-                    // filled: true,
-                    // fillColor: Colors.grey[200],
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.grey),
@@ -163,14 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => SendCode(email: emailController.text)));
                     },
                 ),
-                // ElevatedButton(
-                //   onPressed: () {},
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: Colors.black,
-                //     minimumSize: const Size(double.infinity, 50),
-                //   ),
-                //   child: const Text("Continue", style: TextStyle(color: Colors.white)),
-                // ),
+
                 const SizedBox(height: 15),
 
                 Center(
@@ -217,17 +192,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Fluttertoast.showToast(msg: "Google sign-in cancelled");
         return;
       }
-
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
       final String? accessToken = googleAuth.accessToken;
       final String? idToken = googleAuth.idToken;
-      // Constant.access_token = accessToken;
       print("Google Access Token: $accessToken");
       print("Google ID Token: $idToken");
-
-
-      // context.read<LoginBloc>().add(GoogleLoginEvent(token: idToken));
 
       Fluttertoast.showToast(msg: "Google sign-in successful");
 

@@ -2,8 +2,8 @@ import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
+
 class CycleDetailScreen extends StatelessWidget {
   final String imageUrl;
   final String type;

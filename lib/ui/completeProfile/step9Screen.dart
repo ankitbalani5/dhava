@@ -1,12 +1,11 @@
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
+import 'package:coherent_endurance/data/createProfileData.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavBar.dart' show BottomNavBar, bottomNavKey;
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
-
-import '../../bloc/profileBloc/profile_bloc.dart';
-import '../../constant/Constant.dart';
-import '../../data/createProfileData.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
-import '../bottomNavBar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

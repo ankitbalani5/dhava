@@ -150,7 +150,7 @@ class Constant {
                   callback: () {
                     if (Navigator.canPop(context)) {
                       Constant.closeLoadingDialog(context); // close loading if open
-                      Navigator.pop(context); // close current dialog
+
                     }
                   },
 

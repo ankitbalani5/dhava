@@ -2,7 +2,7 @@ class JoinChallengesModel {
   bool? status;
   int? statusCode;
   String? message;
-  Null? errorMessage;
+  String? errorMessage;
   Null? data;
 
   JoinChallengesModel(

@@ -399,33 +399,3 @@ class _challengesWidgetState extends State<challengesWidget> {
   }
 
 }
-
-
-
-/* SizedBox(
-            height: 35,
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.bgRed,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(vertical: 2),
-              ),
-              onPressed: () {
-                context.read<JoinChalllengesBloc>().add(
-                  PostJoinChallengesEvent(
-                    challenges_Id:"", // <-- API me jo field use hoti hai
-                    context: context,
-                  ),
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChallangesDetailScreen()),
-                );
-              },
-              child: Text(
-                "Join Now",
-                style: CustomTextStyles.bold(textColor: Colors.white, fontSize: 13),
-              ),
-            ),
-          ),*/

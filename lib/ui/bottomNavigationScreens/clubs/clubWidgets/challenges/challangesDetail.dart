@@ -1,4 +1,4 @@
-import 'package:coherent_endurance/models/postSuggestedModel.dart';
+
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';

@@ -3,10 +3,8 @@ import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavigationScreens/progressHistory.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/record/trackingScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class Endurance extends StatefulWidget {
   const Endurance({super.key});
@@ -16,7 +14,7 @@ class Endurance extends StatefulWidget {
 }
 
 class _EnduranceState extends State<Endurance> {
-  int selectedIndex = 1; // Default: Run
+  int selectedIndex = 1;
 
   String categoryId = '';
   final List<String> icons = [
@@ -25,11 +23,9 @@ class _EnduranceState extends State<Endurance> {
     AppImageSvg.cycle
   ];
 
-  // 🔁 Corresponding images for each mode
   final List<String> backgroundImages = [
-    AppImageOthers.walkEndurance, // 👈 create this asset
     AppImageOthers.runEndurance,
-    AppImageOthers.cycleEndurance, // 👈 create this asset
+    AppImageOthers.cycleEndurance,
   ];
 
   @override
@@ -37,7 +33,7 @@ class _EnduranceState extends State<Endurance> {
 
     final defaultCategory = Constant.getCategory?.data?.firstWhere(
           (e) => e.categoryName?.toLowerCase() == "walk",
-      // orElse: () => Constant.getCategory?.data.first, // fallback पहला element
+      // orElse: () => Constant.getCategory?.data.first,
     );
 
     categoryId = defaultCategory!.categoryId!;
@@ -59,7 +55,6 @@ class _EnduranceState extends State<Endurance> {
         children: [
           Container(color: Colors.white),
 
-          /// 🔁 Background Image according to selectedIndex
           Positioned(
             top: 50,
             child: Image.asset(
@@ -69,7 +64,7 @@ class _EnduranceState extends State<Endurance> {
             ),
           ),
 
-          /// Gradient overlay
+
           Positioned(
             top: 40,
             left: 0,
@@ -89,7 +84,7 @@ class _EnduranceState extends State<Endurance> {
             ),
           ),
 
-          /// Activity Selector Buttons
+
           Positioned(
             top: 0,
             left: 0,
@@ -121,7 +116,7 @@ class _EnduranceState extends State<Endurance> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Icon(icons[index] , color: !isSelected ? Colors.black : Colors.white,),
+
                             Image.network(Constant.getCategory!.data![index].categoryIcon.toString() , height: 20, width: 20, color: isSelected ? Colors.white : Colors.black,),
                             SizedBox(width: 10,),
                             Text(Constant.getCategory!.data![index].categoryName.toString(), style: TextStyle(color: !isSelected ? Colors.black : Colors.white),),
@@ -135,7 +130,7 @@ class _EnduranceState extends State<Endurance> {
             ),
           ),
 
-          /// Bottom Text and Button
+
           Positioned(
             bottom: 20,
             left: 20,

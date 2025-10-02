@@ -1,11 +1,10 @@
 import 'package:coherent_endurance/data/createProfileData.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/reasonScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../../resources/color/appColor.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class LevelScreen extends StatefulWidget {
@@ -68,7 +67,7 @@ class _LevelScreenState extends State<LevelScreen> {
               ),
               child: Center(
                 child: ListTile(
-                  // tileColor: isSelect == 'intermediate' ? AppColor.bgRed.withOpacity(.5) : AppColor.bgTextField,
+
                   title: Text('Intermediate', style: CustomTextStyles.bold(fontSize: 14),),
                   subtitle: Text("I can do easy-moderate activities.",
                       style: TextStyle(fontSize: 14)),

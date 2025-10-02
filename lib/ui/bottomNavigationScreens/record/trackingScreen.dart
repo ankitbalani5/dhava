@@ -1,14 +1,13 @@
 
 import 'dart:convert';
-
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/mapSetting.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/saveActivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:coherent_endurance/constant/constant.dart';
-
 import 'dart:async';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
@@ -16,7 +15,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:http/http.dart' as http;
 import 'package:screenshot/screenshot.dart';
-import '../mapSetting.dart';
 import 'package:geocoding/geocoding.dart';
 
 
@@ -57,13 +55,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
   @override
   void initState() {
     super.initState();
-    // अगर Constant.getCategory में "Run" category है तो उसे default assign करो
-    // final defaultCategory = Constant.getCategory?.data?.firstWhere(
-    //       (e) => e.categoryName?.toLowerCase() == "run",
-    //   // orElse: () => Constant.getCategory?.data.first, // fallback पहला element
-    // );
-    //
-    // runType = defaultCategory?.categoryId;
     runType = widget.categoryId;
     print('runtype::: $runType');
 
@@ -89,10 +80,10 @@ class _TrackingScreenState extends State<TrackingScreen> {
     stepStream = Pedometer.stepCountStream;
     stepStream?.listen((StepCount event) {
       if (initialSteps == 0) {
-        initialSteps = event.steps; // पहली बार का step count save करो
+        initialSteps = event.steps;
       }
       setState(() {
-        steps = event.steps - initialSteps; // session-based steps
+        steps = event.steps - initialSteps;
       });
     }, onError: (error) {
       print("Step count error: $error");
@@ -125,7 +116,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
           pointTimestamps.add(DateTime.now()); // <-- timestamp save
         });
 
-        // ✅ Smoothed Elevation Calculation (Strava Style)
+
         if (lastElevation != 0.0) {
           int diff = position.altitude.round() - lastElevation.round();
 
@@ -135,29 +126,15 @@ class _TrackingScreenState extends State<TrackingScreen> {
           }
         }
 
-        // ✅ Update lastElevation & maxElevation
+
         lastElevation = position.altitude;
         if (position.altitude.round() > maxElevation) {
           maxElevation = position.altitude.round();
         }
-        
-        // // Calculate Elevation Gain
-        // if (position.altitude > lastElevation) {
-        //   elevationGain += (position.altitude - lastElevation);
-        // }
-        // lastElevation = position.altitude;
-        //
-        // // Max Elevation Check
-        // if (position.altitude > maxElevation) {
-        //   maxElevation = position.altitude;
-        // }
 
         setState(() {
           pathPoints.add(newPos);
         });
-      // setState(() {
-      //   pathPoints.add(newPos);
-      // });
 
       mapController?.animateCamera(CameraUpdate.newLatLng(newPos));
       }
@@ -175,7 +152,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
     DateTime? lastTime;
 
     for (int i = 0; i < pathPoints.length; i++) {
-      // ✅ अगर timestamp missing है, तो skip कर दो
+
       if (i >= pointTimestamps.length) break;
 
       if (lastPoint != null && lastTime != null) {
@@ -193,7 +170,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
             "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
           });
 
-          // Reset for next split
+
           distanceCovered = 0.0;
           splitDuration = Duration.zero;
         }
@@ -202,7 +179,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
       lastTime = pointTimestamps[i];
     }
 
-    // ✅ अगर आखिरी में बचा हुआ distance < 1km है, तो भी add करो
+
     if (distanceCovered > 0 && lastTime != null) {
       double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
       splits.add({
@@ -218,8 +195,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   Map<String, dynamic> calculateResults() {
     List<Map<String, dynamic>> splits = calculateSplits();
-
-    // Get fastest split pace as double (seconds/km)
     double fastestSplit = double.infinity;
     if (splits.isNotEmpty) {
       for (var split in splits) {
@@ -234,9 +209,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
     return {
       "totalDistance": totalDistance,
-      "elapsedTime": elapsed.inSeconds,                          // total seconds
-      "avgPace": avgPace,                                        // ✅ raw double (API के लिए)
-      "fastestSplit": fastestSplit,                              // ✅ raw double (API के लिए)
+      "elapsedTime": elapsed.inSeconds,
+      "fastestSplit": fastestSplit,
       "segments": splits.length,
       "splits": splits,
     };
@@ -299,9 +273,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
   void stopTracking() async {
     positionStream?.cancel();
     positionStream?.cancel();
-    // start = false;
-    // pause = false;
-    // startActivity = false;
 
     DateTime endTime = DateTime.now();
     double durationSeconds = endTime.difference(startTime!).inSeconds.toDouble();
@@ -330,7 +301,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   String getPace(double distance, double durationInSeconds) {
     if (distance <= 0) return "0:00";
-    double paceInSec = durationInSeconds / (distance / 1000); // seconds per km
+    double paceInSec = durationInSeconds / (distance / 1000); //  per km
     int min = (paceInSec / 60).floor();
     int sec = (paceInSec % 60).floor();
     return "${min}:${sec.toString().padLeft(2, '0')}";
@@ -459,32 +430,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                   ),
                                 ],
                               ),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              //   children: [
-                              //     Column(
-                              //       children: [
-                              //         Text("${elevationGain.toStringAsFixed(1)} m",
-                              //             style: CustomTextStyles.bold(fontSize: 22)),
-                              //         Text("Elevation Gain", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
-                              //       ],
-                              //     ),
-                              //     Column(
-                              //       children: [
-                              //         Text("${maxElevation.toStringAsFixed(1)} m",
-                              //             style: CustomTextStyles.bold(fontSize: 22)),
-                              //         Text("Max Elevation", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
-                              //       ],
-                              //     ),
-                              //     Column(
-                              //       children: [
-                              //         Text("$steps", style: CustomTextStyles.bold(fontSize: 22)),
-                              //         Text("Steps", style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
-                              //       ],
-                              //     ),
-                              //
-                              //   ],
-                              // ),
+
                               SizedBox(height: 10,)
                             ],
                           ),
@@ -560,10 +506,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                   ),
                 ),
               ),
-              // SizedBox(),
-              // SvgPicture.asset(AppImageSvg.pause),
-              // SvgPicture.asset(AppImageSvg.map),
-              // SizedBox()
+
             ],
           )),
         ),
@@ -633,7 +576,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
       },
     ).then((selectedValue) {
       if (selectedValue != null) {
-        runType = selectedValue; // bottomsheet close hone ke baad assign
+        runType = selectedValue;
       }
     });
   }
@@ -658,7 +601,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
               pause = false;
 
               startTime = DateTime.now();
-              // ✅ Get current location & set address/city/state/country
+
               await getCurrentAddress();
               startLocationStream();
               startTimer(); // ⬅️ Start timer
@@ -718,10 +661,10 @@ class _TrackingScreenState extends State<TrackingScreen> {
         state = place.administrativeArea ?? "";
         country = place.country ?? "";
 
-        print("✅ Address: $address, City: $city, State: $state, Country: $country");
+        print(" Address: $address, City: $city, State: $state, Country: $country");
       }
     } catch (e) {
-      print("❌ Error getting location: $e");
+      print(" Error getting location: $e");
     }
   }
 
@@ -753,10 +696,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
             Text('Pause', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
           ],
         ),
-      ),/*Container(
-        height: 60,
-        child: Center(child: SvgPicture.asset(AppImageSvg.pause)),
-      ),*/
+      ),
     );
   }
 
@@ -769,15 +709,13 @@ class _TrackingScreenState extends State<TrackingScreen> {
           Expanded(
               child: GestureDetector(
                 onTap: () {
-                  // showCongratulationDialog(context);
-
                   pause = false;
                   startActivity = true;
                   startTimer();
                   setState(() {
 
                   });
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
+
                 },
                 child: Container(
                     height: 60,
@@ -796,12 +734,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                       ],
                     ),
                   ),
-                /*Container(
-              height: 60,
-              child: Center(
-                  child: Image.asset(AppImageOthers.resume, color: Colors.white,)
-              ),
-            ),*/
+
               ),
           ),
 
@@ -809,15 +742,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                // showCongratulationDialog(context);
 
-                // startActivity = true;
-                // setState(() {
-                //
-                // });
                 stopTracking();
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
-                // sendTrackingData();
                 onFinishTracking();
               },
               child: Container(
@@ -836,10 +762,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                     ],
                   ),
                 ),
-              /*Container(
-              height: 60,
-              child: Center(child: Image.asset(AppImageOthers.finish, color: Colors.white,)),
-            ),*/
+
             ),
           ),
 
@@ -904,7 +827,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
           if (totalDistance > 50) {
             avgPace = elapsed.inSeconds / (totalDistance / 1000); // sec/km
           } else {
-            avgPace = 0.0; // Default when standing still
+            avgPace = 0.0;
           }
         });
       }

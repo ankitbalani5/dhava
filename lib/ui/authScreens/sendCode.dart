@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -5,17 +6,12 @@ import 'package:coherent_endurance/ui/authScreens/otpScreen.dart';
 import 'package:coherent_endurance/ui/authScreens/passwordScreen.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
-
-import '../../bloc/loginBloc/login_bloc.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SendCode extends StatefulWidget {
-  String email;
+ final String email;
   SendCode({required this.email , super.key});
 
   @override
@@ -36,7 +32,6 @@ class _SendCodeState extends State<SendCode> {
               child: BlocConsumer<LoginBloc, LoginState>(
                 listener: (context, state) {
                   if(state is SendOtpSuccess){
-                    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OtpScreen(email: widget.email)));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -62,7 +57,6 @@ class _SendCodeState extends State<SendCode> {
                         ? () {}
                         : () {
                       context.read<LoginBloc>().add(SendOtpEvent(context: context, email: widget.email));
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen(email: widget.email)));
                     },
                     child: state is LoginLoading
                         ? Center(

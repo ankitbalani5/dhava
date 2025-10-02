@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_state.dart';
 import 'package:bloc/bloc.dart';
+import 'package:coherent_endurance/models/getAllChallengesResponse.dart';
 import 'package:coherent_endurance/repository/api.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../models/getAllChallengesResponse.dart';
 
 class GetAllChallengesBloc extends Bloc<GetAllChallengesEvent,GetAllChallengesState>{
   GetAllChallengesBloc() : super(GetAllChallengesInitial()) {
@@ -36,19 +35,7 @@ class GetAllChallengesBloc extends Bloc<GetAllChallengesEvent,GetAllChallengesSt
       }else{
         emit(GetAllChallengesError(result.message.toString()));
       }
-      // if (response != null) {
-      //   if (response.statusCode == 200 && response.status == true) {
-      //     emit(GetAllChallengesLoaded(response));
-      //   } else {
-      //     emit(GetAllChallengesError(response.message.toString()));
-      //   }
-      // } else {
-      //   emit(
-      //     GetAllChallengesError(
-      //       "Response not available, Please try again after some time",
-      //     ),
-      //   );
-      // }
+
 
     }on SocketException{
       emit(GetAllChallengesError('Please check your internet connection'));

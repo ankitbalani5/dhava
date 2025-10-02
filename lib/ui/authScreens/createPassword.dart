@@ -1,20 +1,16 @@
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
-import 'package:coherent_endurance/ui/completeProfile/createProfile.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../bloc/loginBloc/login_bloc.dart';
-import '../../resources/color/appColor.dart';
-import '../../widgets/customButton.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateNewPasswordScreen extends StatefulWidget {
-  String email;
+ final String email;
   CreateNewPasswordScreen({required this.email, super.key});
 
   @override
@@ -153,16 +149,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                 obscureText: _obscureConfirmPassword,
               ),
                 const SizedBox(height: 30),
-        
-                // ElevatedButton(
-                //   onPressed: () {},
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: Colors.red,
-                //     minimumSize: const Size(double.infinity, 50),
-                //   ),
-                //   child: const Text("Verify Number",
-                //       style: TextStyle(color: Colors.white)),
-                // ),
+
               ],
             ),
           ),
@@ -200,8 +187,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     context: context, email: widget.email, password: passwordController.text,
                     confirmPassword: confirmPasswordController.text));
                 }
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => CreateProfile()));
+
               },
               child: state is CreatePasswordLoading
                   ? Center(

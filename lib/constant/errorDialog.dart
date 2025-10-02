@@ -1,9 +1,9 @@
 
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 
-import '../resources/color/appColor.dart';
-import '../resources/style/textStyle.dart';
-import '../widgets/customButton.dart';
 
 class ErrorDialog extends StatelessWidget {
   final String message;
@@ -14,14 +14,14 @@ class ErrorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false, // Prevent dialog dismissal on back press
+      onWillPop: () async => false,
       child: Dialog(
-        backgroundColor: Colors.transparent, // Make the Dialog background transparent
+        backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
             color: Colors.black,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColor.textBackgroundGrey, width: 2), // Stroke with color and width
+            border: Border.all(color: AppColor.textBackgroundGrey, width: 2),
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -50,7 +50,7 @@ class ErrorDialog extends StatelessWidget {
                   callback: () {
                     Navigator.pop(context);
                     if (isSuccess) {
-                      callback(); // Properly execute the callback function
+                      callback();
                     }
                   },
                 ),

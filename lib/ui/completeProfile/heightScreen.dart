@@ -1,17 +1,13 @@
 
 import 'package:coherent_endurance/constant/constant.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
-import 'package:coherent_endurance/ui/completeProfile/weightScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:simple_ruler_picker/simple_ruler_picker.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
-
-import '../../resources/color/appColor.dart';
-import '../../resources/image/appImages.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class HeightScreen extends StatefulWidget {
@@ -23,7 +19,6 @@ class HeightScreen extends StatefulWidget {
 
 class _HeightScreenState extends State<HeightScreen> with WidgetsBindingObserver {
   late WeightSliderController _controller;
-  // String roleName = Constant.dummyRoleName;
   bool isKeyboardOpen = false;
   double _heightValue = 140;
 
@@ -31,7 +26,7 @@ class _HeightScreenState extends State<HeightScreen> with WidgetsBindingObserver
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // _heightValue = ProfileData.weight.toDouble();
+
     _controller = WeightSliderController(initialWeight: _heightValue, minWeight: 0, interval: 1, maxWeight: 1000);
     setState(() {
 
@@ -60,10 +55,6 @@ class _HeightScreenState extends State<HeightScreen> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
-
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -144,8 +135,6 @@ class _HeightScreenState extends State<HeightScreen> with WidgetsBindingObserver
                               ],
                             ),
                           ),
-
-                          // 🔷 Ruler picker inside circle
                           Expanded(
                             child: SizedBox(
                               height: 200,
@@ -198,12 +187,6 @@ class _HeightScreenState extends State<HeightScreen> with WidgetsBindingObserver
             context,
             MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)), (route) => false,
           );
-          // if (_heightValue != 0) {
-          //   // ProfileData.height = _heightValue.toDouble();
-          //   (context.findAncestorStateOfType<EditProfileScreenState>())?.addOverlay(WeightScreen());
-          // } else {
-          //   Constant.showErrorDialog(context, false,  "Select height first", () {});
-          // }
         },
       ),
     ),

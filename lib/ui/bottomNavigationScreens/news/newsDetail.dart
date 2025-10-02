@@ -39,14 +39,7 @@ class _NewsDetailState extends State<NewsDetail> {
       "time": "10 Mins Ago",
       "image": "https://picsum.photos/400/200?2",
     },
-    // {
-    //   "title": "Start Your Healthy Life Today!",
-    //   "description":
-    //   "Kickstart Your Journey To Wellness With Simple, Sustainable Habits Now! "
-    //       "Kickstart Your Journey To Wellness With Simple, Sustainable Habits Now!",
-    //   "time": "15 Mins Ago",
-    //   "image": null,
-    // },
+
   ];
 
   @override

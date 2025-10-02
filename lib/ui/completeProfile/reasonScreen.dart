@@ -1,11 +1,9 @@
 import 'package:coherent_endurance/data/createProfileData.dart';
-import 'package:coherent_endurance/ui/bottomNavBar.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../../resources/color/appColor.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 import 'findYourFriends.dart';
 
@@ -185,7 +183,6 @@ class _ReasonScreenState extends State<ReasonScreen> {
         height: 60,
         child: CustomButton(
           text: 'Continue',
-          // width: MediaQuery.of(context).size.width,
           color: AppColor.bgRed,
           textColor: Colors.white,
           callback: () {
@@ -198,9 +195,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
 
               Fluttertoast.showToast(msg: 'please select plan to use');
             }
-            // (context.findAncestorStateOfType<EditProfileScreenState>())?.addOverlay(DateOfBirthScreen());
 
-            // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar()), (route) => false,);
           },
         ),
       ),

@@ -1,9 +1,9 @@
-import 'package:coherent_endurance/resources/color/appColor.dart';
+
 import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 
-import '../resources/style/textStyle.dart';
-import '../widgets/backButton.dart';
 
 class MilestoneScreen extends StatefulWidget {
   const MilestoneScreen({super.key});
@@ -45,41 +45,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> {
             children: [
 
               buildBadgeGrid(milestone),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: AppColor.bgTile,
-              //     borderRadius: BorderRadius.circular(12)
-              //   ),
-              //   child: Padding(
-              //     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       children: [
-              //         Column(
-              //           children: [
-              //             Image.asset(AppImageOthers.milestone, height: 75),
-              //             SizedBox(height: 10,),
-              //             Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-              //           ],
-              //         ),
-              //         Column(
-              //           children: [
-              //             Image.asset(AppImageOthers.milestone, height: 75),
-              //             SizedBox(height: 10,),
-              //             Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-              //           ],
-              //         ),
-              //         Column(
-              //           children: [
-              //             Image.asset(AppImageOthers.milestone, height: 75),
-              //             SizedBox(height: 10,),
-              //             Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-              //           ],
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // )
+
             ],
           ),
         ),
@@ -98,7 +64,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> {
           margin: EdgeInsets.symmetric(vertical: 8),
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200, // ✅ background per row
+            color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(

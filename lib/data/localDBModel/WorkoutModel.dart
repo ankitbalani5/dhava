@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-part 'WorkoutModel.g.dart'; // ✅ Correct
+part 'WorkoutModel.g.dart';
 
 @HiveType(typeId: 0)
 class WorkoutModel extends HiveObject {

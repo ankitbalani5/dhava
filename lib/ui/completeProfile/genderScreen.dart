@@ -1,14 +1,13 @@
 
+import 'package:coherent_endurance/constant/preferenceKey.dart';
 import 'package:coherent_endurance/data/createProfileData.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/chooseActivity.dart';
 import 'package:coherent_endurance/ui/completeProfile/weightScreen.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../constant/preferenceKey.dart';
-import '../../resources/color/appColor.dart';
-import '../../resources/style/textStyle.dart';
-import '../../widgets/customButton.dart';
 import 'createProfile.dart';
 
 class GenderScreen extends StatefulWidget {
@@ -92,14 +91,7 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 color: AppColor.bgTile
-                // gradient: LinearGradient(
-                //   colors: [
-                //     AppColor.primaryColor.withOpacity(0.2),
-                //     AppColor.primaryColor.withOpacity(0.2),
-                //   ],
-                //   begin: Alignment.topCenter,
-                //   end: Alignment.bottomCenter,
-                // ),
+
               ),
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
               child: Column(
@@ -130,19 +122,10 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
         child:  CustomButton(
           text: 'Continue',
           callback: () {
-            // if (gender.isNotEmpty) {
-            //   ProfileData.gender = gender;
             CreateProfileData.gender = gender;
             print(CreateProfileData.gender);
               (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(ChooseActivity());
-            // } else {
-            //   Constant.showErrorDialog(
-            //     context,
-            //     false,
-            //     "Select gender first",
-            //         () {},
-            //   );
-            // }
+
           },
         ),
       ),
@@ -174,8 +157,7 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
                   ? LinearGradient(
                     colors: [
                       AppColor.bgRed, AppColor.bgRed
-                      // AppColor.primaryColor.withOpacity(0.2),
-                      // AppColor.primaryColor.withOpacity(0.2),
+
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -185,14 +167,13 @@ class _GenderScreenState extends State<GenderScreen> with WidgetsBindingObserver
 
                       AppColor.primaryColor.withOpacity(0.2),
                       AppColor.primaryColor.withOpacity(0.2),
-                      // AppColor.backgroundGrey.withOpacity(0.5),
-                      // AppColor.backgroundGrey.withOpacity(0.5),
+
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
           border: Border.all(
-            color: AppColor.bgRed/*isSelected ? AppColor.primaryColor : AppColor.backgroundGrey*/,
+            color: AppColor.bgRed,
             width: 1
           ),
         ),

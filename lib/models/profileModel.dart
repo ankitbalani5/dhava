@@ -1,14 +1,8 @@
 class ProfileModel {
   bool? status;
   int? statusCode;
-
-  @override
-  String toString() {
-    return 'ProfileModel{status: $status, statusCode: $statusCode, message: $message, errorMessage: $errorMessage, data: $data}';
-  }
-
   String? message;
-  Null? errorMessage;
+  String? errorMessage;
   Data? data;
 
   ProfileModel(
@@ -49,7 +43,7 @@ class Data {
   String? state;
   String? address;
   String? country;
-  Null? mobile;
+  String? mobile;
   String? email;
   bool? isProfileCompleted;
   String? bio;
@@ -69,7 +63,9 @@ class Data {
   String? planToUse;
   String? latitude;
   String? longitude;
+  String? primaryCategoryId;
   List<Categories>? categories;
+  int? totalActivity;
 
   Data(
       {this.userDetailId,
@@ -101,7 +97,9 @@ class Data {
         this.planToUse,
         this.latitude,
         this.longitude,
-        this.categories});
+        this.primaryCategoryId,
+        this.categories,
+        this.totalActivity});
 
   Data.fromJson(Map<String, dynamic> json) {
     userDetailId = json['user_detail_id'];
@@ -133,12 +131,14 @@ class Data {
     planToUse = json['plan_to_use'];
     latitude = json['latitude'];
     longitude = json['longitude'];
+    primaryCategoryId = json['primary_category_id'];
     if (json['categories'] != null) {
       categories = <Categories>[];
       json['categories'].forEach((v) {
         categories!.add(new Categories.fromJson(v));
       });
     }
+    totalActivity = json['total_activity'];
   }
 
   Map<String, dynamic> toJson() {
@@ -172,9 +172,11 @@ class Data {
     data['plan_to_use'] = this.planToUse;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
+    data['primary_category_id'] = this.primaryCategoryId;
     if (this.categories != null) {
       data['categories'] = this.categories!.map((v) => v.toJson()).toList();
     }
+    data['total_activity'] = this.totalActivity;
     return data;
   }
 }

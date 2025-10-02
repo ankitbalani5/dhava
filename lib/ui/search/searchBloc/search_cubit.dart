@@ -1,26 +1,17 @@
-// import 'package:bloc/bloc.dart';
-// import 'package:meta/meta.dart';
-//
-// part 'search_state.dart';
-//
-// class SearchCubit extends Cubit<SearchState> {
-//   SearchCubit() : super(SearchInitial());
-// }
 
 import 'dart:async';
 import 'dart:io';
-
 import 'package:coherent_endurance/models/findUserModel.dart';
+import 'package:coherent_endurance/repository/api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repository/api.dart';
 import 'search_state.dart';
 
 class SearchCubit extends Cubit<SearchState> {
   SearchCubit() : super(SearchInitial());
 
   Timer? _debounce;
-  bool _isSearchActive = true; // ✅ flag
+  bool _isSearchActive = true;
 
   void activateSearch() {
   _isSearchActive = true;
@@ -33,19 +24,16 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   Future<void> searchUsers(String query, context, {int perPage = 10, int page = 1, bool isPagination = false,}) async {
-    // if (query.isEmpty) {
-    //   emit(SearchActive());
-    //   return;
-    // }
 
-    if (!_isSearchActive) return; // ✅ अगर search बंद है तो ignore कर दो
+
+    if (!_isSearchActive) return;
     if (!isPagination) {
       emit(SearchLoading());
     }
 
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 600), () async {
-      if (!_isSearchActive) return; // ✅ फिर से check करो
+      if (!_isSearchActive) return;
       try {
         final body = {
           "search_keyword": query,
@@ -61,10 +49,10 @@ class SearchCubit extends Cubit<SearchState> {
         await Api.getApi('${ApiEndPoint.userFind}?per_page=${perPage}&page=${page}&search_keyword=${query}', headers, context);
         final result = FindUserModel.fromJson(response);
 
-        if (!_isSearchActive) return; // ✅ अगर बीच में बंद कर दिया तो response ignore
+        if (!_isSearchActive) return;
 
         if (result.statusCode == 200) {
-          // ✅ InnerData की List लो
+
           final newUsers = result.data?.data ?? <InnerData>[];
 
           if (isPagination && state is SearchLoaded) {
@@ -84,7 +72,7 @@ class SearchCubit extends Cubit<SearchState> {
       } on SocketException {
         emit(SearchError("Please check your internet connection"));
       } catch (e, stacktrace) {
-        if (!_isSearchActive) return; // ✅ error भी ignore करो
+        if (!_isSearchActive) return;
         if (kDebugMode) {
           print(stacktrace);
         }
@@ -93,10 +81,4 @@ class SearchCubit extends Cubit<SearchState> {
     });
   }
 
-
-  // @override
-  // Future<void> close() {
-  //   _debounce?.cancel();
-  //   return super.close();
-  // }
 }

@@ -2,7 +2,7 @@ class CommonResponseModel {
   bool? status;
   int? statusCode;
   String? message;
-  Null? errorMessage;
+  String? errorMessage;
   dynamic? data;
 
   CommonResponseModel(

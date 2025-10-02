@@ -1,24 +1,19 @@
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/authScreens/createPassword.dart';
+import 'package:coherent_endurance/widgets/customButton.dart' show CustomButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../bloc/loginBloc/login_bloc.dart';
-import '../../constant/constant.dart';
-import '../../widgets/customButton.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OtpScreen extends StatefulWidget {
-  String email;
+  final String email;
   OtpScreen({required this.email, super.key});
 
   @override
@@ -38,10 +33,7 @@ class _OtpScreenState extends State<OtpScreen> {
     pinController = TextEditingController();
     focusNode = FocusNode();
 
-    /// In case you need an SMS autofill feature
-    // smsRetriever = SmsRetrieverImpl(
-    //   SmartAuth(),
-    // );
+
   }
   final defaultPinTheme = PinTheme(
     width: 51,
@@ -85,39 +77,7 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 100),
 
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: List.generate(
-            //     4,
-            //         (index) => SizedBox(
-            //       width: 60,
-            //       child: TextField(
-            //         textAlign: TextAlign.center,
-            //         keyboardType: TextInputType.number,
-            //         decoration: InputDecoration(
-            //           // filled: true,
-            //           // fillColor: Colors.grey[200],
-            //
-            //           border: OutlineInputBorder(
-            //             borderRadius: BorderRadius.circular(8),
-            //             borderSide: BorderSide(color: Colors.grey),
-            //
-            //           ),
-            //           enabledBorder: OutlineInputBorder(
-            //             borderRadius: BorderRadius.circular(8),
-            //             borderSide: BorderSide(color: Colors.grey),
-            //
-            //           ),
-            //           focusedBorder: OutlineInputBorder(
-            //             borderRadius: BorderRadius.circular(8),
-            //             borderSide: BorderSide(color: Colors.grey),
-            //
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Directionality(
@@ -134,9 +94,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   focusNode: focusNode,
                   defaultPinTheme: defaultPinTheme,
                   separatorBuilder: (index) => const SizedBox(width: 8),
-                  // validator: (value) {
-                  //   return value != Constant.otp ? 'Pin is incorrect' : null;
-                  // },
+
                   hapticFeedbackType: HapticFeedbackType.lightImpact,
                   onCompleted: (pin) {
                     debugPrint('onCompleted: $pin');
@@ -179,17 +137,15 @@ class _OtpScreenState extends State<OtpScreen> {
             Center(
               child: BlocListener<LoginBloc, LoginState>(
                 listenWhen: (previous, current) {
-                  // सिर्फ पहली बार navigation allow करो
+
                   return current is SendOtpSuccess && previous is! SendOtpSuccess;
                 },
                 listener: (context, state) {
-                  // if(state is SendOtpLoading){
-                  //   Constant.loadingDialog(context);
-                  // }
+
                   if(state is SendOtpSuccess){
-                    // pinController.clear();
+
                     Fluttertoast.showToast(msg: state.sendOtpModel.data!.otp.toString());
-                    // Constant.closeLoadingDialog(context);
+
                   }
                   if(state is SendOtpError){
                     Fluttertoast.showToast(msg: state.error);
@@ -220,7 +176,7 @@ class _OtpScreenState extends State<OtpScreen> {
             BlocConsumer<LoginBloc, LoginState>(
               listener: (context, state) async {
                 if(state is VerifyOtpSuccess){
-                 // Constant.closeLoadingDialog(context);
+
                   SharedPreferences pref = await SharedPreferences.getInstance();
                   pref.setBool(PrefKey.isLogin, true);
                   pref.setString(PrefKey.accessToken, state.loginResponse.data!.accessToken.toString());
@@ -236,7 +192,7 @@ class _OtpScreenState extends State<OtpScreen> {
               builder: (context, state) {
                 return CustomButton(
                   text: state is VerifyOtpLoading ? '' : 'Verify',
-                  // width: MediaQuery.of(context).size.width,
+
                   color: AppColor.bgRed,
                   textColor: Colors.white,
                   callback: state is VerifyOtpLoading
@@ -244,10 +200,10 @@ class _OtpScreenState extends State<OtpScreen> {
                       : () {
                     if (pinController.text.isEmpty || pinController.text.length < 5) {
                       Fluttertoast.showToast(msg: "Enter your OTP");
-                      return; // return without calling Bloc
+                      return;
                     }
                     context.read<LoginBloc>().add(VerifyOtpEvent(context: context, email: widget.email, otp: pinController.text, deviceId: '', fcmToken: '', deviceType: 'mobile'));
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
+
                   },
                   child: state is VerifyOtpLoading
                       ? Center(
@@ -260,27 +216,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 );
               },
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen()));
-            //   },
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.red,
-            //     minimumSize: const Size(double.infinity, 50),
-            //   ),
-            //   child: const Text("Email me a code",
-            //       style: TextStyle(color: Colors.white)),
-            // ),
-            // const SizedBox(height: 15),
-            //
-            // Center(
-            //   child: TextButton(
-            //     onPressed: () {},
-            //     child: Text("Use Password Instead",
-            //       style: CustomTextStyles.bold(fontSize: 16, textColor: Colors.black),
-            //     ),
-            //   ),
-            // ),
+
           ],
         ),
       ),

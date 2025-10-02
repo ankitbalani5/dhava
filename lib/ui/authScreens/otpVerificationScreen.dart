@@ -181,15 +181,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           context,
                           MaterialPageRoute(builder: (context) => CreateProfile()), (route) => false,
                         );
-                        // //TODO need to check this via otp service
-                        // if (_formKey.currentState!.validate()) {
-                        //   context.read<LoginBloc>().add(
-                        //     VerifyOtpEvent(
-                        //       context: context,
-                        //       otp: pinController.text,
-                        //     ),
-                        //   );
-                        // }
+
                       },
                       child:
                       state is VerifyOtpLoading

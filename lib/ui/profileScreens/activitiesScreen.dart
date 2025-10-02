@@ -1,22 +1,17 @@
-import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
+import 'package:coherent_endurance/bloc/MyFeedBloc/my_feed_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/models/MyFeedModel.dart';
 import 'package:coherent_endurance/models/categoryModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/image/appImages.dart' show AppImageOthers, AppImageSvg;
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/home/feedDetails.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import '../../bloc/MyFeedBloc/my_feed_bloc.dart';
-import '../../constant/Constant.dart';
-import '../../models/feedModel.dart';
-import '../../resources/image/appImages.dart';
-import '../bottomNavigationScreens/home/feedDetails.dart';
-import '../bottomNavigationScreens/home/kudosScreen.dart';
-import '../milestone.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ActivitiesScreen extends StatefulWidget {
@@ -72,15 +67,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
             ...Constant.getCategory!.data!
         ]
     );
-    // categoryData = CategoryModel(data: [
-    //   CategoryModelData(
-    //     categoryId: '',
-    //     categoryName: 'All',
-    //     backgroundImage: '',
-    //     categoryIcon: '',
-    //     tips: '',
-    //     uniqueCode: ''
-    // ), ...?Constant.getCategory!.data]);
+
     super.initState();
   }
   
@@ -439,30 +426,6 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
           );
         }
 
-        /*if(state is FeedSuccess){
-          // var feed = state.feedModel.data!.data;
-          return feed.totalLike! > 0 ?
-            Stack(
-            children: [
-              Container(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(AppImageOthers.userImg, height: 30,),
-                  ],
-                ),
-              ),
-
-              Positioned(
-                  right: 25,
-                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
-              Positioned(
-                  right: 50,
-                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
-            ],
-          ) : SizedBox();
-        }*/
         return SizedBox();
 
       },

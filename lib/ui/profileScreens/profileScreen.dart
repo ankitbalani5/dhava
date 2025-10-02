@@ -1,4 +1,7 @@
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/models/profileModel.dart';
+import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
@@ -14,14 +17,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
-
-import '../../bloc/profileBloc/profile_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../constant/constant.dart';
-import '../../resources/color/appColor.dart';
 
 class ProfileScreen extends StatefulWidget {
-  String path;
+  final String path;
   ProfileScreen({this.path = 'user', super.key});
 
   @override
@@ -44,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     profileData = Constant.getProfile;
     final categoryId = Constant.getCategory!.data!.first.categoryId.toString();
     print('categoryId::::$categoryId');
-    context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
+    var add = context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
     super.initState();
   }
 
@@ -115,9 +114,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           onTap: () {
                                             // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
                                           },
-                                          child: Icon(Icons.share, color: Colors.white,)/*SvgPicture.asset(AppImageSvg.setting)*/),
-                                      // SizedBox(width: 10,),
-                                      // SvgPicture.asset(AppImageSvg.option),
+                                          child: Icon(Icons.share, color: Colors.white,)),
+
                                       SizedBox(width: 10,),
 
                                       widget.path == 'user' ? GestureDetector(
@@ -175,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                                    border: Border.all(color: Colors.red, width: 1),
                                   ),
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(50),
@@ -232,17 +230,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           )
                       ) : SizedBox()
 
-                      // Positioned(
-                      //   bottom: 10,
-                      //     left: 0,
-                      //     right: 0,
-                      //     child: Column(
-                      //       children: [
-                      //         Text('Adam Smith', style: CustomTextStyles.bold(fontSize: 26 ),),
-                      //         Text('Jaipur, India', style: CustomTextStyles.medium(fontSize: 17),),
-                      //       ],
-                      //     )
-                      // )
                     ],
                   ),
                   Padding(
@@ -261,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         SizedBox(height: 12,),
                         Text(profileData!.data!.bio ?? 'No Bio',
-                          style: TextStyle(fontSize: 11/*, color: Colors.grey,*/ ), textAlign: TextAlign.center,),
+                          style: TextStyle(fontSize: 11 ), textAlign: TextAlign.center,),
                       ],
                     ),
                   ),
@@ -390,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                            // Text(summaryData.thisWeekActivities., style: CustomTextStyles.regular(fontSize: 16 )),
+
                                           ],
                                         ),
                                         Column(
@@ -413,12 +400,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   SizedBox(height: 20,),
                                   Container(
                                     height: 200,
-                                    color: AppColor.bgTile, // background color
+                                    color: AppColor.bgTile,
                                     padding: const EdgeInsets.all(8),
                                     child: LineChart(
                                       LineChartData(
                                         backgroundColor: AppColor.bgTile,
-                                        gridData: FlGridData(show: false), // grid lines hide
+                                        gridData: FlGridData(show: false),
                                         titlesData: FlTitlesData(
                                           leftTitles: AxisTitles(
                                             sideTitles: SideTitles(
@@ -523,45 +510,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 SizedBox(height: 20,),
 
                                 buildBadgeGrid(milestone),
-                                // Column(
-                                //   children: [
-                                //     Container(
-                                //       decoration: BoxDecoration(
-                                //           color: Colors.white24,
-                                //           borderRadius: BorderRadius.circular(12)
-                                //       ),
-                                //       child: Padding(
-                                //         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-                                //         child: Row(
-                                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //           children: [
-                                //             Column(
-                                //               children: [
-                                //                 Image.asset(AppImageOthers.milestone, height: 75),
-                                //                 SizedBox(height: 10,),
-                                //                 Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-                                //               ],
-                                //             ),
-                                //             Column(
-                                //               children: [
-                                //                 Image.asset(AppImageOthers.milestone, height: 75),
-                                //                 SizedBox(height: 10,),
-                                //                 Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-                                //               ],
-                                //             ),
-                                //             Column(
-                                //               children: [
-                                //                 Image.asset(AppImageOthers.milestone, height: 75),
-                                //                 SizedBox(height: 10,),
-                                //                 Text('100 Activity', style: CustomTextStyles.bold(fontSize: 16),)
-                                //               ],
-                                //             ),
-                                //           ],
-                                //         ),
-                                //       ),
-                                //     )
-                                //   ],
-                                // ),
+
                                 SizedBox(height: 10,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -629,7 +578,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   padding: EdgeInsets.symmetric(vertical: 10),
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(), // ✅ Important
+                                  physics: NeverScrollableScrollPhysics(),
                                   itemCount: 2,
                                   itemBuilder: (context, index) {
                                     return Container(
@@ -693,7 +642,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           margin: EdgeInsets.symmetric(vertical: 8),
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200, // ✅ background per row
+            color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -735,7 +684,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(context);
-              // ✅ Report Profile logic
+
             },
             isDefaultAction: true,
             child: Text(
@@ -746,7 +695,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(context);
-              // ✅ Block logic
             },
             isDestructiveAction: true,
             child: Text(
@@ -767,76 +715,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-  // void _showMenu(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: Colors.transparent, // ✅ gray bg
-  //     builder: (context) {
-  //       return Container(
-  //         decoration: BoxDecoration(
-  //           color: Colors.white,
-  //           borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-  //         ),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             ListTile(
-  //               title: Center(
-  //                 child: Text(
-  //                   "Report Profile",
-  //                   style: TextStyle(
-  //                     color: Colors.blue,
-  //                     fontSize: 16,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 // ✅ Report profile logic
-  //               },
-  //             ),
-  //             Divider(height: 1),
-  //             ListTile(
-  //               title: Center(
-  //                 child: Text(
-  //                   "Block",
-  //                   style: TextStyle(
-  //                     color: Colors.red,
-  //                     fontSize: 16,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 // ✅ Block logic
-  //               },
-  //             ),
-  //             Divider(height: 8, color: Colors.transparent),
-  //             Container(
-  //               color: Colors.white,
-  //               child: ListTile(
-  //                 title: Center(
-  //                   child: Text(
-  //                     "Cancel",
-  //                     style: TextStyle(
-  //                       color: Colors.blue,
-  //                       fontSize: 16,
-  //                       fontWeight: FontWeight.w600,
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 onTap: () {
-  //                   Navigator.pop(context);
-  //                 },
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
 }

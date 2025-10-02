@@ -33,31 +33,54 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int page = 1;
   final RefreshController _refreshController = RefreshController();
+
+  int maxProgress = 3;
+
+
   @override
   void initState() {
     super.initState();
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: '1', categoryId: null,));
-    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context));
-
-
+    context.read<ActivityBloc>().add(GetFeedEvent(
+      context: context, perPage: '2', page: '1', categoryId: null,));
+    context.read<GetAllChallengesBloc>().add(
+        GetAllChallengesEvent(context: context));
   }
+
+
+
+  int getCompletedSteps(int activityUploaded, int totalFollowing, String photo) {
+    int steps = 0;
+
+    if (activityUploaded >
+         0) steps++; // Activity upload ho gaya
+    if (totalFollowing > 0) steps++; // Following > 0 hai
+    if (photo.isNotEmpty) steps++;   // Photo upload hai
+
+    return steps;
+  }
+
+
   void _onRefresh() {
     page = 1;
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: null,));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context,
+      perPage: '10',
+      page: page.toString(),
+      categoryId: null,));
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
-    context.read<ActivityBloc>().add(GetSuggestedChallengesEvent( context: context));
+    context.read<ActivityBloc>().add(
+        GetSuggestedChallengesEvent(context: context));
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() {
     page++;
     context.read<ActivityBloc>().add(GetFeedEvent(
-      context: context,
-      perPage: '10',
-      page: page.toString(),
-      categoryId: null,
-      isPagination: true
+        context: context,
+        perPage: '10',
+        page: page.toString(),
+        categoryId: null,
+        isPagination: true
     ));
     _refreshController.loadComplete();
   }
@@ -78,12 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SearchScreen(),
-                        ),
-                      );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchScreen(),
+                      ),
+                    );
                   },
                   child: SvgPicture.asset(
                     AppImageSvg.search,
@@ -95,12 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(width: 10),
                 GestureDetector(
                   onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationScreen(),
-                        ),
-                      );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(),
+                      ),
+                    );
                   },
                   child: SvgPicture.asset(
                     AppImageSvg.notification,
@@ -121,18 +144,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColor.bgRed)
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColor.bgRed)
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: CachedNetworkImage(imageUrl:
+                      child: CachedNetworkImage(
+                        imageUrl:
                         Constant.getProfile?.data?.profilePhoto ?? '',
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
-                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage),
-                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage),
+                        placeholder: (context, url) =>
+                            Image.asset(AppImageOthers.defaultImage),
+                        errorWidget: (context, url, error) =>
+                            Image.asset(AppImageOthers.defaultImage),
                       ),
                     ),
                   ),
@@ -150,15 +176,15 @@ class _HomeScreenState extends State<HomeScreen> {
         onLoading: _onLoading,
         child: BlocConsumer<ActivityBloc, ActivityState>(
           listener: (context, state) {
-            if(state is FeedLoading){
+            if (state is FeedLoading) {
 
             }
-            if(state is FeedSuccess){
+            if (state is FeedSuccess) {
 
             }
           },
           builder: (context, state) {
-            if(state is FeedLoading){
+            if (state is FeedLoading) {
               return Center(
                 child: LoadingAnimationWidget.inkDrop(
                   color: AppColor.bgRed,
@@ -166,487 +192,615 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }
-            if(state is FeedSuccess){
+            if (state is FeedSuccess) {
               var feedData = state.feedModel.data!.data;
+
+
               return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Keep that momentum going!', style: CustomTextStyles.semiBold(fontSize: 24),),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 5,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: AppColor.bgTile,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(12), bottomLeft: Radius.circular(12)),
-                                          color: AppColor.bgRed,
-                                        ),
-                                      )),
-                                      Expanded(child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12),
-                                          color: AppColor.bgTile,
-                                        ),
-                                      )),
-                                      Expanded(child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(topRight: Radius.circular(12), bottomLeft: Radius.circular(12)),
-                                          color: AppColor.bgTile,
-                                        ),
-                                      )),
-                                    ],
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                      BlocConsumer<ProfileBloc, ProfileState > (
+
+                  listener: (context, state) {
+                    if (state is ProfileLoading) {
+
+                    }
+                    if (state is ProfileSuccess) {
+
+                    }
+                  },
+                  builder:(context, state) {
+                    if (state is ProfileLoading) {
+                      return Center(
+                        child: LoadingAnimationWidget.inkDrop(
+                          color: AppColor.bgRed,
+                          size: 20,
+                        ),
+                      );
+                    }
+                    if (state is ProfileSuccess) {
+                      var totalFollowing = state.profileModel?.data?.totalFollowing ?? 0;
+                      var photo = state.profileModel?.data?.profilePhoto ?? "";
+                      int ActivityUploaded = state.profileModel?.data?.totalActivity?? 0; // yeh flag aap apne API/logic se set karein
+
+                      int completedSteps = getCompletedSteps(ActivityUploaded, totalFollowing, photo);
+
+                      return Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Keep that momentum going!',
+                              style: CustomTextStyles.semiBold(fontSize: 24),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: TweenAnimationBuilder<double>(
+                                      tween: Tween<double>(
+                                        begin: 0,
+                                        end: completedSteps / maxProgress,
+                                      ),
+                                      duration: Duration(milliseconds: 500),
+                                      builder: (context, value, _) {
+                                        return LinearProgressIndicator(
+                                          value: value, // 0.0 - 1.0
+                                          minHeight: 5,
+                                          backgroundColor: Colors.grey[300],
+                                          valueColor: AlwaysStoppedAnimation<Color>(AppColor.bgRed),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 10,),
-                              Text('1/3')
-                            ],
-                          ),
-                          SizedBox(height: 10,),
+                                SizedBox(width: 10),
+                                Text("$completedSteps/$maxProgress"),
+                              ],
+                            ),
+                            SizedBox(height: 10),
 
-                          GestureDetector(
-                            onTap: () {
-                              bottomNavKey.currentState?.changeTab(2);
-                            },
-
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.bgTile,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: ListTile(
-
-                                leading: SvgPicture.asset(AppImageSvg.run, color: Colors.black, height: 42, width: 42,),
-                                title: Text('Upload your first activity', style: CustomTextStyles.semiBold(fontSize: 14),),
-                                subtitle: Text('You can record it right in the app.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed,),
+                            // STEP 1
+                            GestureDetector(
+                              onTap: () {
+                                bottomNavKey.currentState?.changeTab(2);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color:ActivityUploaded == 0? AppColor.bgTile :AppColor.bgTile.withAlpha(80),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: ListTile(
+                                  leading: SvgPicture.asset(AppImageSvg.run, color: Colors.black, height: 42, width: 42),
+                                  title: Text('Upload your first activity', style: CustomTextStyles.semiBold(fontSize: 14)),
+                                  subtitle: Text('You can record it right in the app.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                  trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 10,),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.bgTile, // 👈 Yaha color diya
-                                borderRadius: BorderRadius.circular(20), // 👈 Proper rounded corners
-                              ),
-                              child: ListTile(
-                                // tileColor: AppColor.bgTile,
-                                // contentPadding: EdgeInsets.zero,
-                                leading: SvgPicture.asset(AppImageSvg.groupImage, color: Colors.black, height: 42, width: 42,),
-                                title: Text('Follow three people', style: CustomTextStyles.semiBold(fontSize: 14),),
-                                subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed,),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10,),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.bgTile,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: ListTile(
-                                leading: SvgPicture.asset(AppImageSvg.person, color: Colors.black, height: 42, width: 42,),
-                                title: Text('Add your profile photo', style: CustomTextStyles.semiBold(fontSize: 14),),
-                                subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed,),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20,),
-                          Text('Suggested Challenges', style: CustomTextStyles.semiBold(fontSize: 24)),
-                          Text('Make accountability a little easier. more fun and earn rewards!', style: CustomTextStyles.semiBold(fontSize: 14)),
 
-                          // SizedBox(height: 10,),
-                        ],
-                      ),
-                    ),
-                    // Suggested Challenges Section
-                    BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
-                      // bloc: GetAllChallengesBloc(),
-                      listener: (context, state) {},
-                      builder: (context, state) {
-                        if(state is GetAllChallengesLoading){
-                          return Center(
-                            child: LoadingAnimationWidget.inkDrop(
-                              color: AppColor.bgRed,
-                              size: 20,
+                            SizedBox(height: 10),
+
+                            // STEP 2
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: totalFollowing == 0 ?  AppColor.bgTile : AppColor.bgTile.withAlpha(80),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: ListTile(
+                                  leading: SvgPicture.asset(AppImageSvg.groupImage, color: Colors.black, height: 42, width: 42),
+                                  title: Text('Follow three people', style: CustomTextStyles.semiBold(fontSize: 14)),
+                                  subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                  trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
+                                ),
+                              ),
                             ),
-                          );
+
+                            SizedBox(height: 10),
+
+                            // STEP 3
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: photo.isEmpty ? AppColor.bgTile :AppColor.bgTile.withAlpha(80) ,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: ListTile(
+                                  leading: SvgPicture.asset(AppImageSvg.person, color: Colors.black, height: 42, width: 42),
+                                  title: Text('Add your profile photo', style: CustomTextStyles.semiBold(fontSize: 14)),
+                                  subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                  trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+
+                    return SizedBox.shrink();
+                  },
+                  ),
+
+
+                  // Suggested Challenges Section
+                  BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
+                    // bloc: GetAllChallengesBloc(),
+                    listener: (context, state) {},
+                    builder: (context, state) {
+                      if (state is GetAllChallengesLoading) {
+                        return Center(
+                          child: LoadingAnimationWidget.inkDrop(
+                            color: AppColor.bgRed,
+                            size: 20,
+                          ),
+                        );
+                      }
+
+                      if (state is GetAllChallengesError) {
+                        return Text(state.error.toString());
+                      }
+                      if (state is GetAllChallengesLoaded) {
+                        var suggestedData = state.responseData.data;
+
+                        if (suggestedData == null || suggestedData.isEmpty) {
+                          return SizedBox.shrink();
                         }
 
-                        if (state is GetAllChallengesError){
-
-                          return Text(state.error.toString());
-                        }
-                        if (state is GetAllChallengesLoaded) {
-
-                          var suggestedData = state.responseData.data;
-
-                          if (suggestedData == null || suggestedData.isEmpty) {
-                            return SizedBox.shrink();
-                          }
-
-                          return Container(
-                            color: AppColor.bgTile,
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 20),
-                                SizedBox(
-                                  height: 210,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: suggestedData.length,
-                                    itemBuilder: (context, index) {
-                                      var challenge = suggestedData[index];
-                                      Widget categoryIconWidget(String? icon) {
-                                        // Null ya empty check
-                                        if (icon == null || icon.isEmpty) {
-                                          return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
-                                        }
-
-                                        // Relative path ko absolute URL me convert karo
-                                        final url = icon.startsWith("http") ? icon : "${Api.BaseUrl}$icon";
-
-                                        // Web safe check
-                                        Uri? uri;
-                                        try {
-                                          uri = Uri.parse(url);
-                                          if (!uri.hasScheme || !uri.hasAuthority) {
-                                            throw FormatException("Invalid URI");
-                                          }
-                                        } catch (_) {
-                                          return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
-                                        }
-
-                                        return CachedNetworkImage(
-                                          imageUrl: url,
-                                          height: 24,
-                                          width: 24,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) => SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          ),
-                                          errorWidget: (context, url, error) => SvgPicture.asset(AppImageSvg.run, color: Colors.black),
-                                        );
+                        return Container(
+                          color: AppColor.bgTile,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 20),
+                              SizedBox(
+                                height: 210,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: suggestedData.length,
+                                  itemBuilder: (context, index) {
+                                    var challenge = suggestedData[index];
+                                    Widget categoryIconWidget(String? icon) {
+                                      // Null ya empty check
+                                      if (icon == null || icon.isEmpty) {
+                                        return SvgPicture.asset(AppImageSvg.run,
+                                            color: Colors.black);
                                       }
 
+                                      // Relative path ko absolute URL me convert karo
+                                      final url = icon.startsWith("http")
+                                          ? icon
+                                          : "${Api.BaseUrl}$icon";
 
-                                      return Container(
-                                        width: 160,
-                                        margin: EdgeInsets.symmetric(horizontal: 5),
-                                        padding: EdgeInsets.all(15),
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage('assets/image/others/bgChallenge.png'),
-                                            fit: BoxFit.cover,
-                                          ),
-                                          borderRadius: BorderRadius.circular(15),
+                                      // Web safe check
+                                      Uri? uri;
+                                      try {
+                                        uri = Uri.parse(url);
+                                        if (!uri.hasScheme ||
+                                            !uri.hasAuthority) {
+                                          throw FormatException("Invalid URI");
+                                        }
+                                      } catch (_) {
+                                        return SvgPicture.asset(AppImageSvg.run,
+                                            color: Colors.black);
+                                      }
+
+                                      return CachedNetworkImage(
+                                        imageUrl: url,
+                                        height: 24,
+                                        width: 24,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            SizedBox(
+                                              height: 24,
+                                              width: 24,
+                                              child: CircularProgressIndicator(
+                                                  strokeWidth: 2),
+                                            ),
+                                        errorWidget: (context, url, error) =>
+                                            SvgPicture.asset(AppImageSvg.run,
+                                                color: Colors.black),
+                                      );
+                                    }
+
+
+                                    return Container(
+                                      width: 160,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      padding: EdgeInsets.all(15),
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/image/others/bgChallenge.png'),
+                                          fit: BoxFit.cover,
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
 
-                                            Text(
-                                              challenge.title ?? "N/A",
-                                              style: CustomTextStyles.semiBold(fontSize: 16),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            SizedBox(height: 4),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                               categoryIconWidget(challenge.categoryIcon),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: Text(
-                                                        challenge.description ?? "N/A",
-                                                        style: CustomTextStyles.regular(fontSize: 12),
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
+                                          Text(
+                                            challenge.title ?? "N/A",
+                                            style: CustomTextStyles.semiBold(
+                                                fontSize: 16),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          SizedBox(height: 4),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              categoryIconWidget(
+                                                  challenge.categoryIcon),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 100,
+                                                    child: Text(
+                                                      challenge.description ??
+                                                          "N/A",
+                                                      style: CustomTextStyles
+                                                          .regular(
+                                                          fontSize: 12),
+                                                      maxLines: 2,
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
                                                     ),
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: Text(
-                                                        challenge.startDate ?? "N/A",
-                                                        style: CustomTextStyles.regular(fontSize: 12),
-                                                      ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 100,
+                                                    child: Text(
+                                                      challenge.startDate ??
+                                                          "N/A",
+                                                      style: CustomTextStyles
+                                                          .regular(
+                                                          fontSize: 12),
                                                     ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 15),
-                                            Spacer(),
-                                            Center(
-                                              child: Container(
-                                                width: 100,
-                                                height: 30,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(15),
-                                                  color: AppColor.bgRed,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    'Join Now',
-                                                    style: CustomTextStyles.bold(
-                                                      fontSize: 14,
-                                                      textColor: Colors.white,
-                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 15),
+                                          Spacer(),
+                                          Center(
+                                            child: Container(
+                                              width: 100,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(15),
+                                                color: AppColor.bgRed,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'Join Now',
+                                                  style: CustomTextStyles.bold(
+                                                    fontSize: 14,
+                                                    textColor: Colors.white,
                                                   ),
                                                 ),
                                               ),
                                             ),
+                                          ),
 
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Center(
-                                    child: GestureDetector(
-                                      onTap: (){
-                                        bottomNavKey.currentState?.openClubChallenges();
-                                      },
-                                      child: Text(
-                                        "Explore all Challenges",
-                                        style: CustomTextStyles.semiBold(textColor:AppColor.bgRed,fontSize: 16),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                        ],
                                       ),
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      bottomNavKey.currentState
+                                          ?.openClubChallenges();
+                                    },
+                                    child: Text(
+                                      "Explore all Challenges",
+                                      style: CustomTextStyles.semiBold(
+                                          textColor: AppColor.bgRed,
+                                          fontSize: 16),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-                        return SizedBox.shrink();
-                      },
-                    ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return SizedBox.shrink();
+                    },
+                  ),
 
-                    SizedBox(height: 10,),
+                  SizedBox(height: 10,),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: ListView.builder(
-                        itemCount: feedData!.length,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          var feed = feedData[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails()));
-                            },
-                            child: Container(
-                              color: Colors.white24,
-                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Column(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(color: Colors.red, width: 1), // 🔴 red border
-                                            ),
-                                            child: ClipOval(
-                                              child: CachedNetworkImage(
-                                                imageUrl: feed.profilePic.toString()
-                                                /*AppImageOthers.userImg*/,
-                                                height: 30, width: 30, fit: BoxFit.fill,
-                                                errorWidget: (context,
-                                                    url, error) =>
-                                                    Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
-                                              ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: ListView.builder(
+                      itemCount: feedData!.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var feed = feedData[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => FeedDetails()));
+                          },
+                          child: Container(
+                            color: Colors.white24,
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Column(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.red,
+                                                width: 1), // 🔴 red border
+                                          ),
+                                          child: ClipOval(
+                                            child: CachedNetworkImage(
+                                              imageUrl: feed.profilePic
+                                                  .toString()
+                                              /*AppImageOthers.userImg*/,
+                                              height: 30,
+                                              width: 30,
+                                              fit: BoxFit.fill,
+                                              errorWidget: (context,
+                                                  url, error) =>
+                                                  Image.asset(
+                                                    AppImageOthers.userImg,
+                                                    height: 30, width: 30,),
                                             ),
                                           ),
-                                          SizedBox(width: 10,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
-                                              SizedBox(
-                                                width: MediaQuery.of(context).size.width*.75,
-                                                child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.feedRun, height: 16,),
-                                                    SizedBox(width: 5,),
-                                                    Expanded(
-                                                      child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
-                                                          // maxLines: 2,
-                                                          style: CustomTextStyles.regular(fontSize: 11,
-                                                              textColor: Colors.grey)),
-                                                    ),
-                                                  ],
-                                                ),
+                                        ),
+                                        SizedBox(width: 10,),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: [
+                                            Text('${feed.firstName
+                                                .toString()} ${feed.lastName}',
+                                              style: CustomTextStyles.regular(
+                                                  fontSize: 14),),
+                                            SizedBox(
+                                              width: MediaQuery
+                                                  .of(context)
+                                                  .size
+                                                  .width * .75,
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Image.asset(
+                                                    AppImageOthers.feedRun,
+                                                    height: 16,),
+                                                  SizedBox(width: 5,),
+                                                  Expanded(
+                                                    child: Text('${feed
+                                                        .location}' /*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
+                                                        // maxLines: 2,
+                                                        style: CustomTextStyles
+                                                            .regular(
+                                                            fontSize: 11,
+                                                            textColor: Colors
+                                                                .grey)),
+                                                  ),
+                                                ],
                                               ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: 20,),
+                                    Text(feed.title.toString(),
+                                      style: CustomTextStyles.semiBold(
+                                          fontSize: 16),),
+                                    SizedBox(height: 15,),
+                                    Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: [
+                                            Text('Distance',
+                                                style: CustomTextStyles.regular(
+                                                    fontSize: 12,
+                                                    textColor: Colors.grey)),
+                                            // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
+                                            Text(
+                                              (double.tryParse(
+                                                  feed.distance.toString()) ??
+                                                  0) >= 1000
+                                                  ? '${(double.parse(
+                                                  feed.distance.toString()) /
+                                                  1000).toStringAsFixed(2)} km'
+                                                  : '${feed.distance} m',
+                                              style: CustomTextStyles.regular(
+                                                  fontSize: 16),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: [
+                                            Text('Pace',
+                                                style: CustomTextStyles.regular(
+                                                    fontSize: 12,
+                                                    textColor: Colors.grey)),
+                                            Text('${feed.pace} /km',
+                                                style: CustomTextStyles.regular(
+                                                    fontSize: 16)),
+                                          ],
+                                        ),
+                                        SizedBox(width: 20,),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: [
+                                            Text('Time',
+                                                style: CustomTextStyles.regular(
+                                                    fontSize: 12,
+                                                    textColor: Colors.grey)),
+                                            Text(feed.movingTime.toString(),
+                                                style: CustomTextStyles.regular(
+                                                    fontSize: 16)),
+                                          ],
+                                        ),
+
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: CachedNetworkImage(
+                                      imageUrl: feed.photo
+                                          .toString() /*AppImageOthers.feedImg*/,
+                                      fit: BoxFit.fill, height: 260,)),
+
+                                SizedBox(height: 10,),
+                                Padding(
+                                  padding: const EdgeInsets
+                                      .symmetric(/*horizontal: 10.0, */
+                                      vertical: 5),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              likeImageWidget(feed),
+                                              SizedBox(width: 10,),
+                                              Text(
+                                                '${feed.totalLike} gave kudos',
+                                                style: CustomTextStyles.regular(
+                                                    fontSize: 12,
+                                                    textColor: Colors.grey),),
+
                                             ],
-                                          )
+                                          ),
+
+                                          Row(
+                                            children: [
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    context.read<ActivityBloc>()
+                                                        .add(ActivityLikeEvent(
+                                                        context: context,
+                                                        activityId: feed
+                                                            .activityId
+                                                            .toString()));
+                                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                                  },
+                                                  child: SizedBox(
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: Icon(
+                                                        Icons.thumb_up,
+                                                        color: feed.isLiked ==
+                                                            true ? AppColor
+                                                            .bgRed : Colors
+                                                            .black,))),
+
+                                              SizedBox(width: 10,),
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
+                                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
+                                                  },
+                                                  child: SizedBox(
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: Icon(Icons.share,
+                                                        color: Colors.black,))),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                       SizedBox(height: 20,),
-                                      Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
-                                      SizedBox(height: 15,),
-                                      Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
-                                              Text(
-                                                (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
-                                                    ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
-                                                    : '${feed.distance} m',
-                                                style: CustomTextStyles.regular(fontSize: 16),
-                                              )                                          ],
-                                          ),
-                                          SizedBox(width: 20,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text('${feed.pace} /km', style: CustomTextStyles.regular(fontSize: 16)),
-                                            ],
-                                          ),
-                                          SizedBox(width: 20,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text(feed.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
-                                            ],
-                                          ),
 
-                                        ],
-                                      )
                                     ],
                                   ),
-                                  SizedBox(height: 10,),
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
-                                        fit: BoxFit.fill, height: 260,)),
-
-                                  SizedBox(height: 10,),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                likeImageWidget(feed),
-                                                SizedBox(width: 10,),
-                                                Text('${feed.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-
-                                              ],
-                                            ),
-
-                                            Row(
-                                              children: [
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
-                                                    },
-                                                    child: SizedBox(
-                                                        height: 30,
-                                                        width: 30,
-                                                        child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
-
-                                                SizedBox(width: 10,),
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
-                                                    },
-                                                    child: SizedBox(
-                                                        height: 30,
-                                                        width: 30,
-                                                        child: Icon(Icons.share, color: Colors.black,))),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 20,),
-
-                                      ],
-                                    ),
-                                  ),
-                                  // SizedBox(height: 20,),
-                                  // Divider(color: Colors.black,)
-                                ],
-                              ),
+                                ),
+                                // SizedBox(height: 20,),
+                                // Divider(color: Colors.black,)
+                              ],
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
+                  ),
                   ],
                 ),
               ),
             );
             }
             if(state is FeedError){
-              return Center(
-                child: Text(state.error),
-              );
+            return Center(
+            child: Text(state.error),
+            );
             }
-            return SizedBox();
+            return
+            SizedBox
+            (
+            );
           },
         ),
       ),
     );
   }
-  
-  static Widget likeImageWidget (FeedModelData feed){
+  // void updateProgress(int newStep) {
+  //   setState(() {
+  //     _startProgress = _newProgress;
+  //     _newProgress = newStep.clamp(0, maxProgress);
+  //   });
+  // }
+
+  static Widget likeImageWidget(FeedModelData feed) {
     return BlocConsumer<ActivityBloc, ActivityState>(
       listener: (context, state) {
         // TODO: implement listener
@@ -662,7 +816,8 @@ class _HomeScreenState extends State<HomeScreen> {
           final visibleUsers = likedUsers.take(4).toList();
 
           return SizedBox(
-            width: feed.likedUsers?.length == 1 ? 32 : feed.likedUsers?.length == 2 ? 58 : feed.likedUsers?.length == 3 ? 84 : 110,
+            width: feed.likedUsers?.length == 1 ? 32 : feed.likedUsers
+                ?.length == 2 ? 58 : feed.likedUsers?.length == 3 ? 84 : 110,
             height: 40,
             child: Stack(
               children: List.generate(
@@ -678,13 +833,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: ClipOval(
                         child: CachedNetworkImage(imageUrl:
-                          user.profilePic ?? "",
+                        user.profilePic ?? "",
                           height: 30,
                           width: 30,
                           fit: BoxFit.cover,
                           errorWidget: (context,
                               url, error) =>
-                              Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
+                              Image.asset(
+                                AppImageOthers.userImg, height: 30, width: 30,),
                         ),
                       ),
                     ),
@@ -696,7 +852,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         return SizedBox();
-
       },
     );
   }

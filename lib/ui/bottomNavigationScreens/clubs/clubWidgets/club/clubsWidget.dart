@@ -6,9 +6,7 @@ import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import 'clubDetailScreen.dart';
-import 'package:coherent_endurance/constant/constant.dart';
 
 
 class Club {
