@@ -341,7 +341,7 @@ class _ResultScreenState extends State<ResultScreen> {
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(height: 10),
+                         SizedBox(height: 10),
                       ],
                     ),
                     SizedBox(height: 10),
