@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/home/resultScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -467,11 +468,16 @@ class _FeedDetailsState extends State<FeedDetails> {
                             ],
                           ),
                           SizedBox(height: 15,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text('View All Results', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
-                            ],
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ResultScreen()));
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text('View All Results', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
+                              ],
+                            ),
                           )
                         ],
                       ),
