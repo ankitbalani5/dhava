@@ -59,6 +59,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginError(e.toString()));
     }
   }
+
   Future<void> _forgotPassword(ForgotPasswordEvent event, Emitter<LoginState> emit) async {
     emit(ForgotPasswordLoading());
     try{

@@ -205,7 +205,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails(activityId: feed.activityId.toString(),)));
                             },
                             child: Container(
                               color: Colors.white24,

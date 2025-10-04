@@ -39,11 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: '1', categoryId: '',));
+    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context, ));
     super.initState();
-    context.read<ActivityBloc>().add(GetFeedEvent(
-      context: context, perPage: '2', page: '1', categoryId: null,));
-    context.read<GetAllChallengesBloc>().add(
-        GetAllChallengesEvent(context: context));
   }
 
 
@@ -62,10 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onRefresh() {
     page = 1;
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context,
-      perPage: '10',
-      page: page.toString(),
-      categoryId: null,));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
     context.read<ActivityBloc>().add(
@@ -76,11 +71,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onLoading() {
     page++;
     context.read<ActivityBloc>().add(GetFeedEvent(
-        context: context,
-        perPage: '10',
-        page: page.toString(),
-        categoryId: null,
-        isPagination: true
+      context: context,
+      perPage: '10',
+      page: page.toString(),
+      categoryId: '',
+      isPagination: true
     ));
     _refreshController.loadComplete();
   }
@@ -155,10 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
-                        placeholder: (context, url) =>
-                            Image.asset(AppImageOthers.defaultImage),
-                        errorWidget: (context, url, error) =>
-                            Image.asset(AppImageOthers.defaultImage),
+                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage),
+                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage),
                       ),
                     ),
                   ),
@@ -176,15 +169,15 @@ class _HomeScreenState extends State<HomeScreen> {
         onLoading: _onLoading,
         child: BlocConsumer<ActivityBloc, ActivityState>(
           listener: (context, state) {
-            if (state is FeedLoading) {
+            if(state is FeedLoading){
 
             }
-            if (state is FeedSuccess) {
+            if(state is FeedSuccess){
 
             }
           },
           builder: (context, state) {
-            if (state is FeedLoading) {
+            if(state is FeedLoading){
               return Center(
                 child: LoadingAnimationWidget.inkDrop(
                   color: AppColor.bgRed,
@@ -192,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }
-            if (state is FeedSuccess) {
+            if(state is FeedSuccess){
               var feedData = state.feedModel.data!.data;
 
 
@@ -542,265 +535,219 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   SizedBox(height: 10,),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: ListView.builder(
-                      itemCount: feedData!.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var feed = feedData[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => FeedDetails()));
-                          },
-                          child: Container(
-                            color: Colors.white24,
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: Column(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: Colors.red,
-                                                width: 1), // 🔴 red border
-                                          ),
-                                          child: ClipOval(
-                                            child: CachedNetworkImage(
-                                              imageUrl: feed.profilePic
-                                                  .toString()
-                                              /*AppImageOthers.userImg*/,
-                                              height: 30,
-                                              width: 30,
-                                              fit: BoxFit.fill,
-                                              errorWidget: (context,
-                                                  url, error) =>
-                                                  Image.asset(
-                                                    AppImageOthers.userImg,
-                                                    height: 30, width: 30,),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text('${feed.firstName
-                                                .toString()} ${feed.lastName}',
-                                              style: CustomTextStyles.regular(
-                                                  fontSize: 14),),
-                                            SizedBox(
-                                              width: MediaQuery
-                                                  .of(context)
-                                                  .size
-                                                  .width * .75,
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Image.asset(
-                                                    AppImageOthers.feedRun,
-                                                    height: 16,),
-                                                  SizedBox(width: 5,),
-                                                  Expanded(
-                                                    child: Text('${feed
-                                                        .location}' /*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
-                                                        // maxLines: 2,
-                                                        style: CustomTextStyles
-                                                            .regular(
-                                                            fontSize: 11,
-                                                            textColor: Colors
-                                                                .grey)),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(height: 20,),
-                                    Text(feed.title.toString(),
-                                      style: CustomTextStyles.semiBold(
-                                          fontSize: 16),),
-                                    SizedBox(height: 15,),
-                                    Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text('Distance',
-                                                style: CustomTextStyles.regular(
-                                                    fontSize: 12,
-                                                    textColor: Colors.grey)),
-                                            // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
-                                            Text(
-                                              (double.tryParse(
-                                                  feed.distance.toString()) ??
-                                                  0) >= 1000
-                                                  ? '${(double.parse(
-                                                  feed.distance.toString()) /
-                                                  1000).toStringAsFixed(2)} km'
-                                                  : '${feed.distance} m',
-                                              style: CustomTextStyles.regular(
-                                                  fontSize: 16),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(width: 20,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text('Pace',
-                                                style: CustomTextStyles.regular(
-                                                    fontSize: 12,
-                                                    textColor: Colors.grey)),
-                                            Text('${feed.pace} /km',
-                                                style: CustomTextStyles.regular(
-                                                    fontSize: 16)),
-                                          ],
-                                        ),
-                                        SizedBox(width: 20,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text('Time',
-                                                style: CustomTextStyles.regular(
-                                                    fontSize: 12,
-                                                    textColor: Colors.grey)),
-                                            Text(feed.movingTime.toString(),
-                                                style: CustomTextStyles.regular(
-                                                    fontSize: 16)),
-                                          ],
-                                        ),
-
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: CachedNetworkImage(
-                                      imageUrl: feed.photo
-                                          .toString() /*AppImageOthers.feedImg*/,
-                                      fit: BoxFit.fill, height: 260,)),
-
-                                SizedBox(height: 10,),
-                                Padding(
-                                  padding: const EdgeInsets
-                                      .symmetric(/*horizontal: 10.0, */
-                                      vertical: 5),
-                                  child: Column(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: ListView.builder(
+                        itemCount: feedData!.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          var feed = feedData[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails(activityId: feed.activityId.toString(),)));
+                            },
+                            child: Container(
+                              color: Colors.white24,
+                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                              child: Column(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Row(
-                                            children: [
-                                              likeImageWidget(feed),
-                                              SizedBox(width: 10,),
-                                              Text(
-                                                '${feed.totalLike} gave kudos',
-                                                style: CustomTextStyles.regular(
-                                                    fontSize: 12,
-                                                    textColor: Colors.grey),),
-
-                                            ],
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                                            ),
+                                            child: ClipOval(
+                                              child: CachedNetworkImage(
+                                                imageUrl: feed.profilePic.toString()
+                                                /*AppImageOthers.userImg*/,
+                                                height: 30, width: 30, fit: BoxFit.fill,
+                                                errorWidget: (context,
+                                                    url, error) =>
+                                                    Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
+                                              ),
+                                            ),
                                           ),
-
-                                          Row(
+                                          SizedBox(width: 10,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              GestureDetector(
-                                                  onTap: () {
-                                                    context.read<ActivityBloc>()
-                                                        .add(ActivityLikeEvent(
-                                                        context: context,
-                                                        activityId: feed
-                                                            .activityId
-                                                            .toString()));
-                                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
-                                                  },
-                                                  child: SizedBox(
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: Icon(
-                                                        Icons.thumb_up,
-                                                        color: feed.isLiked ==
-                                                            true ? AppColor
-                                                            .bgRed : Colors
-                                                            .black,))),
-
-                                              SizedBox(width: 10,),
-                                              GestureDetector(
-                                                  onTap: () {
-                                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
-                                                  },
-                                                  child: SizedBox(
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: Icon(Icons.share,
-                                                        color: Colors.black,))),
+                                              Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
+                                              SizedBox(
+                                                width: MediaQuery.of(context).size.width*.75,
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Image.asset(AppImageOthers.feedRun, height: 16,),
+                                                    SizedBox(width: 5,),
+                                                    Expanded(
+                                                      child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
+                                                          // maxLines: 2,
+                                                          style: CustomTextStyles.regular(fontSize: 11,
+                                                              textColor: Colors.grey)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ],
-                                          ),
+                                          )
                                         ],
                                       ),
                                       SizedBox(height: 20,),
+                                      Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                              // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text(
+                                                (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
+                                                    ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
+                                                    : '${feed.distance} m',
+                                                style: CustomTextStyles.regular(fontSize: 16),
+                                              )                                          ],
+                                          ),
+                                          SizedBox(width: 20,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                              Text('${feed.pace} /km', style: CustomTextStyles.regular(fontSize: 16)),
+                                            ],
+                                          ),
+                                          SizedBox(width: 20,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                              Text(Constant.formatDuration(int.parse(feed.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
+                                            ],
+                                          ),
 
+                                        ],
+                                      )
                                     ],
                                   ),
-                                ),
-                                // SizedBox(height: 20,),
-                                // Divider(color: Colors.black,)
-                              ],
+                                  SizedBox(height: 10,),
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
+                                        fit: BoxFit.fill, height: 260,)),
+
+                                  SizedBox(height: 10,),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                likeImageWidget(feed),
+                                                SizedBox(width: 10,),
+                                                Text('${feed.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+
+                                              ],
+                                            ),
+
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                                    },
+                                                    child: SizedBox(
+                                                        height: 30,
+                                                        width: 30,
+                                                        child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
+
+                                                SizedBox(width: 10,),
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
+                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
+                                                    },
+                                                    child: SizedBox(
+                                                        height: 30,
+                                                        width: 30,
+                                                        child: Icon(Icons.share, color: Colors.black,))),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 20,),
+
+                                        // Row(
+                                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        //   children: [
+                                        //     GestureDetector(
+                                        //         onTap: () {
+                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                        //         },
+                                        //         child: SizedBox(
+                                        //             height: 30,
+                                        //             width: 30,
+                                        //             child: Icon(Icons.thumb_up, color: Colors.white,))),
+                                        //     GestureDetector(
+                                        //         onTap: () {
+                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => Discussion()));
+                                        //         },
+                                        //         child: SizedBox(
+                                        //             height: 30,
+                                        //             width: 30,
+                                        //             child: Icon(Icons.message, color: Colors.white,))),
+                                        //     GestureDetector(
+                                        //         onTap: () {
+                                        //           // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
+                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
+                                        //         },
+                                        //         child: SizedBox(
+                                        //             height: 30,
+                                        //             width: 30,
+                                        //             child: Icon(Icons.share, color: Colors.white,))),
+                                        //   ],
+                                        // )
+                                      ],
+                                    ),
+                                  ),
+                                  // SizedBox(height: 20,),
+                                  // Divider(color: Colors.black,)
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
                   ],
                 ),
               ),
             );
             }
             if(state is FeedError){
-            return Center(
-            child: Text(state.error),
-            );
+              return Center(
+                child: Text(state.error),
+              );
             }
-            return
-            SizedBox
-            (
-            );
+            return SizedBox();
           },
         ),
       ),
     );
   }
-  // void updateProgress(int newStep) {
-  //   setState(() {
-  //     _startProgress = _newProgress;
-  //     _newProgress = newStep.clamp(0, maxProgress);
-  //   });
-  // }
-
-  static Widget likeImageWidget(FeedModelData feed) {
+  
+  static Widget likeImageWidget (FeedModelData feed){
     return BlocConsumer<ActivityBloc, ActivityState>(
       listener: (context, state) {
         // TODO: implement listener
@@ -809,6 +756,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is FeedSuccess) {
           // final feed = state.feedModel.data!;
           final likedUsers = feed.likedUsers ?? [];
+
           if (likedUsers.isEmpty) {
             return const SizedBox();
           }
@@ -829,18 +777,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        color: Colors.white,
                         border: Border.all(color: Colors.red, width: 1),
                       ),
                       child: ClipOval(
                         child: CachedNetworkImage(imageUrl:
-                        user.profilePic ?? "",
+                          user.profilePic ?? "",
                           height: 30,
                           width: 30,
                           fit: BoxFit.cover,
                           errorWidget: (context,
                               url, error) =>
-                              Image.asset(
-                                AppImageOthers.userImg, height: 30, width: 30,),
+                              Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
                         ),
                       ),
                     ),
@@ -851,7 +799,32 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
+        /*if(state is FeedSuccess){
+          // var feed = state.feedModel.data!.data;
+          return feed.totalLike! > 0 ?
+            Stack(
+            children: [
+              Container(
+                width: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image.asset(AppImageOthers.userImg, height: 30,),
+                  ],
+                ),
+              ),
+
+              Positioned(
+                  right: 25,
+                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
+              Positioned(
+                  right: 50,
+                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
+            ],
+          ) : SizedBox();
+        }*/
         return SizedBox();
+
       },
     );
   }

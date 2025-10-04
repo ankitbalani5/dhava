@@ -70,95 +70,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 var notificationData = state.notificationModel.data!.data![index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 important
-                    children: [
-                      // 👈 Image aligned to top-left
-                      CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
-                        height: 40,
-                        width: 40,
-                        placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
-                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
-                      ),
+                  child: notificationData.notificaionType == 'Follow Request'
+                      ? followRequest(notificationData)
+                      : follow(notificationData)
 
-                      const SizedBox(width: 12),
-
-                      // 👈 Title + Subtitle
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${notificationData.userProfile!.firstName} ${notificationData.userProfile!.lastName}',
-                              style: CustomTextStyles.bold(fontSize: 16),
-                            ),
-                            // const SizedBox(height: 2),
-                            Text(
-                              notificationData.message.toString(),
-                              style: CustomTextStyles.regular(
-                                fontSize: 14,
-                                textColor: Colors.grey,
-                              ),
-                            ),
-                            // const SizedBox(height: 2),
-                            // Text(
-                            //   '4 days ago',
-                            //   style: CustomTextStyles.regular(
-                            //     fontSize: 12,
-                            //     textColor: Colors.grey,
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 8),
-
-                      // 👈 Trailing buttons
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                context.read<NotificationBloc>().add(FollowApproveEvent(
-                                    context: context, fromUserId: notificationData.fromUserId.toString()
-                                )
-                                );
-                              },
-                              child: Container(
-                                height: 25,
-                                width: 62,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: AppColor.bgRed,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Confirm',
-                                    style: CustomTextStyles.medium(
-                                      fontSize: 12,
-                                      textColor: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                                onTap: () {
-                                  context.read<NotificationBloc>().add(FollowCancelEvent(
-                                      context: context, fromUserId: notificationData.fromUserId.toString()
-                                  )
-                                  );
-                                },
-                                child: SvgPicture.asset(AppImageSvg.cancel, color: Colors.black, height: 14,)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 );
               },
             );
@@ -244,6 +159,288 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ]
         ),
       )*/
+    );
+  }
+
+  Widget followRequest(notificationData){
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start, // 👈 important
+      children: [
+        // 👈 Image aligned to top-left
+        CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
+          height: 40,
+          width: 40,
+          placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
+          errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+        ),
+
+        const SizedBox(width: 12),
+
+        // 👈 Title + Subtitle
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${notificationData.userProfile!.firstName} ${notificationData.userProfile!.lastName}',
+                style: CustomTextStyles.bold(fontSize: 16),
+              ),
+              // const SizedBox(height: 2),
+              Text(
+                notificationData.message.toString(),
+                style: CustomTextStyles.regular(
+                  fontSize: 14,
+                  textColor: Colors.grey,
+                ),
+              ),
+              // const SizedBox(height: 2),
+              // Text(
+              //   '4 days ago',
+              //   style: CustomTextStyles.regular(
+              //     fontSize: 12,
+              //     textColor: Colors.grey,
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        // 👈 Trailing buttons
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  context.read<NotificationBloc>().add(FollowApproveEvent(
+                      context: context, fromUserId: notificationData.fromUserId.toString()
+                  )
+                  );
+                },
+                child: Container(
+                  height: 25,
+                  width: 62,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColor.bgRed,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Confirm',
+                      style: CustomTextStyles.medium(
+                        fontSize: 12,
+                        textColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                  onTap: () {
+                    context.read<NotificationBloc>().add(FollowCancelEvent(
+                        context: context, fromUserId: notificationData.fromUserId.toString()
+                    )
+                    );
+                  },
+                  child: SvgPicture.asset(AppImageSvg.cancel, color: Colors.black, height: 14,)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widget followApproved(notificationData){
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 18.0),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start, // 👈 important
+  //       children: [
+  //         // 👈 Image aligned to top-left
+  //         CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
+  //           height: 40,
+  //           width: 40,
+  //           placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
+  //           errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+  //         ),
+  //
+  //         const SizedBox(width: 12),
+  //
+  //         // 👈 Title + Subtitle
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 '${notificationData.userProfile!.firstName} ${notificationData.userProfile!.lastName}',
+  //                 style: CustomTextStyles.bold(fontSize: 16),
+  //               ),
+  //               // const SizedBox(height: 2),
+  //               Text(
+  //                 notificationData.message.toString(),
+  //                 style: CustomTextStyles.regular(
+  //                   fontSize: 14,
+  //                   textColor: Colors.grey,
+  //                 ),
+  //               ),
+  //               // const SizedBox(height: 2),
+  //               // Text(
+  //               //   '4 days ago',
+  //               //   style: CustomTextStyles.regular(
+  //               //     fontSize: 12,
+  //               //     textColor: Colors.grey,
+  //               //   ),
+  //               // ),
+  //             ],
+  //           ),
+  //         ),
+  //
+  //         const SizedBox(width: 8),
+  //
+  //         // 👈 Trailing buttons
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 20.0),
+  //           child: Row(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               GestureDetector(
+  //                 onTap: () {
+  //                   context.read<NotificationBloc>().add(FollowApproveEvent(
+  //                       context: context, fromUserId: notificationData.fromUserId.toString()
+  //                   )
+  //                   );
+  //                 },
+  //                 child: Container(
+  //                   height: 25,
+  //                   width: 62,
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(12),
+  //                     color: AppColor.bgRed,
+  //                   ),
+  //                   child: Center(
+  //                     child: Text(
+  //                       'Confirm',
+  //                       style: CustomTextStyles.medium(
+  //                         fontSize: 12,
+  //                         textColor: Colors.white,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 8),
+  //               GestureDetector(
+  //                   onTap: () {
+  //                     context.read<NotificationBloc>().add(FollowCancelEvent(
+  //                         context: context, fromUserId: notificationData.fromUserId.toString()
+  //                     )
+  //                     );
+  //                   },
+  //                   child: SvgPicture.asset(AppImageSvg.cancel, color: Colors.black, height: 14,)),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget follow(notificationData){
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // 👈 important
+        children: [
+          // 👈 Image aligned to top-left
+          CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
+            height: 40,
+            width: 40,
+            placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
+            errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+          ),
+
+          const SizedBox(width: 12),
+
+          // 👈 Title + Subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${notificationData.userProfile!.firstName} ${notificationData.userProfile!.lastName}',
+                  style: CustomTextStyles.bold(fontSize: 16),
+                ),
+                // const SizedBox(height: 2),
+                Text(
+                  notificationData.message.toString(),
+                  style: CustomTextStyles.regular(
+                    fontSize: 14,
+                    textColor: Colors.grey,
+                  ),
+                ),
+                // const SizedBox(height: 2),
+                // Text(
+                //   '4 days ago',
+                //   style: CustomTextStyles.regular(
+                //     fontSize: 12,
+                //     textColor: Colors.grey,
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // 👈 Trailing buttons
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(vertical: 20.0),
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           context.read<NotificationBloc>().add(FollowApproveEvent(
+          //               context: context, fromUserId: notificationData.fromUserId.toString()
+          //           )
+          //           );
+          //         },
+          //         child: Container(
+          //           height: 25,
+          //           width: 62,
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(12),
+          //             color: AppColor.bgRed,
+          //           ),
+          //           child: Center(
+          //             child: Text(
+          //               'Confirm',
+          //               style: CustomTextStyles.medium(
+          //                 fontSize: 12,
+          //                 textColor: Colors.white,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       const SizedBox(width: 8),
+          //       GestureDetector(
+          //           onTap: () {
+          //             context.read<NotificationBloc>().add(FollowCancelEvent(
+          //                 context: context, fromUserId: notificationData.fromUserId.toString()
+          //             )
+          //             );
+          //           },
+          //           child: SvgPicture.asset(AppImageSvg.cancel, color: Colors.black, height: 14,)),
+          //     ],
+          //   ),
+          // ),
+        ],
+      ),
     );
   }
 }

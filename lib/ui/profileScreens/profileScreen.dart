@@ -28,7 +28,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
+  int selectedWeekIndex = 0;
   List<Map<String, String>> milestone = [
     {"image": AppImageOthers.milestone, "title": "December 5K",},
     {"image": AppImageOthers.milestone, "title": "December 5K",},
@@ -66,7 +66,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             }
             if(state is ProfileSuccess){
-              // final summaryData = state.summaryModel!.data;
+              final summaryData = state.summaryModel?.data;
+              final activities = state.summaryModel?.data?.thisWeekActivities ?? [];
+              // var activity = selectedWeekIndex != null ? activities[selectedWeekIndex] : null;
+              final activity = (selectedWeekIndex != null && selectedWeekIndex < activities.length)
+                  ? activities[selectedWeekIndex]
+                  : null;
+              final trophies = state.summaryModel?.data?.userTrophies ?? [];
+              final challenges = state.summaryModel?.data?.userChallenges ?? [];
+
               return Column(
                 children: [
                   Stack(
@@ -377,88 +385,224 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                            // Text('${double.parse(activity.distance.toString())/1000} km', style: CustomTextStyles.regular(fontSize: 16 )),
 
+                                            Text(
+                                              activity != null ? "${(double.parse(activity.distance.toString())/1000).toStringAsFixed(1)} km" : "--",
+                                              style: CustomTextStyles.regular(fontSize: 16),
+                                            ),
                                           ],
                                         ),
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                            Text('0 m', style: CustomTextStyles.regular(fontSize: 16 )),
+                                            // Text('${activity.pace}', style: CustomTextStyles.regular(fontSize: 16 )),
+
+                                            Text(
+                                              activity != null ? "${activity.pace}" : "--",
+                                              style: CustomTextStyles.regular(fontSize: 16),
+                                            ),
                                           ],
                                         ),
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text('Elev Gain', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                            Text('0 m', style: CustomTextStyles.regular(fontSize: 16 )),
+                                            // Text('${activity.elavationGain}', style: CustomTextStyles.regular(fontSize: 16 )),
+
+                                            Text(
+                                              activity != null ? "${activity.elavationGain}" : "--",
+                                              style: CustomTextStyles.regular(fontSize: 16),
+                                            ),
                                           ],
                                         ),
                                       ],
                                     ),
                                   ),
                                   SizedBox(height: 20,),
+                                  // Container(
+                                  //   height: 200,
+                                  //   color: AppColor.bgTile, // background color
+                                  //   padding: const EdgeInsets.all(8),
+                                  //   child: LineChart(
+                                  //     LineChartData(
+                                  //       backgroundColor: AppColor.bgTile,
+                                  //       gridData: FlGridData(show: false), // grid lines hide
+                                  //       titlesData: FlTitlesData(
+                                  //         leftTitles: AxisTitles(
+                                  //           sideTitles: SideTitles(
+                                  //             showTitles: true,
+                                  //             reservedSize: 40,
+                                  //             getTitlesWidget: (value, meta) {
+                                  //               return Text(
+                                  //                 '${value.toInt()} km',
+                                  //                 style: const TextStyle(color: Colors.black, fontSize: 10),
+                                  //               );
+                                  //             },
+                                  //           ),
+                                  //         ),
+                                  //         bottomTitles: AxisTitles(
+                                  //           sideTitles: SideTitles(
+                                  //             showTitles: true,
+                                  //             reservedSize: 30,
+                                  //             getTitlesWidget: (value, meta) {
+                                  //               return Text(
+                                  //                 '${value.toInt()} m',
+                                  //                 style: const TextStyle(color: Colors.black, fontSize: 10),
+                                  //               );
+                                  //             },
+                                  //           ),
+                                  //         ),
+                                  //         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                  //         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                  //       ),
+                                  //       borderData: FlBorderData(
+                                  //         show: true,
+                                  //         border: Border.all(color: Colors.grey, width: 0.5),
+                                  //       ),
+                                  //       lineBarsData: [
+                                  //         LineChartBarData(
+                                  //           spots: const [
+                                  //             FlSpot(0, 0),
+                                  //             FlSpot(1, 0),
+                                  //             FlSpot(2, 0),
+                                  //             FlSpot(3, 2),
+                                  //             FlSpot(4, 0),
+                                  //             FlSpot(5, 0),
+                                  //             FlSpot(6, 0),
+                                  //           ],
+                                  //           isCurved: false,
+                                  //           color: Colors.redAccent,
+                                  //           barWidth: 2,
+                                  //           dotData: FlDotData(show: true),
+                                  //           belowBarData: BarAreaData(show: false),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   Container(
-                                    height: 200,
-                                    color: AppColor.bgTile,
-                                    padding: const EdgeInsets.all(8),
+                                    // padding: const EdgeInsets.symmetric(vertical: 10),
+                                    height: 180,
                                     child: LineChart(
                                       LineChartData(
-                                        backgroundColor: AppColor.bgTile,
                                         gridData: FlGridData(show: false),
                                         titlesData: FlTitlesData(
+                                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                                           leftTitles: AxisTitles(
                                             sideTitles: SideTitles(
                                               showTitles: true,
-                                              reservedSize: 40,
+                                              reservedSize: 50,
+                                              interval: 50, // ✅ हर 50 km पर tick
                                               getTitlesWidget: (value, meta) {
-                                                return Text(
-                                                  '${value.toInt()} km',
-                                                  style: const TextStyle(color: Colors.black, fontSize: 10),
+                                                return Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                                    child: Text(
+                                                      "${value.toInt()} km",
+                                                      style: const TextStyle(
+                                                        fontSize: 10,   // ✅ font size 10
+                                                        color: Colors.black, // optional
+                                                      ),
+                                                    ),
+                                                  ),
                                                 );
                                               },
                                             ),
                                           ),
+
+                                          // leftTitles: AxisTitles(
+                                          //   sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                                          // ),
                                           bottomTitles: AxisTitles(
                                             sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 30,
+                                              showTitles: false,
                                               getTitlesWidget: (value, meta) {
-                                                return Text(
-                                                  '${value.toInt()} m',
-                                                  style: const TextStyle(color: Colors.black, fontSize: 10),
-                                                );
+                                                if (value.toInt() < activities.length) {
+                                                  final week = activities[value.toInt()];
+                                                  return Text(
+                                                    "${DateTime.parse(week.startDate!).day}", // सिर्फ़ दिन show किया
+                                                    style: const TextStyle(fontSize: 10),
+                                                  );
+                                                }
+                                                return const Text("");
                                               },
                                             ),
                                           ),
-                                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                                         ),
+                                        // borderData: FlBorderData(show: false),
+                                        // ✅ अब maxY को round figure तक ले जाएंगे
+                                        minY: 0,
+                                        // maxY: () {
+                                        //   double maxDist = activities
+                                        //       .map((e) => double.parse(e.distance.toString()) / 1000)
+                                        //       .reduce((a, b) => a > b ? a : b);
+                                        //
+                                        //   // ✅ अब maxDist को अगले 50 के multiple तक round कर देंगे
+                                        //   int rounded = ((maxDist / 50).ceil() * 50);
+                                        //   return rounded.toDouble();
+                                        // }(),
+                                        maxY: () {
+                                          if (activities.isEmpty) {
+                                            return 0.0; // ✅ default value अगर कोई data नहीं है
+                                          }
+                                          double maxDist = activities
+                                              .map((e) => double.parse(e.distance.toString()) / 1000)
+                                              .reduce((a, b) => a > b ? a : b);
+
+                                          int rounded = ((maxDist / 50).ceil() * 50);
+                                          return rounded.toDouble();
+                                        }(),
                                         borderData: FlBorderData(
                                           show: true,
                                           border: Border.all(color: Colors.grey, width: 0.5),
                                         ),
                                         lineBarsData: [
                                           LineChartBarData(
-                                            spots: const [
-                                              FlSpot(0, 0),
-                                              FlSpot(1, 0),
-                                              FlSpot(2, 0),
-                                              FlSpot(3, 2),
-                                              FlSpot(4, 0),
-                                              FlSpot(5, 0),
-                                              FlSpot(6, 0),
-                                            ],
+                                            spots: activities.asMap().entries.map((e) {
+                                              return FlSpot(e.key.toDouble(), double.parse(e.value.distance.toString())/1000);
+                                            }).toList(),
                                             isCurved: false,
                                             color: Colors.redAccent,
                                             barWidth: 2,
                                             dotData: FlDotData(show: true),
-                                            belowBarData: BarAreaData(show: false),
                                           ),
                                         ],
+
+                                        // 👇 Handle Touch
+                                        lineTouchData: LineTouchData(
+                                          enabled: true,
+                                          touchCallback: (event, response) {
+                                            if (response != null &&
+                                                response.lineBarSpots != null &&
+                                                response.lineBarSpots!.isNotEmpty) {
+                                              setState(() {
+                                                selectedWeekIndex = response.lineBarSpots!.first.x.toInt();
+                                              });
+                                            }
+                                          },
+                                          touchTooltipData: LineTouchTooltipData(
+                                            tooltipBgColor: Colors.black54,
+                                            getTooltipItems: (touchedSpots) {
+                                              return touchedSpots.map((spot) {
+                                                final activity = activities[spot.x.toInt()];
+                                                return LineTooltipItem(
+                                                  "Dist: ${double.parse(activity.distance.toString())/1000} km\n"
+                                                      "Pace: ${activity.pace}\n"
+                                                      "Elev: ${activity.elavationGain}",
+                                                  const TextStyle(color: Colors.white),
+                                                );
+                                              }).toList();
+                                            },
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
+                                  SizedBox(height: 40,)
                                 ],
                               ),
                             ),
