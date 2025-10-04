@@ -36,13 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final RefreshController _refreshController = RefreshController();
   @override
   void initState() {
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '2', page: '1', categoryId: null,));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: '1', categoryId: '',));
     context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context, ));
     super.initState();
   }
   void _onRefresh() {
     page = 1;
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: null,));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
     context.read<ActivityBloc>().add(GetSuggestedChallengesEvent( context: context));
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       perPage: '10',
       page: page.toString(),
-      categoryId: null,
+      categoryId: '',
       isPagination: true
     ));
     _refreshController.loadComplete();
@@ -481,7 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           var feed = feedData[index];
                           return GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails(activityId: feed.activityId.toString(),)));
                             },
                             child: Container(
                               color: Colors.white24,
@@ -565,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text(feed.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text(Constant.formatDuration(int.parse(feed.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
                                             ],
                                           ),
 
@@ -712,6 +712,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        color: Colors.white,
                         border: Border.all(color: Colors.red, width: 1),
                       ),
                       child: ClipOval(

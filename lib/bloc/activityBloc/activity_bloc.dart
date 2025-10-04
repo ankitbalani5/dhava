@@ -23,17 +23,17 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
   }
 
   Future<void> _getFeed(GetFeedEvent event, Emitter<ActivityState> emit) async {
-    var body = {
-      'per_page': event.perPage,
-      'page': event.page,
-      'category_id': event.categoryId
-    };
+    // var body = {
+    //   'per_page': event.perPage,
+    //   'page': event.page,
+    //   'category_id': event.categoryId
+    // };
     final headers = {
       'Content-Type': 'application/json'
     };
     if(feedModel != null){
 
-      final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
+      final response = await Api.getApi('${ApiEndPoint.getFeed}?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}', headers, event.context);
       final result = feed.FeedModel.fromJson(response);
       if(event.isPagination == true){
         feedModel!.data!.data!.addAll(result.data!.data!);
@@ -48,7 +48,7 @@ class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
       emit(FeedLoading());
       try{
 
-        final response = await Api.getApiWithQuery(ApiEndPoint.getFeed, body, headers, event.context);
+        final response = await Api.getApi('${ApiEndPoint.getFeed}?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}', headers, event.context);
         final result = feed.FeedModel.fromJson(response);
 
         if(result.statusCode == 200){

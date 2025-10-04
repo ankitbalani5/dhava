@@ -19,7 +19,7 @@ class ActivitiesTabScreen extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => FeedDetails()));
+                context, MaterialPageRoute(builder: (context) => FeedDetails(activityId: '',)));
           },
           child: Container(
             color: Colors.white,

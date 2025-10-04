@@ -47,6 +47,18 @@ class Constant {
   }
 
 
+  static String formatDuration(int seconds) {
+    final int hours = seconds ~/ 3600;
+    final int minutes = (seconds % 3600) ~/ 60;
+    final int secs = seconds % 60;
+
+    String result = "";
+    if (hours > 0) result += "${hours}h ";
+    if (minutes > 0) result += "${minutes}m ";
+    if (secs > 0 || result.isEmpty) result += "${secs}s";
+
+    return result.trim();
+  }
 
   static loadingDialog(BuildContext context) {
     return showDialog(

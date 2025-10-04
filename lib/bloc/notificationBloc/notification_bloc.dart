@@ -63,6 +63,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
       if(result.statusCode == 200){
 
+        if (notificationModel != null && notificationModel!.data != null && notificationModel!.data!.data != null) {
+          for (var notif in notificationModel!.data!.data!) {
+            if (notif.notificaionType == "Follow Request" && notif.fromUserId == event.fromUserId) {
+              notif.notificaionType = "Follow Approved";
+            }
+          }
+        }
         emit(NotificationSuccess(notificationModel!));
       }else{
         emit(NotificationError(result.message.toString()));
@@ -91,6 +98,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       final result = NotificationModel.fromJson(response);
 
       if(result.statusCode == 200){
+        if (notificationModel != null && notificationModel!.data != null && notificationModel!.data!.data != null) {
+          for (var notif in notificationModel!.data!.data!) {
+            if (notif.notificaionType == "Follow Request" && notif.fromUserId == event.fromUserId) {
+              notif.notificaionType = "Follow Approved";
+            }
+          }
+        }
+
         emit(NotificationSuccess(notificationModel!));
         // Fluttertoast.showToast(msg: result.data.)
       }else{
