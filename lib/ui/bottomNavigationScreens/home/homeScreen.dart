@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: '1', categoryId: '',));
-    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context, ));
+    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
     super.initState();
   }
 
