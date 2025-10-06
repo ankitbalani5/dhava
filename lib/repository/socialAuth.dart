@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'api.dart';
 
 
@@ -124,6 +123,7 @@ class SocialAuth{
   //     }
   //   }
   // }
+
   Future<void> googleLogin(BuildContext context) async {
       try {
         // Authenticate the user
