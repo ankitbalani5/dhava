@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:coherent_endurance/bloc/saveActivityBloc/save_activity_bloc.dart';
 import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/models/categoryModel.dart';
@@ -8,12 +9,15 @@ import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/record/trackingScreen.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class SaveActivity extends StatefulWidget {
   final Map<String, dynamic> trackingData;
@@ -26,6 +30,7 @@ class SaveActivity extends StatefulWidget {
 }
 
 class _SaveActivityState extends State<SaveActivity> {
+
   var _formKey = GlobalKey<FormState>();
   String selectedRunType = '';
   List<String> runTypes = ["Run", "Walk", "Cycle"];
@@ -43,13 +48,21 @@ class _SaveActivityState extends State<SaveActivity> {
   String selectedGear = "Default Shoes";
   String selectedVisibility = "Everyone";
   String selectedHiddenDetails = "None";
-
-
   bool isUploading = false;
+
+
+  String convertedImage = '';
+  File? _selectedImage;
+  final ImagePicker picker = ImagePicker();
 
 
   Future<void> uploadActivity() async {
     setState(() => isUploading = true);
+
+    if (_selectedImage != null) {
+      final bytes = await _selectedImage!.readAsBytes();
+      convertedImage = base64Encode(bytes);
+    }
 
     await Api.saveActivityApi({
       "category_id": categoryId,
@@ -79,7 +92,7 @@ class _SaveActivityState extends State<SaveActivity> {
       "avg_elapsed_pace": widget.trackingData["avgPace"],
       "elapsed_time": widget.trackingData["time"],
       "max_speed": widget.trackingData["maxSpeed"] ?? 0,
-      "photo": widget.trackingData["photo"],
+      "photo": _selectedImage != null ? convertedImage : widget.trackingData["photo"],
     }, context);
 
     setState(() => isUploading = false);
@@ -303,14 +316,38 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 const SizedBox(height: 20),
+
                 Container(
                   height: 128,
                   width: double.infinity,
-                  child: Image.asset(AppImageOthers.sampleMap, fit: BoxFit.fill, width: double.maxFinite,),
+                  child:  _selectedImage != null
+                    ? ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(
+                    _selectedImage!,
+                    height: 150,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ):Image.asset(AppImageOthers.sampleMap, fit: BoxFit.fill, width: double.maxFinite,),
                 ),
-                const SizedBox(height: 16),
-                Image.asset(AppImageOthers.addPhoto),
-                const SizedBox(height: 24),
+                const SizedBox(height:10),
+
+                GestureDetector(
+                  onTap: () {
+                    _showImageSourceSheet(context);
+                  },
+                  child:    Image.asset(
+                    AppImageOthers.addPhoto,
+                    height: 150,
+                  ),
+                ),
+
+
+
+
+
+                const SizedBox(height: 20),
 
                 const Text("Details", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
@@ -577,6 +614,7 @@ class _SaveActivityState extends State<SaveActivity> {
                     GestureDetector(
                       onTap: () {
                         isPublish = !isPublish;
+                        print("ispublish :  ${isPublish}");
                         setState(() {
 
                         });
@@ -597,16 +635,22 @@ class _SaveActivityState extends State<SaveActivity> {
                   ],
                 ),
                 SizedBox(height: 10,),
-                Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColor.bgRed,
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>  TrackingScreen(categoryId)));
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColor.bgRed,
+                      ),
+                      borderRadius: BorderRadius.circular(12)
                     ),
-                    borderRadius: BorderRadius.circular(12)
-                  ),
-                  child: Center(
-                    child: Text('Discard Activity', style: CustomTextStyles.bold(fontSize: 14, textColor: AppColor.bgRed),),
+                    child: Center(
+                      child: Text('Discard Activity', style: CustomTextStyles.bold(fontSize: 14, textColor: AppColor.bgRed),),
+                    ),
                   ),
                 )
               ],
@@ -635,8 +679,17 @@ class _SaveActivityState extends State<SaveActivity> {
           builder: (context, state) {
             return CustomButton(
               text: 'Save Activity',
-              callback: () {
-                if(_formKey.currentState!.validate()){
+              callback: () async { // ✅ make callback async
+                if (_formKey.currentState!.validate()) {
+
+                  String? convertedImage;
+
+                  if (_selectedImage != null) {
+                    final bytes = await _selectedImage!.readAsBytes(); // ✅ now you can use await
+                    convertedImage = base64Encode(bytes);
+                  }
+
+                  widget.trackingData["photo"] = _selectedImage != null ? convertedImage : widget.trackingData["photo"];
                   context.read<SaveActivityBloc>().add(
                     SaveActivityPressed(
                       trackingData: widget.trackingData,
@@ -660,6 +713,59 @@ class _SaveActivityState extends State<SaveActivity> {
           },
         ),
       ),
+    );
+  }
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final pickedFile = await picker.pickImage(source: source, imageQuality: 80);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to pick image: $e")),
+      );
+    }
+  }
+
+  void _showImageSourceSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Take Photo'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.gallery);
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.close),
+                title: const Text('Cancel'),
+                onTap: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -716,6 +822,16 @@ class _SaveActivityState extends State<SaveActivity> {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
 class ResultScreen extends StatefulWidget {
   final Map<String, dynamic> data;
 
@@ -767,4 +883,6 @@ class _ResultScreenState extends State<ResultScreen> {
     );
 
   }
+
+
 }

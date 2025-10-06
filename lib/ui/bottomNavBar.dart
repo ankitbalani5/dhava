@@ -127,7 +127,6 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-
         if (_currentIndex != 0) {
           setState(() {
             _currentIndex = 0;
@@ -136,23 +135,21 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
           return false;
         }
 
-
         DateTime now = DateTime.now();
         if (currentBackPressTime == null ||
             now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
           currentBackPressTime = now;
-
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Press back again to exit"),
-              duration: Duration(seconds: 2),
-            ),
+            const SnackBar(content: Text("Press back again to exit")),
           );
           return false;
         }
 
         return true;
       },
+
+
+
       child: Scaffold(
         body: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {

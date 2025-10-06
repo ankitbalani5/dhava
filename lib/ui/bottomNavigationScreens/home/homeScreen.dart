@@ -63,8 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
-    context.read<ActivityBloc>().add(
-        GetSuggestedChallengesEvent(context: context));
+    context.read<ActivityBloc>().add(GetSuggestedChallengesEvent(context: context));
     _refreshController.refreshCompleted();
   }
 
@@ -218,10 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (state is ProfileSuccess) {
                       var totalFollowing = state.profileModel?.data?.totalFollowing ?? 0;
                       var photo = state.profileModel?.data?.profilePhoto ?? "";
-                      int ActivityUploaded = state.profileModel?.data?.totalActivity?? 0; // yeh flag aap apne API/logic se set karein
-
+                      int ActivityUploaded = state.profileModel?.data?.totalActivity?? 0;
                       int completedSteps = getCompletedSteps(ActivityUploaded, totalFollowing, photo);
-
                       return Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
@@ -245,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       duration: Duration(milliseconds: 500),
                                       builder: (context, value, _) {
                                         return LinearProgressIndicator(
-                                          value: value, // 0.0 - 1.0
+                                          value: value,
                                           minHeight: 5,
                                           backgroundColor: Colors.grey[300],
                                           valueColor: AlwaysStoppedAnimation<Color>(AppColor.bgRed),
@@ -258,9 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text("$completedSteps/$maxProgress"),
                               ],
                             ),
+
                             SizedBox(height: 10),
 
-                            // STEP 1
                             GestureDetector(
                               onTap: () {
                                 bottomNavKey.currentState?.changeTab(2);
@@ -281,7 +278,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             SizedBox(height: 10),
 
-                            // STEP 2
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
@@ -302,7 +298,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             SizedBox(height: 10),
 
-                            // STEP 3
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
@@ -320,18 +315,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
+
                           ],
                         ),
                       );
                     }
-
-
                     return SizedBox.shrink();
                   },
                   ),
 
-
-                  // Suggested Challenges Section
                   BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
                     // bloc: GetAllChallengesBloc(),
                     listener: (context, state) {},
@@ -376,7 +368,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: Colors.black);
                                       }
 
-                                      // Relative path ko absolute URL me convert karo
                                       final url = icon.startsWith("http")
                                           ? icon
                                           : "${Api.BaseUrl}$icon";
@@ -411,7 +402,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 color: Colors.black),
                                       );
                                     }
-
 
                                     return Container(
                                       width: 160,
@@ -561,7 +551,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Container(
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                                              border: Border.all(color: Colors.red, width: 1),
                                             ),
                                             child: ClipOval(
                                               child: CachedNetworkImage(
@@ -599,9 +589,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                           )
                                         ],
                                       ),
+
                                       SizedBox(height: 20,),
+
                                       Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
+
                                       SizedBox(height: 15,),
+
                                       Row(
                                         children: [
                                           Column(
@@ -609,12 +603,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                             children: [
                                               Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
                                               // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
+
                                               Text(
                                                 (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
                                                     ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
                                                     : '${feed.distance} m',
                                                 style: CustomTextStyles.regular(fontSize: 16),
-                                              )                                          ],
+                                              )
+
+
+                                            ],
                                           ),
                                           SizedBox(width: 20,),
                                           Column(
@@ -635,15 +633,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                         ],
                                       )
+
+
                                     ],
                                   ),
+
                                   SizedBox(height: 10,),
+
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
                                       child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
-                                        fit: BoxFit.fill, height: 260,)),
+                                        fit: BoxFit.fill, height: 260,width: double.infinity,)),
 
                                   SizedBox(height: 10,),
+
                                   Padding(
                                     padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
                                     child: Column(
@@ -662,6 +665,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                             Row(
                                               children: [
+
                                                 GestureDetector(
                                                     onTap: () {
                                                       context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
@@ -672,7 +676,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         width: 30,
                                                         child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
 
+
                                                 SizedBox(width: 10,),
+
                                                 GestureDetector(
                                                     onTap: () {
                                                       // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
@@ -688,36 +694,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         SizedBox(height: 20,),
 
-                                        // Row(
-                                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        //   children: [
-                                        //     GestureDetector(
-                                        //         onTap: () {
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
-                                        //         },
-                                        //         child: SizedBox(
-                                        //             height: 30,
-                                        //             width: 30,
-                                        //             child: Icon(Icons.thumb_up, color: Colors.white,))),
-                                        //     GestureDetector(
-                                        //         onTap: () {
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => Discussion()));
-                                        //         },
-                                        //         child: SizedBox(
-                                        //             height: 30,
-                                        //             width: 30,
-                                        //             child: Icon(Icons.message, color: Colors.white,))),
-                                        //     GestureDetector(
-                                        //         onTap: () {
-                                        //           // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                        //           Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
-                                        //         },
-                                        //         child: SizedBox(
-                                        //             height: 30,
-                                        //             width: 30,
-                                        //             child: Icon(Icons.share, color: Colors.white,))),
-                                        //   ],
-                                        // )
                                       ],
                                     ),
                                   ),

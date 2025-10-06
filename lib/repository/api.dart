@@ -248,8 +248,10 @@ class Api {
             "Error saveActivityApi: ${response.statusCode}, Response: ${response.body}");
         return null;
       }
-    } catch (e) {
+    } catch (e, sssss) {
       print('Error saveActivityApi: $e');
+      print('Error saveActivityApi: $sssss');
+
       return null;
     }
   }

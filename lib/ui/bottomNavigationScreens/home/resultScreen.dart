@@ -307,7 +307,6 @@ class _ResultScreenState extends State<ResultScreen> {
               itemCount: listEfforts.length,
               itemBuilder: (context, index) {
                 return Column(
-
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

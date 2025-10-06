@@ -94,12 +94,13 @@ dev_dependencies:
   pedometer: ^4.1.1
   screenshot: ^3.0.0
   google_fonts: ^6.3.1
-
   flutter_facebook_auth:
   firebase_auth: ^5.3.1
   email_validator: ^3.0.0
   geocoding: ^2.1.0
   google_sign_in: ^6.1.1
+  image: ^4.2.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavBar.dart';
@@ -11,6 +14,8 @@ import '../../constant/constant.dart';
 import '../../models/profileModel.dart';
 import '../../resources/color/appColor.dart';
 import '../../resources/image/appImages.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -21,7 +26,9 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   ProfileModel? profileData;
+  File? _selectedImage;
 
+  final ImagePicker picker = ImagePicker();
   TextEditingController birthdayController = TextEditingController();
   TextEditingController firstnameController = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
@@ -35,15 +42,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String planToUse = '';
   String fitnessLevel = '';
   List<String> genderList = ["Male", "Female", "Other"];
+  String convertedImage = "";
+
+
   @override
   void initState() {
     profileData = Constant.getProfile;
     firstnameController.text = profileData!.data!.firstName.toString();
     lastnameController.text = profileData!.data!.lastName.toString();
     birthdayController.text = profileData!.data!.dob.toString();
+    cityController.text = profileData!.data!.city.toString();
+    stateController.text = profileData!.data!.state.toString();
+    bioController.text = profileData!.data!.bio.toString();
+    weightController.text = profileData!.data!.weight.toString();
+    weightController.text = profileData!.data!.primaryCategoryId.toString();
     birthdayController.text = Constant.formatDob(birthdayController.text);
     planToUse = profileData?.data?.planToUse ??"";
     fitnessLevel = profileData?.data?.fitnessLevel??"";
+    convertedImage = profileData?.data?.profilePhoto??"";
 
     print('gender::${profileData!.data!.gender}');
     final genderValue = profileData?.data?.gender?.toLowerCase();
@@ -78,14 +94,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         titleSpacing: 0,
         actions: [
           TextButton(
-            onPressed: () {
-              context.read<ProfileBloc>().add(UpdateProfileEvent(context: context,
-                  firstName: firstnameController.text, lastName: lastnameController.text,
-                  city: cityController.text, state: stateController.text,
-                  primaryCategoryId: primaryCategoryId.toString(), bio: bioController.text,
-                  weight: weightController.text,
-                  dob: birthdayController.text, gender: gender, fitnessLevel: fitnessLevel,
-                  planToUse: planToUse));
+            onPressed: () async {
+              // Agar image select hui ho to convert kare
+              if (_selectedImage != null) {
+                final bytes = await _selectedImage!.readAsBytes();
+                convertedImage = base64Encode(bytes);
+              }
+
+              // Bloc me event bhejna
+              context.read<ProfileBloc>().add(UpdateProfileEvent(
+                context: context,
+                firstName: firstnameController.text,
+                lastName: lastnameController.text,
+                city: cityController.text,
+                state: stateController.text,
+                profilePic: convertedImage,
+                primaryCategoryId: primaryCategoryId.toString(),
+                bio: bioController.text,
+                weight: weightController.text,
+                dob: birthdayController.text,
+                gender: gender,
+                fitnessLevel: fitnessLevel,
+                planToUse: planToUse,
+              ));
             },
             child: const Text(
               "DONE",
@@ -96,7 +127,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
+
         ],
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -115,50 +148,60 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Constant.closeLoadingDialog(context);
             }
           },
-          builder: (context, state) {
+          builder: (context, state)  {
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Profile Picture
+
                 Center(
                   child: Stack(
                     children: [
                       CircleAvatar(
                         radius: 45,
-                        child: CachedNetworkImage(
-                          imageUrl: profileData!.data!.profilePhoto.toString(),
+                        child: _selectedImage != null
+                            ? ClipOval(
+                          child: Image.file(
+                            _selectedImage!,
+                            width: 90,
+                            height: 90,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                            : CachedNetworkImage(
+                          imageUrl: profileData!.data!.profilePhoto?.toString() ?? '',
                           width: 90.0,
                           height: 90.0,
                           fit: BoxFit.cover,
-                          placeholder:
-                              (context, url) =>
-                              Padding(
-                                padding:
-                                EdgeInsets.all(
-                                    40.0),
-                                child:
-                                CircularProgressIndicator(
-                                  color: AppColor.bgRed,
-                                  strokeWidth: 1,
-                                ),
-                              ),
-                          errorWidget: (context,
-                              url, error) =>
-                              Image.asset(AppImageOthers.profilePic, height: 90,),
+                          placeholder: (context, url) => Padding(
+                            padding: const EdgeInsets.all(40.0),
+                            child: CircularProgressIndicator(
+                              color: AppColor.bgRed,
+                              strokeWidth: 1,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Image.asset(AppImageOthers.profilePic, height: 90),
                         ),
-
                       ),
+
                       Positioned(
                         bottom: 0,
                         right: 0,
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
+                        child: GestureDetector(
+                          onTap: (){
+                            _showImageSourceSheet(context);
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.edit, color: Colors.white, size: 16),
                           ),
-                          child: const Icon(Icons.edit, color: Colors.white, size: 16),
                         ),
                       ),
                     ],
@@ -214,6 +257,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
+
+  void _showImageSourceSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Take Photo'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.gallery);
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.close),
+                title: const Text('Cancel'),
+                onTap: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final pickedFile = await picker.pickImage(source: source, imageQuality: 80);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to pick image: $e")),
+      );
+    }
+  }
+
 
   Widget _buildGenderDropdown() {
     return DropdownSearch<String>(
