@@ -355,8 +355,13 @@ class _FeedDetailsState extends State<FeedDetails> {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(Icons.thumb_up,
-                                            color: feedData.isLiked! ? AppColor.bgRed : Colors.black),
+                                        GestureDetector(
+                                          onTap: () {
+                                            context.read<FeedDetailBloc>().add(ActivityLikeEvent(context: context, activityId: feedData.activityId.toString()));
+                                          },
+                                          child: Icon(Icons.thumb_up,
+                                              color: feedData.isLiked! ? AppColor.bgRed : Colors.black),
+                                        ),
                                         SizedBox(width: 8,),
                                         Icon(Icons.share,
                                             color: Colors.black),
@@ -650,7 +655,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('10:47 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${feedData.pace} /Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -658,7 +663,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Moving Time', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('24:07', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text(feedData.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -666,7 +671,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('46:32:36/Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${feedData.avgElapsedPace}/Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -674,7 +679,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Elapsed Time', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('104:07:37', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${feedData.elapsedTime}', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -682,7 +687,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('10:20 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${feedData.fastestSplit} /Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                               ],
@@ -796,7 +801,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Elevation Gain', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('0m', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${feedData.elavationGain}m', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -804,7 +809,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Max Elevation', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('422m', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${feedData.maxElavation}m', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                               ],

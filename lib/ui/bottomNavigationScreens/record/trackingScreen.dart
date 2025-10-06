@@ -1,4 +1,4 @@
-
+import 'package:fl_chart/fl_chart.dart';
 import 'dart:convert';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
@@ -50,6 +50,21 @@ class _TrackingScreenState extends State<TrackingScreen> {
   String country = '';
   int initialSteps = 0;
   List<DateTime> pointTimestamps = [];
+
+  String? categoryName;
+  String _getCategoryName(String? categoryId) {
+    if (Constant.getCategory == null ||
+        Constant.getCategory!.data == null ||
+        categoryId == null) return "Run"; // default text
+
+    final category = Constant.getCategory!.data!
+        .firstWhere(
+          (item) => item.categoryId == categoryId,
+      orElse: () => Constant.getCategory!.data!.first,
+    );
+    return category.categoryName ?? "Run";
+  }
+
 
 
   @override
@@ -207,12 +222,17 @@ class _TrackingScreenState extends State<TrackingScreen> {
       fastestSplit = 0.0;
     }
 
+    double avgPace = elapsed.inSeconds > 0 && totalDistance > 0
+        ? elapsed.inSeconds / (totalDistance / 1000) // seconds per km
+        : 0.0;
+
     return {
       "totalDistance": totalDistance,
       "elapsedTime": elapsed.inSeconds,
       "fastestSplit": fastestSplit,
       "segments": splits.length,
       "splits": splits,
+      'avgPace': avgPace
     };
   }
 
@@ -394,7 +414,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Text('Run', style: CustomTextStyles.medium(fontSize: 16),),
+                              Text(
+                              /*_getCategoryName(runType)*/categoryName ?? ''/*'Run'*/, style: CustomTextStyles.medium(fontSize: 16),),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
@@ -403,12 +424,22 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                       Row(
                                         crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
-                                          Text("${elapsed.inMinutes.remainder(60)}m ",
-                                              style: CustomTextStyles.regular(fontSize: 25)),
-                                          Text("${elapsed.inSeconds.remainder(60)}s",
-                                              style: CustomTextStyles.regular(fontSize: 18, textColor: Colors.black)),
+                                          Text(
+                                            formatElapsed(elapsed),
+                                            style: CustomTextStyles.regular(fontSize: 25),
+                                          ),
                                         ],
                                       ),
+
+                                      // Row(
+                                      //   crossAxisAlignment: CrossAxisAlignment.end,
+                                      //   children: [
+                                      //     Text("${elapsed.inMinutes.remainder(60)}m ",
+                                      //         style: CustomTextStyles.regular(fontSize: 25)),
+                                      //     Text("${elapsed.inSeconds.remainder(60)}s",
+                                      //         style: CustomTextStyles.regular(fontSize: 18, textColor: Colors.black)),
+                                      //   ],
+                                      // ),
                                       Text('Time', style: CustomTextStyles.medium(fontSize: 12, textColor: Colors.grey)),
                                     ],
                                   ),
@@ -448,11 +479,11 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
             });
           },
-          child: expandTimeWidget()
+          child: expandTimeWidget(elapsed: elapsed, distance: totalDistance, avgPace: avgPace, elevationGain: elevationGain.toDouble(), graphData: [])
       ),
       bottomNavigationBar: SizedBox(
         height: isShort ? 100 : 100,
-        child: isShort ? Column(
+        child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -462,58 +493,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
             ),
           ],
         )
-            : Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          height: 60,
-          child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 60,
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColor.bgRed
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(AppImageOthers.resume, height: 24),
-                      SizedBox(width: 5,),
-                      Text('Resume', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: 10,),
-              Expanded(
-                child: Container(
-                  height: 60,
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.black
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(AppImageOthers.finish, height: 24,),
-                      SizedBox(width: 5,),
-                      Text('Finish', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
-                    ],
-                  ),
-                ),
-              ),
-
-            ],
-          )),
-        ),
       ),
     );
   }
- // selected runType ka naam/id store karne ke liye
   void _showRunTypeBottomSheet(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
@@ -522,65 +504,70 @@ class _TrackingScreenState extends State<TrackingScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 40,),
-                  const Text(
-                    "Choose A Sport",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: Constant.getCategory!.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final item = Constant.getCategory!.data![index];
-                      final isSelected = runType == item.categoryId; // check if selected
-                      return ListTile(
-                        leading: Image.network(
-                          item.categoryIcon ?? "",
-                          height: 28,
-                          width: 28,
-                          color: isSelected ? Colors.red : null, // icon color
-                          errorBuilder: (_, __, ___) => const Icon(Icons.error),
-                        ),
-                        title: Text(
-                          item.categoryName ?? "",
-                          style: TextStyle(
-                            color: isSelected ? Colors.red : Colors.black, // text color
-                          ),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: Colors.red)
-                            : null,
-                        onTap: () {
-                          setState(() {
-                            runType = item.categoryId; // Save selected
-                          });
-                          Navigator.pop(context, item.categoryId);
-                        },
-                      );
-                    },
-                  ),
-                ],
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40),
+              const Text(
+                "Choose A Sport",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            );
-          },
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: Constant.getCategory?.data?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final item = Constant.getCategory!.data![index];
+                  final isSelected = runType == item.categoryId;
+                  return ListTile(
+                    leading: Image.network(
+                      item.categoryIcon ?? "",
+                      height: 28,
+                      width: 28,
+                      color: isSelected ? Colors.red : null,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.error),
+                    ),
+                    title: Text(
+                      item.categoryName ?? "",
+                      style: TextStyle(
+                        color: isSelected ? Colors.red : Colors.black,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? const Icon(Icons.check, color: Colors.red)
+                        : null,
+                    onTap: () {
+                      // ✅ main fix: parent setState call
+                      setState(() {
+                        runType = item.categoryId;
+                        categoryName = item.categoryName;
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
-    ).then((selectedValue) {
-      if (selectedValue != null) {
-        runType = selectedValue;
-      }
-    });
+    );
   }
 
+  String formatElapsed(Duration elapsed) {
+    int hours = elapsed.inHours;
+    int minutes = elapsed.inMinutes.remainder(60);
+    int seconds = elapsed.inSeconds.remainder(60);
+
+    if (hours > 0) {
+      return "${hours}h ${minutes}m ${seconds}s";
+    } else {
+      return "${minutes}m ${seconds}s";
+    }
+  }
 
 
   Widget startWidget(){
@@ -835,7 +822,74 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
 
-  static Widget expandTimeWidget(){
+  // Widget expandTimeWidget({
+  //   required Duration elapsed,
+  //   required double distance,          // meters
+  //   required double avgPace,           // seconds per km
+  //   required double elevationGain,required List<double> graphData,}){
+  //   return Container(
+  //     width: double.infinity,
+  //     color: Colors.white,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         Text('Time', style: CustomTextStyles.semiBold()),
+  //         Text(
+  //             formatElapsed(elapsed), style: CustomTextStyles.bold(fontSize: 80),),
+  //         Divider(),
+  //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
+  //         Text(formatPace(avgPace), style: CustomTextStyles.bold(fontSize: 100),),
+  //         Text('/KM', style: CustomTextStyles.semiBold()),
+  //         Divider(),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 Container(
+  //                   height: 80,
+  //                   width: 50,
+  //                   color: Colors.blue,
+  //                 ),
+  //                 Text('0:00', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //
+  //             SizedBox(
+  //               height: 200,
+  //               child: VerticalDivider(
+  //                 thickness: 1,
+  //                 color: Colors.grey,
+  //                 // width: 20,
+  //               ),
+  //             ),
+  //             Column(
+  //               children: [
+  //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
+  //                 Text("${(distance / 1000).toStringAsFixed(2)}", style: CustomTextStyles.bold(fontSize: 70),),
+  //                 Text('KILOMETERS', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget expandTimeWidget({
+    required Duration elapsed,
+    required double distance,          // meters
+    required double avgPace,           // seconds per km
+    required double elevationGain,
+    required List<double> graphData,   // pace over time
+  }) {
+    // Ensure graph data is safe (no NaN or Infinity values)
+    final safeGraphData = graphData.isNotEmpty
+        ? graphData.map((e) => e.isFinite ? e : 0.0).toList()
+        : [0.0]; // fallback if empty
+
     return Container(
       width: double.infinity,
       color: Colors.white,
@@ -843,10 +897,16 @@ class _TrackingScreenState extends State<TrackingScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('Time', style: CustomTextStyles.semiBold()),
-          Text('00:00:00', style: CustomTextStyles.bold(fontSize: 80),),
+          Text(
+            formatElapsed(elapsed),
+            style: CustomTextStyles.bold(fontSize: 80),
+          ),
           Divider(),
           Text('AVG PACE', style: CustomTextStyles.semiBold()),
-          Text('0:00', style: CustomTextStyles.bold(fontSize: 150),),
+          Text(
+            formatPace(avgPace),
+            style: CustomTextStyles.bold(fontSize: 100),
+          ),
           Text('/KM', style: CustomTextStyles.semiBold()),
           Divider(),
           Row(
@@ -855,6 +915,42 @@ class _TrackingScreenState extends State<TrackingScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Dynamic Pace Graph
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: SizedBox(
+                      height: 150,
+                      width: 200,
+                      child: LineChart(
+                        LineChartData(
+                          gridData: FlGridData(show: true),
+                          borderData: FlBorderData(show: true),
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: true),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                          ),
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: List.generate(
+                                safeGraphData.length,
+                                    (index) => FlSpot(index.toDouble(), safeGraphData[index]),
+                              ),
+                              isCurved: true,
+                              barWidth: 2,
+                              color: Colors.red,
+                              dotData: FlDotData(show: false),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Small reference box
                   Container(
                     height: 80,
                     width: 50,
@@ -864,18 +960,23 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 ],
               ),
 
+              // Divider
               SizedBox(
                 height: 200,
                 child: VerticalDivider(
                   thickness: 1,
                   color: Colors.grey,
-                  // width: 20,
                 ),
               ),
+
+              // Distance display
               Column(
                 children: [
                   Text('DISTANCE', style: CustomTextStyles.semiBold()),
-                  Text('0:00', style: CustomTextStyles.bold(fontSize: 70),),
+                  Text(
+                    "${(distance / 1000).toStringAsFixed(2)}",
+                    style: CustomTextStyles.bold(fontSize: 70),
+                  ),
                   Text('KILOMETERS', style: CustomTextStyles.semiBold()),
                 ],
               ),
@@ -885,4 +986,104 @@ class _TrackingScreenState extends State<TrackingScreen> {
       ),
     );
   }
+
+
+  // Widget expandTimeWidget({required Duration elapsed, required double distance,}) {
+  //   return Container(
+  //     width: double.infinity,
+  //     color: Colors.white,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         /// TIME
+  //         Text('Time', style: CustomTextStyles.semiBold()),
+  //         Text(
+  //           formatElapsed(elapsed),
+  //           style: CustomTextStyles.bold(fontSize: 40),
+  //         ),
+  //         Divider(),
+  //
+  //         /// AVG PACE
+  //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
+  //         Text(
+  //           formatPace(avgPace),
+  //           style: CustomTextStyles.bold(fontSize: 70),
+  //         ),
+  //         Text('/KM', style: CustomTextStyles.semiBold()),
+  //         Divider(),
+  //
+  //         /// DISTANCE + ELEVATION
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 Icon(Icons.terrain, color: Colors.blue, size: 40),
+  //                 SizedBox(height: 8),
+  //                 Text(
+  //                   "${elevationGain.toStringAsFixed(0)} m",
+  //                   style: CustomTextStyles.semiBold(),
+  //                 ),
+  //                 Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+  //               ],
+  //             ),
+  //             SizedBox(
+  //               height: 120,
+  //               child: VerticalDivider(thickness: 1, color: Colors.grey),
+  //             ),
+  //             Column(
+  //               children: [
+  //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
+  //                 Text(
+  //                   "${(distance / 1000).toStringAsFixed(2)}",
+  //                   style: CustomTextStyles.bold(fontSize: 50),
+  //                 ),
+  //                 Text('Kilometers', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //         Divider(),
+  //
+  //         /// GRAPH (PACE/ELEVATION OVER DISTANCE)
+  //         // SizedBox(
+  //         //   height: 200,
+  //         //   child: Padding(
+  //         //     padding: const EdgeInsets.all(8.0),
+  //         //     child: LineChart(
+  //         //       LineChartData(
+  //         //         gridData: FlGridData(show: true),
+  //         //         titlesData: FlTitlesData(
+  //         //           leftTitles: AxisTitles(
+  //         //             sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+  //         //           ),
+  //         //           bottomTitles: AxisTitles(
+  //         //             sideTitles: SideTitles(showTitles: true),
+  //         //           ),
+  //         //         ),
+  //         //         borderData: FlBorderData(show: true),
+  //         //         lineBarsData: [
+  //         //           LineChartBarData(
+  //         //             spots: List.generate(
+  //         //               graphData.length,
+  //         //                   (i) => FlSpot(i.toDouble(), graphData[i]),
+  //         //             ),
+  //         //             isCurved: true,
+  //         //             color: Colors.blue,
+  //         //             dotData: FlDotData(show: false),
+  //         //             belowBarData: BarAreaData(show: false),
+  //         //           ),
+  //         //         ],
+  //         //       ),
+  //         //     ),
+  //         //   ),
+  //         // ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
 }
+
+

@@ -61,10 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onRefresh() {
     page = 1;
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
-    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
-    context.read<ProfileBloc>().add(CategoryEvent(context));
-    context.read<ActivityBloc>().add(
-        GetSuggestedChallengesEvent(context: context));
+    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
+    // context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+    // context.read<ProfileBloc>().add(CategoryEvent(context));
+    // context.read<ActivityBloc>().add(
+    //     GetSuggestedChallengesEvent(context: context));
     _refreshController.refreshCompleted();
   }
 
@@ -173,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             }
             if(state is FeedSuccess){
-
+              _refreshController.refreshCompleted();
             }
           },
           builder: (context, state) {
