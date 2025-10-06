@@ -535,7 +535,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
               });
             },
-            child: expandTimeWidget()
+            child: expandTimeWidget(distance: totalDistance, elapsed: elapsed, )
         ),
 
       ),
@@ -953,211 +953,211 @@ class _TrackingScreenState extends State<TrackingScreen> {
   //   );
   // }
 
-  Widget expandTimeWidget({
-    required Duration elapsed,
-    required double distance,          // meters
-    required double avgPace,           // seconds per km
-    required double elevationGain,
-    required List<double> graphData,   // pace over time
-  }) {
-    // Ensure graph data is safe (no NaN or Infinity values)
-    final safeGraphData = graphData.isNotEmpty
-        ? graphData.map((e) => e.isFinite ? e : 0.0).toList()
-        : [0.0]; // fallback if empty
-
-    return Container(
-      width: double.infinity,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text('Time', style: CustomTextStyles.semiBold()),
-          Text(
-            formatElapsed(elapsed),
-            style: CustomTextStyles.bold(fontSize: 80),
-          ),
-          Divider(),
-          Text('AVG PACE', style: CustomTextStyles.semiBold()),
-          Text(
-            formatPace(avgPace),
-            style: CustomTextStyles.bold(fontSize: 100),
-          ),
-          Text('/KM', style: CustomTextStyles.semiBold()),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Dynamic Pace Graph
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: SizedBox(
-                      height: 150,
-                      width: 200,
-                      child: LineChart(
-                        LineChartData(
-                          gridData: FlGridData(show: true),
-                          borderData: FlBorderData(show: true),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: true),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
-                          lineBarsData: [
-                            LineChartBarData(
-                              spots: List.generate(
-                                safeGraphData.length,
-                                    (index) => FlSpot(index.toDouble(), safeGraphData[index]),
-                              ),
-                              isCurved: true,
-                              barWidth: 2,
-                              color: Colors.red,
-                              dotData: FlDotData(show: false),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Small reference box
-                  Container(
-                    height: 80,
-                    width: 50,
-                    color: Colors.blue,
-                  ),
-                  Text('0:00', style: CustomTextStyles.semiBold()),
-                ],
-              ),
-
-              // Divider
-              SizedBox(
-                height: 200,
-                child: VerticalDivider(
-                  thickness: 1,
-                  color: Colors.grey,
-                ),
-              ),
-
-              // Distance display
-              Column(
-                children: [
-                  Text('DISTANCE', style: CustomTextStyles.semiBold()),
-                  Text(
-                    "${(distance / 1000).toStringAsFixed(2)}",
-                    style: CustomTextStyles.bold(fontSize: 70),
-                  ),
-                  Text('KILOMETERS', style: CustomTextStyles.semiBold()),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  // Widget expandTimeWidget({required Duration elapsed, required double distance,}) {
+  // Widget expandTimeWidget({
+  //   required Duration elapsed,
+  //   required double distance,          // meters
+  //   required double avgPace,           // seconds per km
+  //   required double elevationGain,
+  //   required List<double> graphData,   // pace over time
+  // }) {
+  //   // Ensure graph data is safe (no NaN or Infinity values)
+  //   final safeGraphData = graphData.isNotEmpty
+  //       ? graphData.map((e) => e.isFinite ? e : 0.0).toList()
+  //       : [0.0]; // fallback if empty
+  //
   //   return Container(
   //     width: double.infinity,
   //     color: Colors.white,
   //     child: Column(
   //       crossAxisAlignment: CrossAxisAlignment.center,
   //       children: [
-  //         /// TIME
   //         Text('Time', style: CustomTextStyles.semiBold()),
   //         Text(
   //           formatElapsed(elapsed),
-  //           style: CustomTextStyles.bold(fontSize: 40),
+  //           style: CustomTextStyles.bold(fontSize: 80),
   //         ),
   //         Divider(),
-  //
-  //         /// AVG PACE
   //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
   //         Text(
   //           formatPace(avgPace),
-  //           style: CustomTextStyles.bold(fontSize: 70),
+  //           style: CustomTextStyles.bold(fontSize: 100),
   //         ),
   //         Text('/KM', style: CustomTextStyles.semiBold()),
   //         Divider(),
-  //
-  //         /// DISTANCE + ELEVATION
   //         Row(
   //           mainAxisAlignment: MainAxisAlignment.spaceAround,
   //           children: [
   //             Column(
   //               crossAxisAlignment: CrossAxisAlignment.center,
   //               children: [
-  //                 Icon(Icons.terrain, color: Colors.blue, size: 40),
-  //                 SizedBox(height: 8),
-  //                 Text(
-  //                   "${elevationGain.toStringAsFixed(0)} m",
-  //                   style: CustomTextStyles.semiBold(),
+  //                 // Dynamic Pace Graph
+  //                 Padding(
+  //                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //                   child: SizedBox(
+  //                     height: 150,
+  //                     width: 200,
+  //                     // child: LineChart(
+  //                     //   LineChartData(
+  //                     //     gridData: FlGridData(show: true),
+  //                     //     borderData: FlBorderData(show: true),
+  //                     //     titlesData: FlTitlesData(
+  //                     //       leftTitles: AxisTitles(
+  //                     //         sideTitles: SideTitles(showTitles: true),
+  //                     //       ),
+  //                     //       bottomTitles: AxisTitles(
+  //                     //         sideTitles: SideTitles(showTitles: false),
+  //                     //       ),
+  //                     //     ),
+  //                     //     lineBarsData: [
+  //                     //       LineChartBarData(
+  //                     //         spots: List.generate(
+  //                     //           safeGraphData.length,
+  //                     //               (index) => FlSpot(index.toDouble(), safeGraphData[index]),
+  //                     //         ),
+  //                     //         isCurved: true,
+  //                     //         barWidth: 2,
+  //                     //         color: Colors.red,
+  //                     //         dotData: FlDotData(show: false),
+  //                     //       ),
+  //                     //     ],
+  //                     //   ),
+  //                     // ),
+  //                   ),
   //                 ),
-  //                 Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+  //
+  //                 // Small reference box
+  //                 Container(
+  //                   height: 80,
+  //                   width: 50,
+  //                   color: Colors.blue,
+  //                 ),
+  //                 Text('0:00', style: CustomTextStyles.semiBold()),
   //               ],
   //             ),
+  //
+  //             // Divider
   //             SizedBox(
-  //               height: 120,
-  //               child: VerticalDivider(thickness: 1, color: Colors.grey),
+  //               height: 200,
+  //               child: VerticalDivider(
+  //                 thickness: 1,
+  //                 color: Colors.grey,
+  //               ),
   //             ),
+  //
+  //             // Distance display
   //             Column(
   //               children: [
   //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
   //                 Text(
   //                   "${(distance / 1000).toStringAsFixed(2)}",
-  //                   style: CustomTextStyles.bold(fontSize: 50),
+  //                   style: CustomTextStyles.bold(fontSize: 70),
   //                 ),
-  //                 Text('Kilometers', style: CustomTextStyles.semiBold()),
+  //                 Text('KILOMETERS', style: CustomTextStyles.semiBold()),
   //               ],
   //             ),
   //           ],
   //         ),
-  //         Divider(),
-  //
-  //         /// GRAPH (PACE/ELEVATION OVER DISTANCE)
-  //         // SizedBox(
-  //         //   height: 200,
-  //         //   child: Padding(
-  //         //     padding: const EdgeInsets.all(8.0),
-  //         //     child: LineChart(
-  //         //       LineChartData(
-  //         //         gridData: FlGridData(show: true),
-  //         //         titlesData: FlTitlesData(
-  //         //           leftTitles: AxisTitles(
-  //         //             sideTitles: SideTitles(showTitles: true, reservedSize: 40),
-  //         //           ),
-  //         //           bottomTitles: AxisTitles(
-  //         //             sideTitles: SideTitles(showTitles: true),
-  //         //           ),
-  //         //         ),
-  //         //         borderData: FlBorderData(show: true),
-  //         //         lineBarsData: [
-  //         //           LineChartBarData(
-  //         //             spots: List.generate(
-  //         //               graphData.length,
-  //         //                   (i) => FlSpot(i.toDouble(), graphData[i]),
-  //         //             ),
-  //         //             isCurved: true,
-  //         //             color: Colors.blue,
-  //         //             dotData: FlDotData(show: false),
-  //         //             belowBarData: BarAreaData(show: false),
-  //         //           ),
-  //         //         ],
-  //         //       ),
-  //         //     ),
-  //         //   ),
-  //         // ),
   //       ],
   //     ),
   //   );
   // }
+
+
+  Widget expandTimeWidget({required Duration elapsed, required double distance,}) {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          /// TIME
+          Text('Time', style: CustomTextStyles.semiBold()),
+          Text(
+            formatElapsed(elapsed),
+            style: CustomTextStyles.bold(fontSize: 40),
+          ),
+          Divider(),
+
+          /// AVG PACE
+          Text('AVG PACE', style: CustomTextStyles.semiBold()),
+          Text(
+            formatPace(avgPace),
+            style: CustomTextStyles.bold(fontSize: 70),
+          ),
+          Text('/KM', style: CustomTextStyles.semiBold()),
+          Divider(),
+
+          /// DISTANCE + ELEVATION
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.terrain, color: Colors.blue, size: 40),
+                  SizedBox(height: 8),
+                  Text(
+                    "${elevationGain.toStringAsFixed(0)} m",
+                    style: CustomTextStyles.semiBold(),
+                  ),
+                  Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+                ],
+              ),
+              SizedBox(
+                height: 120,
+                child: VerticalDivider(thickness: 1, color: Colors.grey),
+              ),
+              Column(
+                children: [
+                  Text('DISTANCE', style: CustomTextStyles.semiBold()),
+                  Text(
+                    "${(distance / 1000).toStringAsFixed(2)}",
+                    style: CustomTextStyles.bold(fontSize: 50),
+                  ),
+                  Text('Kilometers', style: CustomTextStyles.semiBold()),
+                ],
+              ),
+            ],
+          ),
+          Divider(),
+
+          /// GRAPH (PACE/ELEVATION OVER DISTANCE)
+          // SizedBox(
+          //   height: 200,
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: LineChart(
+          //       LineChartData(
+          //         gridData: FlGridData(show: true),
+          //         titlesData: FlTitlesData(
+          //           leftTitles: AxisTitles(
+          //             sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+          //           ),
+          //           bottomTitles: AxisTitles(
+          //             sideTitles: SideTitles(showTitles: true),
+          //           ),
+          //         ),
+          //         borderData: FlBorderData(show: true),
+          //         lineBarsData: [
+          //           LineChartBarData(
+          //             spots: List.generate(
+          //               graphData.length,
+          //                   (i) => FlSpot(i.toDouble(), graphData[i]),
+          //             ),
+          //             isCurved: true,
+          //             color: Colors.blue,
+          //             dotData: FlDotData(show: false),
+          //             belowBarData: BarAreaData(show: false),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+        ],
+      ),
+    );
+  }
 
 }
 
