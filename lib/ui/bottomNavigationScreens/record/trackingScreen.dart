@@ -319,11 +319,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Back press → Endurance tab
-        bottomNavKey.currentState?.changeTab(2);
-        Navigator.of(context).pop(); // Remove TrackingScreen
-        return false; // prevent BottomNavBar onWillPop
+
+        bottomNavKey.currentState?.changeTab(2); // 👈 Endurance tab pe redirect
+        Navigator.of(context).pop(); // Tracking screen se pop
+        return false;
       },
+
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

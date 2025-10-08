@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:collection/collection.dart';
 
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
-import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -55,18 +54,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     stateController.text = profileData!.data!.state.toString();
     bioController.text = profileData!.data!.bio.toString();
     weightController.text = profileData!.data!.weight.toString();
-    weightController.text = profileData!.data!.primaryCategoryId.toString();
+    // primaryCategoryId = profileData!.data!.primaryCategoryId.toString();
     birthdayController.text = Constant.formatDob(birthdayController.text);
     planToUse = profileData?.data?.planToUse ??"";
     fitnessLevel = profileData?.data?.fitnessLevel??"";
     convertedImage = profileData?.data?.profilePhoto??"";
+    final profileCategoryId = profileData?.data?.primaryCategoryId;
 
-    print('gender::${profileData!.data!.gender}');
-    final genderValue = profileData?.data?.gender?.toLowerCase();
+
+
+    if(profileCategoryId != null){
+      final category = Constant.getCategory?.data?.firstWhereOrNull((e) => e.categoryId == profileCategoryId);
+      selectedSport = category?.categoryName ?? '';
+    }else{
+      selectedSport = "profileCategoryId is null";
+    }
+
+    final genderValue = profileData?.data?.gender?.toLowerCase() ?? '';
     final a = genderList.firstWhere(
           (e) => e.toLowerCase() == genderValue,
-      orElse: () => "Other", // fallback
+      orElse: () => "Other",
     );
+
+    print('gender:: $a');
     gender = a;
 
     super.initState();
@@ -142,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Constant.closeLoadingDialog(context);
               Fluttertoast.showToast(msg: state.profileModel.message.toString());
               context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
-              Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
             }
             if(state is UpdateProfileError){
               Constant.closeLoadingDialog(context);
@@ -160,6 +170,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     children: [
                       CircleAvatar(
                         radius: 45,
+                        backgroundColor: Colors.grey.shade200,
                         child: _selectedImage != null
                             ? ClipOval(
                           child: Image.file(
@@ -169,22 +180,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             fit: BoxFit.cover,
                           ),
                         )
-                            : CachedNetworkImage(
-                          imageUrl: profileData!.data!.profilePhoto?.toString() ?? '',
-                          width: 90.0,
-                          height: 90.0,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Padding(
-                            padding: const EdgeInsets.all(40.0),
-                            child: CircularProgressIndicator(
-                              color: AppColor.bgRed,
-                              strokeWidth: 1,
+                            : (profileData?.data?.profilePhoto != null &&
+                            profileData!.data!.profilePhoto!.isNotEmpty)
+                            ? ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: profileData!.data!.profilePhoto!,
+                            width: 90.0,
+                            height: 90.0,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: CircularProgressIndicator(
+                                color: AppColor.bgRed,
+                                strokeWidth: 1,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              AppImageOthers.profilePic,
+                              height: 90,
                             ),
                           ),
-                          errorWidget: (context, url, error) =>
-                              Image.asset(AppImageOthers.profilePic, height: 90),
+                        )
+                            : ClipOval(
+                          child: Image.asset(
+                            AppImageOthers.profilePic,
+                            width: 90,
+                            height: 90,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
+
 
                       Positioned(
                         bottom: 0,

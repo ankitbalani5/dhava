@@ -514,4 +514,6 @@ class ApiEndPoint {
   static const String followCancel = '/api/v1/follow/cancel';
   static const String unfollow = '/api/v1/unfollow';
 
+  static const String suggestions = '/api/v1/user/suggestions';
+
 }

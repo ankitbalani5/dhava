@@ -55,9 +55,7 @@ class _EnduranceState extends State<Endurance> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-
-        bottomNavKey.currentState?.changeTab(0);
-        return false; // prevent BottomNavBar onWillPop from firing immediately
+        return true; // Allow BottomNavScreen to handle it
       },
       child: Scaffold(
         appBar: AppBar(
@@ -187,14 +185,17 @@ class _EnduranceState extends State<Endurance> {
                       textColor: Colors.white,
                     ),
                   ),
+
                   const SizedBox(height: 20),
+
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(bottomNavKey.currentContext!).push(
+                      Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => TrackingScreen(categoryId),
                         ),
                       );
+
                     },
 
                     child: Container(

@@ -8,6 +8,7 @@ import 'package:coherent_endurance/bloc/profileBloc/followRequest_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/bloc/saveActivityBloc/save_activity_bloc.dart';
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
 import 'package:coherent_endurance/ui/introScreens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()),
         BlocProvider<FollowRequestBloc>(create: (context) => FollowRequestBloc()),
         BlocProvider<FeedDetailBloc>(create: (context) => FeedDetailBloc()),
+        BlocProvider<SuggestionBloc>(create: (context) => SuggestionBloc()),
     ],
       child:
       MaterialApp(

@@ -46,7 +46,6 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     super.initState();
     _currentIndex = widget.i;
     _initializePreferences();
-
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
   }
@@ -127,14 +126,31 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_currentIndex != 0) {
+        // agar koi overlay open hai → close karo
+        if (_overlayStack.isNotEmpty) {
           setState(() {
-            _currentIndex = 0;
-            _overlayStack.clear();
+            _overlayStack.removeLast();
           });
           return false;
         }
 
+        // agar current tab Endurance hai → wapas Home tab
+        if (_currentIndex == 2) {
+          setState(() {
+            _currentIndex = 0;
+          });
+          return false;
+        }
+
+        // agar current tab Home nahi hai → Home tab pe le jao
+        if (_currentIndex != 0) {
+          setState(() {
+            _currentIndex = 0;
+          });
+          return false;
+        }
+
+        // double back to exit
         DateTime now = DateTime.now();
         if (currentBackPressTime == null ||
             now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
@@ -145,8 +161,9 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
           return false;
         }
 
-        return true;
+        return true; // exit app
       },
+
 
 
 

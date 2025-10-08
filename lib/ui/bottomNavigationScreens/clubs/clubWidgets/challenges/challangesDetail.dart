@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChallangesDetailScreen extends StatefulWidget {
-  final isAlreadyJoined;
+  final bool? isAlreadyJoined;
   const ChallangesDetailScreen( {super.key,required this.isAlreadyJoined});
 
   @override

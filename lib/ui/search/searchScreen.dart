@@ -1,15 +1,17 @@
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_event.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
+import 'package:coherent_endurance/resources/image/appImages.dart';
+import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/notification/notificationScreen.dart';
+import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:coherent_endurance/ui/search/searchBloc/search_cubit.dart';
 import 'package:coherent_endurance/ui/search/searchBloc/search_state.dart';
 import 'package:coherent_endurance/ui/search/searchWidget/friendsWidget.dart';
 import 'package:coherent_endurance/ui/search/searchWidget/searchActiveWidget.dart';
-import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../resources/image/appImages.dart';
-import '../../resources/style/textStyle.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -28,6 +30,8 @@ class _SearchScreenState extends State<SearchScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _innerTabController = TabController(length: 2, vsync: this);
+    context.read<SuggestionBloc>().add(GetSuggestionEvent(perPage: '10', page: '1', context: context));
+
   }
 
   @override
@@ -43,12 +47,9 @@ class _SearchScreenState extends State<SearchScreen>
       create: (_) => SearchCubit(),
       child: BlocBuilder<SearchCubit, SearchState>(
         builder: (context, state) {
-          // ❌ Default UI सिर्फ़ SearchInitial पर दिखेगी
           if (state is SearchInitial) {
             return _buildDefaultSearchUI(context);
           }
-
-          // ✅ बाकी सब states में SearchActiveWidget दिखे
           return const SearchActiveWidget();
         },
       ),
@@ -74,31 +75,15 @@ class _SearchScreenState extends State<SearchScreen>
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Row(
               children: [
+
                 GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => NotificationScreen(),
-                    //   ),
-                    // );
-                  },
-                  child: SvgPicture.asset(
-                    AppImageSvg.search,
-                    // Replace with your back icon path
-                    width: 30,
-                    height: 30,
-                  ),
-                ),
-                SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => NotificationScreen(),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(),
+                      ),
+                    );
                   },
                   child: SvgPicture.asset(
                     AppImageSvg.notification,
@@ -110,12 +95,12 @@ class _SearchScreenState extends State<SearchScreen>
                 SizedBox(width: 10),
                 GestureDetector(
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ProfileScreen(),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(),
+                      ),
+                    );
                   },
                   child: Image.asset(
                     AppImageOthers.defaultImage,
@@ -184,7 +169,7 @@ class _SearchScreenState extends State<SearchScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          buildFriendsTab(_innerTabController, context),
+          FriendsTabWidget( innerTabController: _innerTabController,),
           const Center(child: Text("Clubs Tab Coming Soon...")),
         ],
       ),

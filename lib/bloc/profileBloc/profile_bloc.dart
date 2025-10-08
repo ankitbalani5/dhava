@@ -6,11 +6,11 @@ import 'package:coherent_endurance/models/summaryModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../constant/Constant.dart';
 import '../../models/categoryModel.dart';
 import '../../repository/api.dart';
-
+import 'package:http/http.dart' as http;
 part 'profile_event.dart';
 part 'profile_state.dart';
 
@@ -121,6 +121,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         print('_updateProfile:::$result');
       }
       if(result.statusCode == 200){
+
         emit(UpdateProfileSuccess(result));
       }else{
         emit(UpdateProfileError(result.message.toString()));

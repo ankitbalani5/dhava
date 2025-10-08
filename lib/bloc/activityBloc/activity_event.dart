@@ -19,9 +19,3 @@ class ActivityLikeEvent extends ActivityEvent{
   final String activityId;
   ActivityLikeEvent({required this.context, required this.activityId});
 }
-
-
-class GetSuggestedChallengesEvent extends ActivityEvent {
-  final  BuildContext context;
-  GetSuggestedChallengesEvent({required this.context});
-}
