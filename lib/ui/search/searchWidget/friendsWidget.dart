@@ -15,6 +15,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FriendsTabWidget extends StatefulWidget {
   final TabController innerTabController;
@@ -95,7 +99,7 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
               controller: widget.innerTabController,
               children: [
                 _buildSuggestedList(context),
-                _buildContactsTab(),
+                ContactsTab(),
               ],
             ),
           ),
@@ -289,7 +293,7 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
     );
   }
 
-  Widget _buildContactsTab() {
+/*  Widget _buildContactsTab() {
     return Center(
       child: Column(
         children: [
@@ -336,6 +340,159 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
           ),
         ],
       ),
+    );
+  }*/
+}
+
+
+class ContactsTab extends StatefulWidget {
+  const ContactsTab({super.key});
+
+  @override
+  State<ContactsTab> createState() => _ContactsTabState();
+}
+
+class _ContactsTabState extends State<ContactsTab> {
+  List<Contact> _contacts = [];
+  bool _loading = false;
+  bool _connected = false;
+  Future<void> _fetchContacts() async {
+    // Step 1: Check and request permission
+    var status = await Permission.contacts.status;
+    if (!status.isGranted) {
+      status = await Permission.contacts.request();
+    }
+
+    if (!status.isGranted) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Permission denied to read contacts")),
+        );
+      }
+      return;
+    }
+
+    // Step 2: Start loading
+    setState(() => _loading = true);
+
+    try {
+      // Step 3: Fetch contacts using flutter_contacts
+      final List<Contact> contacts =
+      await FlutterContacts.getContacts(withProperties: true);
+
+      if (!mounted) return;
+
+      setState(() {
+        _contacts = contacts;
+        _connected = true;
+      });
+    } catch (e, st) {
+      debugPrint("Error fetching contacts: $e");
+      debugPrintStack(stackTrace: st);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to load contacts: $e")),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// 🔹 Initial Connect View
+  Widget _buildConnectView() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.contacts, size: 60, color: Colors.red),
+        const SizedBox(height: 10),
+        const Text(
+          "Connect Contacts",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 5),
+        const Text(
+          "Your friends are on Strava. See what they're\nup to by connecting your phone contacts.",
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: _fetchContacts,
+          child: Container(
+            height: 40,
+            width: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.red),
+            ),
+            child: const Center(
+              child: Text("Connect Securely", style: TextStyle(color: Colors.red)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 🔹 Show Contacts List
+  Widget _buildContactList() {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_contacts.isEmpty) {
+      return const Center(child: Text("No contacts found."));
+    }
+
+    return ListView.builder(
+      itemCount: _contacts.length,
+      itemBuilder: (context, index) {
+        final contact = _contacts[index];
+        final name = contact.displayName ?? 'Unknown';
+        final number = contact.phones?.isNotEmpty == true
+            ? contact.phones!.first.number
+            : 'No number';
+
+        return ListTile(
+          leading: CircleAvatar(child:Image.asset(AppImageOthers.defaultUserImg)),
+          title: Text(name,style: CustomTextStyles.semiBold(fontSize: 12),maxLines: 1,),
+          subtitle: Text(number ?? ''),
+          trailing: GestureDetector(
+            onTap: (){
+
+                debugPrint('Invite $name');
+
+            },
+            child: Container(
+              height: 35,
+              width: 85,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColor.bgRed,
+                ),
+              ),
+              child: Center(
+                child: Text("Invite",
+                  style: CustomTextStyles.semiBold(
+                    textColor: AppColor.textBackgroundGrey,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: _connected ? _buildContactList() : _buildConnectView(),
     );
   }
 }

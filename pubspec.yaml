@@ -101,7 +101,7 @@ dev_dependencies:
   google_sign_in: ^6.1.1
   image: ^4.2.0
   collection: ^1.17.0
-
+  flutter_contacts: ^1.1.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
