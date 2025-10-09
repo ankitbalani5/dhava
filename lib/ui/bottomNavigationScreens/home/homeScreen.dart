@@ -145,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: CachedNetworkImage(
+                      child: Constant.getProfile?.data?.profilePhoto != null
+                          ? CachedNetworkImage(
                         imageUrl:
                         Constant.getProfile?.data?.profilePhoto ?? '',
                         // Replace with your back icon path
@@ -153,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 30,
                         placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage),
-                      ),
+                      ) : Image.asset(AppImageOthers.defaultImage),
                     ),
                   ),
                 ),
@@ -621,7 +622,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text('${feed.pace} /km', style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text('${formatPace(double.parse(feed.pace.toString()))} /km', style: CustomTextStyles.regular(fontSize: 16)),
                                             ],
                                           ),
                                           SizedBox(width: 20,),
@@ -723,6 +724,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+
+  String formatPace(double paceInSec) {
+    if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
+    int min = (paceInSec / 60).floor();
+    int sec = (paceInSec % 60).floor();
+    return "$min:${sec.toString().padLeft(2, '0')}";
   }
   
   static Widget likeImageWidget (FeedModelData feed){

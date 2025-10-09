@@ -49,6 +49,7 @@ class _SaveActivityState extends State<SaveActivity> {
   String selectedVisibility = "Everyone";
   String selectedHiddenDetails = "None";
   bool isUploading = false;
+  String? selectedCategoryImage;
 
 
   String convertedImage = '';
@@ -142,6 +143,7 @@ class _SaveActivityState extends State<SaveActivity> {
     );
 
     selectedRunType = matchedCategory.categoryName ?? "";
+    selectedCategoryImage = matchedCategory.categoryIcon ?? '';
     categoryId = matchedCategory.categoryId ?? '';
     super.initState();
   }
@@ -271,6 +273,7 @@ class _SaveActivityState extends State<SaveActivity> {
                           ?.firstWhere((element) => element.categoryName == selectedRunType);
 
                       categoryId = selectedCategory?.categoryId ?? "";
+                      selectedCategoryImage = selectedCategory?.categoryIcon ?? '';
                     });
                   },
                   items: (String? filter, _) => Constant.getCategory?.data
@@ -297,7 +300,8 @@ class _SaveActivityState extends State<SaveActivity> {
                       fillColor: AppColor.bgTile,
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: Icon(Icons.directions_run, color: Colors.black),
+                        child: Image.network(selectedCategoryImage!, height: 25, width: 25,)
+                        /*Icon(Icons.directions_run, color: Colors.black),*/
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       border: OutlineInputBorder(

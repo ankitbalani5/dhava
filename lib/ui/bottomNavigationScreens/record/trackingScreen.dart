@@ -51,22 +51,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
   String country = '';
   int initialSteps = 0;
   List<DateTime> pointTimestamps = [];
-
+  bool isShort = true;
+  ScreenshotController screenshotController = ScreenshotController();
   String? categoryName;
-  String _getCategoryName(String? categoryId) {
-    if (Constant.getCategory == null ||
-        Constant.getCategory!.data == null ||
-        categoryId == null) return "Run"; // default text
-
-    final category = Constant.getCategory!.data!
-        .firstWhere(
-          (item) => item.categoryId == categoryId,
-      orElse: () => Constant.getCategory!.data!.first,
-    );
-    return category.categoryName ?? "Run";
-  }
-
-
 
   @override
   void initState() {
@@ -237,37 +224,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     };
   }
 
-  Future<void> sendTrackingData() async {
-    final url = Uri.parse("https://yourapi.com/save-activity");
-
-    final results = calculateResults();
-
-    final body = {
-      "distance": results["totalDistance"],
-      "time": results["elapsedTime"],
-      "avgPace": results["avgPace"],
-      "fastestSplit": results["fastestSplit"],
-      "segments": results["segments"],
-      "elevationGain": elevationGain,
-      "maxElevation": maxElevation,
-      "steps": steps,
-      "path": pathPoints.map((p) => {"lat": p.latitude, "lng": p.longitude}).toList(),
-      "splits": results["splits"]
-    };
-
-    final response = await http.post(
-      url,
-      body: json.encode(body),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      print("✅ Data sent successfully");
-    } else {
-      print("❌ Error: ${response.body}");
-    }
-  }
-
   String formatPace(double paceInSec) {
     if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
     int min = (paceInSec / 60).floor();
@@ -305,20 +261,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return {
       Polyline(
         polylineId: const PolylineId("track"),
-        color: Colors.blue,
+        color: AppColor.bgRed/*Colors.blue*/,
         width: 5,
         points: pathPoints,
       )
     };
   }
-
-  @override
-  void dispose() {
-    positionStream?.cancel();
-    super.dispose();
-  }
-
-  bool isShort = true;
 
   String getPace(double distance, double durationInSeconds) {
     if (distance <= 0) return "0:00";
@@ -327,8 +275,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
     int sec = (paceInSec % 60).floor();
     return "${min}:${sec.toString().padLeft(2, '0')}";
   }
-  ScreenshotController screenshotController = ScreenshotController();
 
+  @override
+  void dispose() {
+    positionStream?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -362,12 +314,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: isShort
-                  ? GestureDetector(
+                  ? SizedBox()/*GestureDetector(
                   onTap: () {
                     Navigator.push(
                         context, MaterialPageRoute(builder: (context) => MapSetting()));
                   },
-                  child: Icon(Icons.settings))
+                  child: Icon(Icons.settings))*/
                   : GestureDetector(
                   onTap: () {
                     isShort = !isShort;
@@ -380,11 +332,11 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
         body: pathPoints.isEmpty
             ? const Center(child: CircularProgressIndicator())
-            : isShort ? Screenshot(
-          controller: screenshotController,
-              child: Stack(
-                children: [
-                  GoogleMap(
+            : Stack(
+              children: [
+                Screenshot(
+                  controller: screenshotController,
+                  child: GoogleMap(
                     initialCameraPosition: CameraPosition(
                       target: pathPoints.first,
                       zoom: 17,
@@ -396,151 +348,111 @@ class _TrackingScreenState extends State<TrackingScreen> {
                       mapController = controller;
                     },
                   ),
-                  Visibility(
-                    visible: isShort,
-                    child: Positioned(
-                      bottom: 0,
+                ),
+                Visibility(
+                  visible: !isShort,
+                  child: Positioned(
+                      top: 0,
                       left: 0,
                       right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          isShort = !isShort;
-                          setState(() {
+                      bottom: !isShort ? 150 : 220,
+                      child: expandTimeWidget(elapsed: elapsed, distance: totalDistance)
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      isShort = !isShort;
+                      setState(() {
 
-                          });
-                        },
-                        child: Container(
-                          height: 230,
-                          // color: AppColor.textBackgroundGrey,
-                          color: Colors.white,
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              gradient: LinearGradient(colors: [AppColor.bgRed.withOpacity(.5), Colors.white], begin: Alignment.topCenter, end: Alignment.bottomCenter)
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text('Run', style: CustomTextStyles.medium(fontSize: 18),),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            Text("${elapsed.inMinutes.remainder(60)}m ",
-                                                style: CustomTextStyles.regular(fontSize: 20)),
-                                            Text("${elapsed.inSeconds.remainder(60)}s",
-                                                style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.black)),
-                                          ],
-                                        ),
-                                        Text('Time', style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(formatPace(avgPace),
-                                            style: CustomTextStyles.bold(fontSize: 20)),
-                                        Text('Split avg. pace (/km)',
-                                            style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text((totalDistance / 1000).toStringAsFixed(2),
-                                            style: CustomTextStyles.bold(fontSize: 20)),
-                                        Text('Distance (km)',
-                                            style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5,),
-                                SizedBox(height: isShort ? 80 : 80,
-                                  child: isShort ? Column(children: [
-                                    Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      });
+                    },
+                    child: Container(
+                      height: !isShort ? 150 : 220,
+                      // color: AppColor.textBackgroundGrey,
+                      color: Colors.white,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(colors: [AppColor.bgRed.withOpacity(.5), Colors.white], begin: Alignment.topCenter, end: Alignment.bottomCenter)
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text('Run', style: CustomTextStyles.medium(fontSize: 18),),
+                            Visibility(
+                              visible: isShort,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
-                                          !start ? startWidget() : !pause ? pauseWidget() : resume()
+                                          Text("${elapsed.inMinutes.remainder(60)}m ",
+                                              style: CustomTextStyles.regular(fontSize: 20)),
+                                          Text("${elapsed.inSeconds.remainder(60)}s",
+                                              style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.black)),
                                         ],
                                       ),
+                                      Text('Time', style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
                                     ],
-                                  )
-                                      : Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    height: 50,
-                                    child: Center(
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                height: 50,
-                                                padding: EdgeInsets.all(15),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    color: AppColor.bgRed
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.resume, height: 24),
-                                                    SizedBox(width: 5,),
-                                                    Text('Resume', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 5,),
-                                            Expanded(
-                                              child: Container(
-                                                height: 50,
-                                                padding: EdgeInsets.all(15),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    color: Colors.black
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.finish, height: 24,),
-                                                    SizedBox(width: 5,),
-                                                    Text('Finish', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-
-                                          ],
-                                        )),
                                   ),
-                                ),
-
-                              ],
+                                  Column(
+                                    children: [
+                                      Text(formatPace(avgPace),
+                                          style: CustomTextStyles.bold(fontSize: 20)),
+                                      Text('Split avg. pace (/km)',
+                                          style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text((totalDistance / 1000).toStringAsFixed(2),
+                                          style: CustomTextStyles.bold(fontSize: 20)),
+                                      Text('Distance (km)',
+                                          style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                            SizedBox(height: 5,),
+
+                            bottomButton()
+
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-            ) : GestureDetector(
-            onTap: () {
-              isShort = !isShort;
-              setState(() {
-
-              });
-            },
-            child: expandTimeWidget(distance: totalDistance, elapsed: elapsed, )
-        ),
+                ),
+              ],
+            )
 
       ),
     );
   }
+
+  Widget bottomButton(){
+    return SizedBox(height: isShort ? 70 : 70,
+        child: Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              !start ? startWidget() : !pause ? pauseWidget() : resume()
+            ],
+          ),
+        ],
+        )
+      );
+  }
+
  // selected runType ka naam/id store karne ke liye
   void _showRunTypeBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -615,7 +527,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     }
   }
 
-
   Widget startWidget(){
     return Expanded(
       child: Row(
@@ -643,9 +554,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
               });
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
             },
-            child: SizedBox(height: 65,width: 65,
+            child: SizedBox(height: 60,width: 60,
               child: Center(
-                  child: SvgPicture.asset(AppImageSvg.play,height: 65,width: 65,)
+                  child: SvgPicture.asset(AppImageSvg.play,height: 60,width: 60,)
               ),
             ),
           ),
@@ -754,7 +665,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 child: Container(
                     height: 50,
                     // width: MediaQuery.of(context).size.width - 40,
-                    padding: EdgeInsets.all(15),
+                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: AppColor.bgRed
@@ -805,8 +716,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       ),
     );
   }
-
-
 
   Future<void> onFinishTracking() async {
     if (pathPoints.isEmpty || pointTimestamps.isEmpty) {
@@ -861,7 +770,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 "maxElevation": maxElevation,
                 "steps": steps,
                 "path": pathPoints
-                    .map((p) => {"lat": p.latitude, "lng": p.longitude})
+                    .map((p) => {"latitude": p.latitude.toString(), "longitude": p.longitude.toString()})
                     .toList(),
                 "photo": base64Image,
                 "city": city,
@@ -875,10 +784,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       }
     }
   }
-
-
-
-
 
   void startTimer() {
     _timer?.cancel();
@@ -1071,55 +976,121 @@ class _TrackingScreenState extends State<TrackingScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           /// TIME
-          Text('Time', style: CustomTextStyles.semiBold()),
-          Text(
-            formatElapsed(elapsed),
-            style: CustomTextStyles.bold(fontSize: 40),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Time', style: CustomTextStyles.semiBold()),
+                Text(
+                  formatElapsed(elapsed),
+                  style: CustomTextStyles.bold(fontSize: 40),
+                ),
+              ],
+            ),
           ),
+
           Divider(),
 
           /// AVG PACE
-          Text('AVG PACE', style: CustomTextStyles.semiBold()),
-          Text(
-            formatPace(avgPace),
-            style: CustomTextStyles.bold(fontSize: 70),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('AVG PACE', style: CustomTextStyles.semiBold()),
+                Text(
+                  formatPace(avgPace),
+                  style: CustomTextStyles.bold(fontSize: 70),
+                ),
+                Text('/KM', style: CustomTextStyles.semiBold()),
+              ],
+            ),
           ),
-          Text('/KM', style: CustomTextStyles.semiBold()),
           Divider(),
 
           /// DISTANCE + ELEVATION
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+          Expanded(
+            child: IntrinsicHeight( // 👈 Added this wrapper
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Icon(Icons.terrain, color: Colors.blue, size: 40),
-                  SizedBox(height: 8),
-                  Text(
-                    "${elevationGain.toStringAsFixed(0)} m",
-                    style: CustomTextStyles.semiBold(),
+                  /// ELEVATION
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.terrain, color: Colors.blue, size: 40),
+                      SizedBox(height: 8),
+                      Text(
+                        "${elevationGain.toStringAsFixed(0)} m",
+                        style: CustomTextStyles.semiBold(),
+                      ),
+                      Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+                    ],
                   ),
-                  Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+
+                  /// 👇 Vertical Divider (Now dynamic)
+                  VerticalDivider(
+                    thickness: 1,
+                    color: Colors.grey,
+                    width: 20,
+                  ),
+
+                  /// DISTANCE
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('DISTANCE', style: CustomTextStyles.semiBold()),
+                      Text(
+                        "${(distance / 1000).toStringAsFixed(2)}",
+                        style: CustomTextStyles.bold(fontSize: 50),
+                      ),
+                      Text('Kilometers', style: CustomTextStyles.semiBold()),
+                    ],
+                  ),
                 ],
               ),
-              SizedBox(
-                height: 120,
-                child: VerticalDivider(thickness: 1, color: Colors.grey),
-              ),
-              Column(
-                children: [
-                  Text('DISTANCE', style: CustomTextStyles.semiBold()),
-                  Text(
-                    "${(distance / 1000).toStringAsFixed(2)}",
-                    style: CustomTextStyles.bold(fontSize: 50),
-                  ),
-                  Text('Kilometers', style: CustomTextStyles.semiBold()),
-                ],
-              ),
-            ],
+            ),
           ),
-          Divider(),
+
+          // Expanded(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //         children: [
+          //           Column(
+          //             crossAxisAlignment: CrossAxisAlignment.center,
+          //             children: [
+          //               Icon(Icons.terrain, color: Colors.blue, size: 40),
+          //               SizedBox(height: 8),
+          //               Text(
+          //                 "${elevationGain.toStringAsFixed(0)} m",
+          //                 style: CustomTextStyles.semiBold(),
+          //               ),
+          //               Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+          //             ],
+          //           ),
+          //           SizedBox(
+          //             height: 120,
+          //             child: VerticalDivider(thickness: 1, color: Colors.grey),
+          //           ),
+          //           Column(
+          //             children: [
+          //               Text('DISTANCE', style: CustomTextStyles.semiBold()),
+          //               Text(
+          //                 "${(distance / 1000).toStringAsFixed(2)}",
+          //                 style: CustomTextStyles.bold(fontSize: 50),
+          //               ),
+          //               Text('Kilometers', style: CustomTextStyles.semiBold()),
+          //             ],
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // Divider(),
 
           /// GRAPH (PACE/ELEVATION OVER DISTANCE)
           // SizedBox(

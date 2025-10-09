@@ -11,50 +11,59 @@ import 'package:coherent_endurance/bloc/saveActivityBloc/save_activity_bloc.dart
 import 'package:coherent_endurance/ui/introScreens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'bloc/MyFeedBloc/my_feed_bloc.dart';
 import 'bloc/activityBloc/challenges_bloc.dart';
 import 'bloc/loginBloc/login_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-        // BlocProvider<CommonResponseBloc>(create: (context) => CommonResponseBloc(),),
-        BlocProvider<LoginBloc>(create: (context) => LoginBloc()),
-        BlocProvider<ProfileBloc>(create: (context) => ProfileBloc()),
-        BlocProvider<ActivityBloc>(create: (context) => ActivityBloc()),
-        BlocProvider<SaveActivityBloc>(create: (context) => SaveActivityBloc()),
-        BlocProvider<GetAllChallengesBloc>(create: (context) => GetAllChallengesBloc()),
-        BlocProvider<SuggestedBloc>(create: (context) => SuggestedBloc()),
-        BlocProvider<MyFeedBloc>(create: (context) => MyFeedBloc()),
-        BlocProvider<JoinChalllengesBloc>(create: (context) => JoinChalllengesBloc()),
-        BlocProvider<OtherProfileBloc>(create: (context) => OtherProfileBloc()),
-        BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()),
-        BlocProvider<FollowRequestBloc>(create: (context) => FollowRequestBloc()),
-        BlocProvider<FeedDetailBloc>(create: (context) => FeedDetailBloc()),
-    ],
-      child:
-      MaterialApp(
+      providers: [
+        BlocProvider<LoginBloc>(create: (_) => LoginBloc()),
+        BlocProvider<ProfileBloc>(create: (_) => ProfileBloc()),
+        BlocProvider<ActivityBloc>(create: (_) => ActivityBloc()),
+        BlocProvider<SaveActivityBloc>(create: (_) => SaveActivityBloc()),
+        BlocProvider<GetAllChallengesBloc>(create: (_) => GetAllChallengesBloc()),
+        BlocProvider<SuggestedBloc>(create: (_) => SuggestedBloc()),
+        BlocProvider<MyFeedBloc>(create: (_) => MyFeedBloc()),
+        BlocProvider<JoinChalllengesBloc>(create: (_) => JoinChalllengesBloc()),
+        BlocProvider<OtherProfileBloc>(create: (_) => OtherProfileBloc()),
+        BlocProvider<NotificationBloc>(create: (_) => NotificationBloc()),
+        BlocProvider<FollowRequestBloc>(create: (_) => FollowRequestBloc()),
+        BlocProvider<FeedDetailBloc>(create: (_) => FeedDetailBloc()),
+      ],
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-      title: 'Coherent Endurance',
-      theme: ThemeData(
-        fontFamily: 'InterRegular',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
+        title: 'Dhava',
+        theme: ThemeData(fontFamily: 'InterRegular'),
+        home: const SplashScreen(),
       ),
-      home: SplashScreen(),
-    ));
+    );
   }
 }

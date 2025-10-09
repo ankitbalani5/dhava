@@ -12,191 +12,123 @@ import 'api.dart';
 
 class SocialAuth{
   var fcmToken;
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn.instance/*GoogleSignIn()*/;
+  // final FirebaseAuth auth = FirebaseAuth.instance;
+  // final GoogleSignIn googleSignIn = GoogleSignIn.instance/*GoogleSignIn()*/;
+
+  // FirebaseAuth instance to handle authentication.
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // GoogleSignIn instance to handle Google Sign-In.
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  /// Signs in the user with Google and returns the authenticated Firebase [User].
+  ///
+  /// Returns `null` if the sign-in process is canceled or fails.
+  Future<User?> signInWithGoogle() async {
+    try {
+
+      final googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) return null;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      return userCredential.user;
+    } catch (e) {
+
+      print("Sign-in error: $e");
+      return null;
+    }
+  }
+
+  /// Signs out the user from both Google and Firebase.
+  Future<void> signOut() async {
+
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+  }
+
 
   // Future<void> googleLogin(BuildContext context) async {
-  //   SharedPreferences pref = await SharedPreferences.getInstance();
-  //   fcmToken = pref.getString('fcmToken');
-  //   try {
-  //     final GoogleSignInAccount? googleSignInAccount =
-  //     await googleSignIn.signIn();
-  //     if (googleSignInAccount != null) {
-  //       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-  //       final AuthCredential authCredential = GoogleAuthProvider.credential(
-  //           idToken: googleSignInAuthentication.idToken,
-  //           accessToken: googleSignInAuthentication.accessToken);
+  //     try {
+  //       // Authenticate the user
+  //       final GoogleSignInAccount? googleUser = await googleSignIn.authenticate();
+  //       if (googleUser == null) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text("Google sign-in cancelled")),
+  //         );
+  //         return;
+  //       }
   //
-  //       UserCredential result = await auth.signInWithCredential(authCredential);
-  //       User? user = result.user;
+  //       // Fetch authentication details
+  //       final headers =
+  //       await googleUser.authorizationClient.authorizationHeaders([
+  //         'email',
+  //         'https://www.googleapis.com/auth/userinfo.profile',
+  //       ]);
+  //
+  //       if (headers == null) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text("Failed to fetch authorization headers")),
+  //         );
+  //         return;
+  //       }
+  //
+  //       // Create Firebase credentials using ID token
+  //       final googleAuth = await googleUser.authentication;
+  //       final AuthCredential credential = GoogleAuthProvider.credential(
+  //         // accessToken: googleAuth.accessToken,
+  //         idToken: googleAuth.idToken,
+  //       );
+  //
+  //       // Sign in to Firebase
+  //       UserCredential userCredential =
+  //       await auth.signInWithCredential(credential);
+  //       final User? user = userCredential.user;
   //
   //       if (user != null) {
-  //         String Mobilenumber = "";
-  //         String countryCode = "";
-  //
-  //         print("Login done");
-  //         print("Email: ${result.user!.email}");
-  //         print("Name: ${result.user!.displayName}");
-  //         print("UID: ${result.user!.uid}");
-  //         print("Phone Number: ${result.user!.phoneNumber}");
-  //
-  //         print("Login done");
-  //
-  //         print("Email: ${user.email}");
-  //         print("Name: ${user.displayName}");
-  //         print("UID: ${user.uid}");
-  //         print("Phone Number: ${user.phoneNumber}");
-  //         print("Photo: ${user.photoURL}");
-  //         String? phoneNumber = user.phoneNumber;
-  //
-  //         var namePart = user.displayName?.split(' ');
-  //         var firstName = namePart?[0].toString();
-  //         var lastName = namePart?.sublist(1).join(" ");
-  //         SharedPreferences pref = await SharedPreferences.getInstance();
-  //         pref.setString('first_name', firstName.toString());
-  //         pref.setString('last_name', lastName.toString());
-  //         pref.setString('email', user.email.toString());
-  //         pref.setString('image', user.photoURL.toString());
+  //         // Save user info locally
+  //         final SharedPreferences pref = await SharedPreferences.getInstance();
+  //         pref.setString('first_name', user.displayName ?? '');
+  //         pref.setString('email', user.email ?? '');
+  //         pref.setString('image', user.photoURL ?? '');
   //         pref.setBool('login', true);
   //
-  //         Constant.token = pref.getString('token').toString();
-  //         Constant.firstName = pref.getString('first_name').toString();
-  //         Constant.lastName = pref.getString('last_name').toString();
-  //         Constant.email = pref.getString('email').toString();
-  //         // Constant.country = pref.getString('country');
-  //         // Constant.countryCode = pref.getString('country_code');
-  //         Constant.image = pref.getString('image');
-  //
-  //         if (phoneNumber != null) {
-  //           String countryCode =
-  //           phoneNumber.substring(0, phoneNumber.indexOf(' ') + 1).trim();
-  //           String phoneNumberWithoutCountryCode =
-  //           phoneNumber.substring(phoneNumber.indexOf(' ') + 1).trim();
-  //           print("Phone Number: $phoneNumberWithoutCountryCode");
-  //           print("Country Code: $countryCode");
-  //           Mobilenumber = phoneNumberWithoutCountryCode;
-  //           countryCode = countryCode;
-  //
-  //
-  //         } else {
-  //           print("Phone Number: Not available");
-  //         }
-  //         // SocialLoginApi(result.user!.email.toString(), "google",
-  //         //     result.user!.uid.toString(),);
-  //
-  //
-  //         Api.socialLoginApi(
+  //         // Call your API
+  //         await Api.socialLoginApi(
   //           socailite_type: "google",
-  //           email: result.user!.email.toString(),
-  //           socailite_id: result.user!.uid.toString(),
-  //           first_name: user.displayName.toString(),
-  //           fcm_token: fcmToken,
+  //           email: user.email.toString(),
+  //           socailite_id: user.uid.toString(),
+  //           first_name: user.displayName ?? "",
+  //           fcm_token: '',
+  //         ).then((response) async {
+  //           if (response['status'] == 'success') {
+  //             pref.setString('token', response['token'].toString());
+  //             pref.setString(
+  //                 'current_steps', response['userdata']['current_steps'].toString());
   //
-  //           // email: result.user!.email.toString(),
-  //           // id: result.user!.uid.toString(),
-  //           // type: "google",
-  //           // name: user.displayName.toString(),
-  //           // mobile: Mobilenumber,
-  //           // countryCode: countryCode,
-  //         ).then((e) async {
-  //           if(e['status'] == 'success'){
-  //             Navigator.pop(context);
-  //             SharedPreferences pref = await SharedPreferences.getInstance();
-  //             pref.setString('token', e['token'].toString());
-  //             pref.setString('current_steps', e['userdata']['current_steps'].toString());
-  //             Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
+  //             Navigator.pushReplacementNamed(context, '/home');
+  //           } else {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(content: Text(response['message'] ?? 'Login failed')),
+  //             );
   //           }
   //         });
   //       }
-  //     }
-  //   } catch (e) {
-  //     // Get.back();
-  //     Navigator.pop(context);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('An error occurred: ${e.toString()}')),
-  //     );
-  //     print('google == ${e.toString()}');
-  //     if (e is PlatformException) {
-  //       print('Error code: ${e.code}');
-  //       print('Error message: ${e.message}');
-  //       print('Error details: ${e.details}');
+  //     } catch (e) {
+  //       print("Google Login Error: $e");
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text("Google sign-in failed: $e")),
+  //       );
   //     }
   //   }
-  // }
-
-  Future<void> googleLogin(BuildContext context) async {
-      try {
-        // Authenticate the user
-        final GoogleSignInAccount? googleUser = await googleSignIn.authenticate();
-        if (googleUser == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Google sign-in cancelled")),
-          );
-          return;
-        }
-
-        // Fetch authentication details
-        final headers =
-        await googleUser.authorizationClient.authorizationHeaders([
-          'email',
-          'https://www.googleapis.com/auth/userinfo.profile',
-        ]);
-
-        if (headers == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to fetch authorization headers")),
-          );
-          return;
-        }
-
-        // Create Firebase credentials using ID token
-        final googleAuth = await googleUser.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          // accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        // Sign in to Firebase
-        UserCredential userCredential =
-        await auth.signInWithCredential(credential);
-        final User? user = userCredential.user;
-
-        if (user != null) {
-          // Save user info locally
-          final SharedPreferences pref = await SharedPreferences.getInstance();
-          pref.setString('first_name', user.displayName ?? '');
-          pref.setString('email', user.email ?? '');
-          pref.setString('image', user.photoURL ?? '');
-          pref.setBool('login', true);
-
-          // Call your API
-          await Api.socialLoginApi(
-            socailite_type: "google",
-            email: user.email.toString(),
-            socailite_id: user.uid.toString(),
-            first_name: user.displayName ?? "",
-            fcm_token: '',
-          ).then((response) async {
-            if (response['status'] == 'success') {
-              pref.setString('token', response['token'].toString());
-              pref.setString(
-                  'current_steps', response['userdata']['current_steps'].toString());
-
-              Navigator.pushReplacementNamed(context, '/home');
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(response['message'] ?? 'Login failed')),
-              );
-            }
-          });
-        }
-      } catch (e) {
-        print("Google Login Error: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Google sign-in failed: $e")),
-        );
-      }
-    }
 
 
   Future<void> facebookLogin(BuildContext context) async {
@@ -289,12 +221,12 @@ class SocialAuth{
     }
   }
 
-  Future<void> signout() async {
-    await auth.signOut();
-    await googleSignIn.signOut();
-    await FacebookAuth.instance.logOut();
-    print("User signed out");
-  }
+  // Future<void> signout() async {
+  //   await auth.signOut();
+  //   await googleSignIn.signOut();
+  //   await FacebookAuth.instance.logOut();
+  //   print("User signed out");
+  // }
 
   // Future<void> appleLogin(BuildContext context) async {
   //   SharedPreferences pref = await SharedPreferences.getInstance();

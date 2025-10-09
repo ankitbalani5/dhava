@@ -1,21 +1,18 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:coherent_endurance/bloc/feedDetailsBloc/feed_detail_bloc.dart';
 import 'package:coherent_endurance/models/feedDetailModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavigationScreens/home/resultScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:hive/hive.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../constant/constant.dart';
-import '../../../data/localDBModel/WorkoutModel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../models/feedModel.dart';
@@ -34,117 +31,14 @@ class _FeedDetailsState extends State<FeedDetails> {
   StreamSubscription<Position>? positionStream;
   double totalDistance = 0.0;
   DateTime? startTime;
+  Set<Polyline> polylines = {};
 
   @override
   void initState() {
     super.initState();
     context.read<FeedDetailBloc>().add(FetchFeedDetailEvent(context, widget.activityId));
     print('activityId::::${widget.activityId}');
-    initTracking();
-  }
-  Future<void> initTracking() async {
-
-    LocationPermission permission = await Geolocator.requestPermission();
-
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text("Location permission is required to track.")),
-        );
-      }
-      Navigator.pop(context);
-      return;
-    }
-
-    try {
-      Position pos = await Geolocator.getCurrentPosition();
-      LatLng initial = LatLng(pos.latitude, pos.longitude);
-
-      setState(() {
-        pathPoints.add(initial);
-        startTime = DateTime.now();
-      });
-
-      startLocationStream();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to get location: $e")),
-        );
-      }
-    }
-  }
-
-  void startLocationStream() {
-    positionStream = Geolocator.getPositionStream(
-      locationSettings:  LocationSettings(
-        accuracy: LocationAccuracy.bestForNavigation,
-        distanceFilter: 10,
-      ),
-    ).listen((position) {
-      LatLng newPos = LatLng(position.latitude, position.longitude);
-      if (pathPoints.isNotEmpty) {
-        totalDistance += _calculateDistance(pathPoints.last, newPos);
-      }
-
-      setState(() {
-        pathPoints.add(newPos);
-      });
-
-      mapController?.animateCamera(CameraUpdate.newLatLng(newPos));
-    });
-  }
-
-
-  double _calculateDistance(LatLng start, LatLng end) {
-    const R = 6371000; // Earth radius in meters
-    double dLat = _degToRad(end.latitude - start.latitude);
-    double dLng = _degToRad(end.longitude - start.longitude);
-    double a =
-        (sin(dLat / 2) * sin(dLat / 2)) +
-            cos(_degToRad(start.latitude)) *
-                cos(_degToRad(end.latitude)) *
-                sin(dLng / 2) * sin(dLng / 2);
-
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    return R * c;
-  }
-
-  double _degToRad(double deg) => deg * (3.1415926535 / 180.0);
-
-  void stopTracking() async {
-    positionStream?.cancel();
-
-    DateTime endTime = DateTime.now();
-    double durationSeconds = endTime.difference(startTime!).inSeconds.toDouble();
-    double averageSpeed = totalDistance / durationSeconds; // m/s
-
-    final workout = WorkoutModel(
-      path: pathPoints,
-      totalDistance: totalDistance,
-      averageSpeed: averageSpeed,
-      startTime: startTime!,
-      endTime: endTime,
-    );
-
-    final box = Hive.box<WorkoutModel>('workouts');
-    await box.add(workout);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Workout saved!")),
-    );
-  }
-
-  Set<Polyline> getPolyline() {
-    return {
-      Polyline(
-        polylineId: const PolylineId("track"),
-        color: Colors.blue,
-        width: 5,
-        points: pathPoints,
-      )
-    };
+    // initTracking();
   }
 
   @override
@@ -152,18 +46,37 @@ class _FeedDetailsState extends State<FeedDetails> {
     positionStream?.cancel();
     super.dispose();
   }
+  void _fitToRoute() async {
+    if (mapController == null || pathPoints.isEmpty) return;
+
+    LatLngBounds bounds = _getLatLngBounds(pathPoints);
+    CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 140);
+    mapController!.animateCamera(cameraUpdate);
+  }
+
+  LatLngBounds _getLatLngBounds(List<LatLng> points) {
+    double x0 = points.first.latitude;
+    double x1 = points.first.latitude;
+    double y0 = points.first.longitude;
+    double y1 = points.first.longitude;
+
+    for (LatLng latLng in points) {
+      if (latLng.latitude > x1) x1 = latLng.latitude;
+      if (latLng.latitude < x0) x0 = latLng.latitude;
+      if (latLng.longitude > y1) y1 = latLng.longitude;
+      if (latLng.longitude < y0) y0 = latLng.longitude;
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(x0, y0),
+      northeast: LatLng(x1, y1),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pathPoints.isEmpty
-          ? Center(
-        child: LoadingAnimationWidget.inkDrop(
-          color: AppColor.bgRed,
-          size: 20,
-        ),
-      )
-          : BlocConsumer<FeedDetailBloc, FeedDetailState>(
+      body: BlocConsumer<FeedDetailBloc, FeedDetailState>(
         listener: (context, state) {
           // TODO: implement listener
         },
@@ -178,6 +91,31 @@ class _FeedDetailsState extends State<FeedDetails> {
           }
           if(state is FeedDetailSuccess){
             var feedData = state.feedDetailModel.data;
+            pathPoints.clear();
+
+            if (feedData?.path != null && feedData!.path!.isNotEmpty) {
+              for (var p in feedData.path!) {
+                final lat = double.tryParse(p.latitude.toString());
+                final lng = double.tryParse(p.longitude.toString());
+                if (lat != null && lng != null) {
+                  pathPoints.add(LatLng(lat, lng));
+                }
+              }
+
+              polylines = {
+                Polyline(
+                  polylineId: const PolylineId("route"),
+                  points: pathPoints,
+                  color: AppColor.bgRed,
+                  width: 5,
+                ),
+              };
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _fitToRoute();
+              });
+            }
+
             return SafeArea(
               child: CustomScrollView(
                 slivers: [
@@ -193,6 +131,25 @@ class _FeedDetailsState extends State<FeedDetails> {
                           Positioned.fill(
                             child: GoogleMap(
                               initialCameraPosition: CameraPosition(
+                                target: pathPoints.isNotEmpty
+                                    ? pathPoints.first
+                                    : const LatLng(26.9124, 75.7873), // default Jaipur point
+                                // zoom: 50,
+                              ),
+                              onMapCreated: (controller) {
+                                mapController = controller;
+                                if (pathPoints.isNotEmpty) {
+                                  _fitToRoute();
+                                }
+                              },
+                              polylines: polylines,
+                              myLocationEnabled: false,
+                              zoomControlsEnabled: false,
+                              compassEnabled: false,
+                            )
+
+                            /*GoogleMap(
+                              initialCameraPosition: CameraPosition(
                                 target: pathPoints.first,
                                 zoom: 17,
 
@@ -202,7 +159,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                               onMapCreated: (controller) {
                                 mapController = controller;
                               },
-                            ),
+                            ),*/
                           ),
                         ],
                       ),
@@ -309,7 +266,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   ],
                                 ),
                                 const SizedBox(height: 10),
-                                const Text("Lunch Run",
+                                Text(feedData.title.toString(),
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 20,
@@ -319,11 +276,11 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _InfoColumn(title: "Distance", value: "${(double.parse(feedData.distance.toString())/1000)} km"),
+                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Distance", value: "${(double.parse(feedData.distance.toString())/1000).toStringAsFixed(2)} km")),
                                     SizedBox(width: 15,),
-                                    _InfoColumn(title: "Pace", value: "${feedData.pace} /km"),
+                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.center, title: "Pace", value: "${Constant.formatPace(double.parse(feedData.pace.toString()))} /km")),
                                     SizedBox(width: 15,),
-                                    _InfoColumn(title: "Time", value: Constant.formatDuration(int.parse(feedData.movingTime.toString()))),
+                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Time", value: Constant.formatDuration(int.parse(feedData.movingTime.toString())))),
                                   ],
                                 ),
                                 const SizedBox(height: 10),
@@ -331,12 +288,14 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _InfoColumn(title: "Elevation Gain", value: "${feedData.elavationGain.toString()} m"),
+                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Elevation Gain", value: "${feedData.elavationGain.toString()} m")),
                                     SizedBox(width: 15,),
-                                    _InfoColumn(
-                                        title: "Max Elevation", value: "${feedData.maxElavation} m"),
+                                    Expanded(
+                                      child: _InfoColumn(cross: CrossAxisAlignment.center,
+                                          title: "Max Elevation", value: "${feedData.maxElavation} m"),
+                                    ),
                                     SizedBox(width: 15,),
-                                    _InfoColumn(title: "Steps", value: "${feedData.steps}"),
+                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Steps", value: "${feedData.steps}")),
                                     // SizedBox(width: 15,),
                                   ],
                                 ),
@@ -363,8 +322,20 @@ class _FeedDetailsState extends State<FeedDetails> {
                                               color: feedData.isLiked! ? AppColor.bgRed : Colors.black),
                                         ),
                                         SizedBox(width: 8,),
-                                        Icon(Icons.share,
-                                            color: Colors.black),
+                                        GestureDetector(
+                                          onTap: () {
+
+                                            final activityId = widget.activityId;
+                                            final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
+
+                                            Share.share(
+                                              "Check out my run on Dhava 🏃‍♂️:\n$link",
+                                              subject: "My Activity",
+                                            );
+                                          },
+                                          child: Icon(Icons.share,
+                                              color: Colors.black),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -372,7 +343,8 @@ class _FeedDetailsState extends State<FeedDetails> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          // const SizedBox(height: 20),
+                          // results
                           // results
                           // Container(
                           //   height: 324,
@@ -655,7 +627,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('${feedData.pace} /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${Constant.formatPace(double.parse(feedData.pace.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -663,7 +635,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Moving Time', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text(feedData.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text(Constant.formatDuration(int.parse(feedData.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -671,7 +643,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('${feedData.avgElapsedPace}/Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${Constant.formatPace(double.parse(feedData.avgElapsedPace.toString()))}/Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 15,),
@@ -687,7 +659,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 12)),
-                                    Text('${feedData.fastestSplit} /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('${Constant.formatPace(double.parse(feedData.fastestSplit.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                               ],
@@ -928,13 +900,14 @@ class _FeedDetailsState extends State<FeedDetails> {
 class _InfoColumn extends StatelessWidget {
   final String title;
   final String value;
+  final CrossAxisAlignment cross;
 
-  const _InfoColumn({required this.title, required this.value});
+  const _InfoColumn({required this.title, required this.value, required this.cross});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: cross,
       children: [
 
         Text(title, style: const TextStyle(color: Colors.grey)),

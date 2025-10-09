@@ -260,8 +260,8 @@ class Path {
   Path({this.latitude, this.longitude});
 
   Path.fromJson(Map<String, dynamic> json) {
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    latitude = json['latitude'].toString();
+    longitude = json['longitude'].toString();
   }
 
   Map<String, dynamic> toJson() {

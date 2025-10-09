@@ -1,13 +1,15 @@
+import 'package:coherent_endurance/repository/socialAuth.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/ui/authScreens/sendCode.dart';
+import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   var _formKey = GlobalKey<FormState>();
 
+  final SocialAuth _authService = SocialAuth();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,20 +54,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // Google Register Button
 
-                Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(6)
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                GestureDetector(
+                  onTap: () async {
+                    // Attempt to sign in with Google
+                    User? user = await _authService.signInWithGoogle();
+                    // If sign-in is successful, navigate to the HomeScreen
+                    if (user != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => BottomNavBar(key: bottomNavKey,)),
+                      );
+                    }
+                  },
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(6)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
 
-                      Image.asset(AppImageOthers.google, height: 24),
-                      SizedBox(width: 10,),
-                      Text("Continue With Google", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ],
+                        Image.asset(AppImageOthers.google, height: 24),
+                        SizedBox(width: 10,),
+                        Text("Continue With Google", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                 ),
 

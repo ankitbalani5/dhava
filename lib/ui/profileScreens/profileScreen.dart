@@ -19,6 +19,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../models/summaryModel.dart';
+
 class ProfileScreen extends StatefulWidget {
   final String path;
   ProfileScreen({this.path = 'user', super.key});
@@ -648,12 +650,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Trophy Case', style: CustomTextStyles.semiBold(fontSize: 16),),
-                                    Text('3', style: CustomTextStyles.regular(fontSize: 16)),
+                                    // Text('3', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 20,),
 
-                                buildBadgeGrid(milestone),
+                                buildBadgeGrid(trophies),
 
                                 SizedBox(height: 10,),
                                 Row(
@@ -672,26 +674,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Challenges', style: CustomTextStyles.semiBold(fontSize: 16),),
-                                    Text('1', style: CustomTextStyles.regular(fontSize: 16)),
+                                    // Text('1', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
                                 SizedBox(height: 20,),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SvgPicture.asset(AppImageSvg.activeUser, height: 51,),
-                                  title: Text('Timeout Streaks Challenge\nJuly 2025'),
-                                  subtitle: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SvgPicture.asset(AppImageSvg.run, color: Colors.grey,),
-                                          Text(' --/4 weeks', style: TextStyle(color: Colors.grey),)
-                                        ],
+                                ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemCount: challenges.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    final duration = calculateChallengeDuration(
+                                      challenges[index].startDate,
+                                      challenges[index].endDate,
+                                    );
+                                    return ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                      leading: (challenges[index].challengeIcon != null && challenges[index].challengeIcon != 'null' &&
+                                          challenges[index].challengeIcon!.isNotEmpty)
+                                          ? CachedNetworkImage(
+                                        imageUrl: challenges[index].challengeIcon!,
+                                        height: 50,
+                                        width: 50,
+                                        imageBuilder: (context, imageProvider) => ClipOval(
+                                          child: Image(
+                                            image: imageProvider,
+                                            height: 50,
+                                            width: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        placeholder: (context, url) => ClipOval(
+                                          child: SvgPicture.asset(
+                                            AppImageSvg.activeUser,
+                                            height: 50,
+                                            width: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) => ClipOval(
+                                          child: SvgPicture.asset(
+                                            AppImageSvg.activeUser,
+                                            height: 50,
+                                            width: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      )
+                                          : ClipOval(
+                                        child: SvgPicture.asset(
+                                          AppImageSvg.activeUser,
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      Text('10 days left', style: TextStyle(color: Colors.grey))
-                                    ],
-                                  ),
+
+                                      title: Text(challenges[index].title.toString()/*'Timeout Streaks Challenge\nJuly 2025'*/),
+                                        subtitle: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                SvgPicture.asset(AppImageSvg.run, color: Colors.grey,),
+                                                Text(' --/${duration['weeks']} weeks', style: TextStyle(color: Colors.grey),)
+                                              ],
+                                            ),
+                                            Text('${duration['daysLeft']} days left', style: TextStyle(color: Colors.grey))
+                                          ],
+                                        ),
+                                      );
+                                  },
                                 ),
                                 SizedBox(height: 10,),
                                 Row(
@@ -702,54 +755,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 SizedBox(height: 10,),
 
-                                Divider(height: 20,color: AppColor.bgTile,thickness: 2,),
-
-                                SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Clubs', style: CustomTextStyles.semiBold(fontSize: 16),),
-                                    Text('2', style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
-                                SizedBox(height: 20,),
-                                GridView.builder(
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 8,
-                                      crossAxisSpacing: 8,
-                                      mainAxisExtent: 110
-                                  ),
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: 2,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: AppColor.bgTile,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Center(child: Image.asset(AppImageOthers.clubDP, height: 55,)),
-                                          SizedBox(height: 5),
-                                          Text('Pinkcity Runners', style: CustomTextStyles.semiBold(fontSize: 15),),
-
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text('All clubs', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
+                                // Divider(height: 20,color: AppColor.bgTile,thickness: 2,),
+                                //
+                                // SizedBox(height: 10,),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Clubs', style: CustomTextStyles.semiBold(fontSize: 16),),
+                                //     Text('2', style: CustomTextStyles.regular(fontSize: 16)),
+                                //   ],
+                                // ),
+                                // SizedBox(height: 20,),
+                                // GridView.builder(
+                                //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                //       crossAxisCount: 2,
+                                //       mainAxisSpacing: 8,
+                                //       crossAxisSpacing: 8,
+                                //       mainAxisExtent: 110
+                                //   ),
+                                //   padding: EdgeInsets.symmetric(vertical: 10),
+                                //   shrinkWrap: true,
+                                //   physics: NeverScrollableScrollPhysics(),
+                                //   itemCount: 2,
+                                //   itemBuilder: (context, index) {
+                                //     return Container(
+                                //       padding: EdgeInsets.all(10),
+                                //       decoration: BoxDecoration(
+                                //         color: AppColor.bgTile,
+                                //         borderRadius: BorderRadius.circular(12),
+                                //       ),
+                                //       child: Column(
+                                //         crossAxisAlignment: CrossAxisAlignment.center,
+                                //         children: [
+                                //           Center(child: Image.asset(AppImageOthers.clubDP, height: 55,)),
+                                //           SizedBox(height: 5),
+                                //           Text('Pinkcity Runners', style: CustomTextStyles.semiBold(fontSize: 15),),
+                                //
+                                //         ],
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.end,
+                                //   children: [
+                                //     Text('All clubs', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
+                                //   ],
+                                // ),
+                                // SizedBox(height: 10,),
                               ],
                             ),
                           ),
@@ -774,8 +827,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Map<String, dynamic> calculateChallengeDuration(String? startDateStr, String? endDateStr) {
+    try {
+      if (startDateStr == null || endDateStr == null) {
+        return {'weeks': 0, 'daysLeft': 0};
+      }
 
-  Widget buildBadgeGrid(List<Map<String, String>> badges) {
+      final startDate = DateTime.parse(startDateStr);
+      final endDate = DateTime.parse(endDateStr);
+      final now = DateTime.now();
+
+      // Weeks between start and end
+      final totalDays = endDate.difference(startDate).inDays;
+      final weeks = (totalDays / 7).ceil();
+
+      // Days remaining from today
+      final remainingDays = endDate.difference(now).inDays;
+
+      return {
+        'weeks': weeks > 0 ? weeks : 0,
+        'daysLeft': remainingDays > 0 ? remainingDays : 0,
+      };
+    } catch (e) {
+      return {'weeks': 0, 'daysLeft': 0};
+    }
+  }
+
+
+  // Widget buildBadgeGrid(List<UserTrophies> badges) {
+  //   List<Widget> rows = [];
+  //
+  //   for (int i = 0; i < badges.length; i += 3) {
+  //     final rowItems = badges.skip(i).take(3).toList();
+  //
+  //     rows.add(
+  //       Container(
+  //         margin: EdgeInsets.symmetric(vertical: 8),
+  //         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+  //         decoration: BoxDecoration(
+  //           color: Colors.grey.shade200,
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: rowItems.map((badge) {
+  //             return Column(
+  //               children: [
+  //                 Image.asset(
+  //                   badge.trophyIcon!,
+  //                   height: 75, width: 70,
+  //                 ),
+  //                 SizedBox(height: 8),
+  //                 Text(
+  //                   badge.title!,
+  //                   style: CustomTextStyles.semiBold(fontSize: 12),
+  //                 ),
+  //
+  //                 // if (badge["subTitle"] != null && badge["subTitle"]!.isNotEmpty)
+  //                 //   Text(
+  //                 //     badge['subTitle']!,
+  //                 //     style: CustomTextStyles.regular(fontSize: 12),
+  //                 //   )
+  //               ],
+  //             );
+  //           }).toList(),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  //
+  //   return Column(children: rows);
+  // }
+
+  Widget buildBadgeGrid(List<UserTrophies> badges) {
     List<Widget> rows = [];
 
     for (int i = 0; i < badges.length; i += 3) {
@@ -783,8 +907,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       rows.add(
         Container(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
             color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
@@ -792,24 +916,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: rowItems.map((badge) {
-              return Column(
-                children: [
-                  Image.asset(
-                    badge["image"]!,
-                    height: 75, width: 70,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    badge["title"]!,
-                    style: CustomTextStyles.semiBold(fontSize: 12),
-                  ),
-
-                  if (badge["subTitle"] != null && badge["subTitle"]!.isNotEmpty)
-                    Text(
-                      badge['subTitle']!,
-                      style: CustomTextStyles.regular(fontSize: 12),
+              return Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 🏆 Trophy Image
+                    badge.trophyIcon != null && badge.trophyIcon!.isNotEmpty
+                        ? Image.network(
+                      badge.trophyIcon!,
+                      height: 75,
+                      width: 70,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.emoji_events, size: 50, color: Colors.grey);
+                      },
                     )
-                ],
+                        : const Icon(Icons.emoji_events, size: 50, color: Colors.grey),
+
+                    const SizedBox(height: 8),
+
+                    // 🏷️ Title
+                    Text(
+                      badge.title ?? "",
+                      textAlign: TextAlign.center,
+                      style: CustomTextStyles.semiBold(fontSize: 12),
+                    ),
+
+                    // 📜 Optional Description
+                    // if (badge.description != null && badge.description!.isNotEmpty)
+                    //   Padding(
+                    //     padding: const EdgeInsets.only(top: 4),
+                    //     child: Text(
+                    //       badge.description!,
+                    //       textAlign: TextAlign.center,
+                    //       style: CustomTextStyles.regular(fontSize: 12),
+                    //     ),
+                    //   ),
+                  ],
+                ),
               );
             }).toList(),
           ),
@@ -819,6 +963,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Column(children: rows);
   }
+
 
   void _showCupertinoMenu(BuildContext context) {
     showCupertinoModalPopup(

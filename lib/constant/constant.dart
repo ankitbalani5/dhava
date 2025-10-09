@@ -47,6 +47,13 @@ class Constant {
   }
 
 
+  static String formatPace(double paceInSec) {
+    if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
+    int min = (paceInSec / 60).floor();
+    int sec = (paceInSec % 60).floor();
+    return "$min:${sec.toString().padLeft(2, '0')}";
+  }
+
   static String formatDuration(int seconds) {
     final int hours = seconds ~/ 3600;
     final int minutes = (seconds % 3600) ~/ 60;
