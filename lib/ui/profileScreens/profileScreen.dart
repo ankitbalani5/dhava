@@ -4,6 +4,7 @@ import 'package:coherent_endurance/models/profileModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/allChallenges/myAllChallenges.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
 import 'package:coherent_endurance/ui/trophyCase.dart';
 import 'package:coherent_endurance/ui/profileScreens/activitiesScreen.dart';
@@ -37,11 +38,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   ProfileModel? profileData;
   String selectedValue = Constant.getCategory!.data!.first.categoryName.toString(); // default selected
+  late final String categoryId ;
 
   @override
   void initState() {
     profileData = Constant.getProfile;
-    final categoryId = Constant.getCategory!.data!.first.categoryId.toString();
+     categoryId = Constant.getCategory!.data!.first.categoryId.toString();
     print('categoryId::::$categoryId');
     var add = context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
     super.initState();
@@ -74,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : null;
               final trophies = state.summaryModel?.data?.userTrophies ?? [];
               final challenges = state.summaryModel?.data?.userChallenges ?? [];
+
 
               return Column(
                 children: [
@@ -694,11 +697,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
-                                  ],
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyAllChallenges(categoryID: categoryId,)));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: 10,),
 

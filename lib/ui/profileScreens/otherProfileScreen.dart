@@ -7,6 +7,7 @@ import 'package:coherent_endurance/bloc/profileBloc/otherProfile_state.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/allChallenges/userAllChallenges.dart';
 import 'package:coherent_endurance/ui/profileScreens/settingScreen.dart';
 import 'package:coherent_endurance/ui/profileScreens/statisticsScreen.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
@@ -893,16 +894,21 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'All Challenge',
-                                      style: CustomTextStyles.regular(
-                                        textColor: AppColor.bgRed,
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserAllChallenges(user_Id: widget.userId,)));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'All Challenge',
+                                        style: CustomTextStyles.regular(
+                                          textColor: AppColor.bgRed,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: 20),
                                 Row(

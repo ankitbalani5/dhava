@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,9 +27,11 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
       'category_id': event.categoryId,
       'user_id': event.userId
     };
+
     final headers = {
       'Content-Type': 'application/json'
     };
+
     if(myFeedModel != null){
       Constant.loadingDialog(event.context);
       final response = await Api.getApi('${ApiEndPoint.getMyFeed}?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}&user_id=', headers, event.context);
@@ -45,7 +46,8 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
         emit(MyFeedSuccess(myFeedModel!));
       }
 
-    }else{
+    }
+    else{
 
       emit(MyFeedLoading());
       try{
@@ -86,7 +88,7 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
       final result = ActivityLikeModel.fromJson(response);
 
       if(result.statusCode == 200){
-        // ✅ पुराना data copy करो
+
         var feedModelCopy = myFeed.MyFeedModel(
           data: myFeed.Data(
             data: List<myFeed.MyFeedModelData>.from(myFeedModel?.data?.data ?? []),
@@ -97,12 +99,12 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
           if (item.activityId == event.activityId) {
             if(item.isLiked == false){
 
-              item.isLiked = !item.isLiked!;   // 👉 liked flag
-              item.totalLike = (item.totalLike ?? 0) + 1; // 👉 likes count बढ़ा दो
+              item.isLiked = !item.isLiked!;
+              item.totalLike = (item.totalLike ?? 0) + 1;
             }else{
 
-              item.isLiked = !item.isLiked!;   // 👉 liked flag
-              item.totalLike = (item.totalLike ?? 0) - 1; // 👉 likes count बढ़ा दो
+              item.isLiked = !item.isLiked!;
+              item.totalLike = (item.totalLike ?? 0) - 1;
             }
             break;
           }
@@ -120,4 +122,6 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
       emit(LikeFeedError(e.toString()));
     }
   }
+
+
 }

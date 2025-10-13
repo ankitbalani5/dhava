@@ -126,46 +126,7 @@ class _SearchScreenState extends State<SearchScreen>
           ],
         ),
       ),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-      //     onPressed: () => Navigator.pop(context),
-      //   ),
-      //   title: const Text(
-      //     "Search",
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.search, color: Colors.black),
-      //       onPressed: () {},
-      //     ),
-      //     IconButton(
-      //       icon: const Icon(Icons.notifications_none, color: Colors.black),
-      //       onPressed: () {},
-      //     ),
-      //     CircleAvatar(
-      //       radius: 16,
-      //       backgroundImage: AssetImage("assets/images/user.png"), // Replace with your profile pic asset
-      //     ),
-      //     const SizedBox(width: 10),
-      //   ],
-      //   bottom: TabBar(
-      //     controller: _tabController,
-      //     labelColor: Colors.red,
-      //     unselectedLabelColor: Colors.black,
-      //     indicatorColor: Colors.red,
-      //     tabs: const [
-      //       Tab(text: "Friends"),
-      //       Tab(text: "Clubs"),
-      //     ],
-      //   ),
-      // ),
+
       body: TabBarView(
         controller: _tabController,
         children: [

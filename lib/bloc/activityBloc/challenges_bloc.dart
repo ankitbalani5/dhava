@@ -30,7 +30,6 @@ class GetAllChallengesBloc extends Bloc<GetAllChallengesEvent,GetAllChallengesSt
       }
 
       if(result.statusCode == 200){
-        // suggestedModel = result;
         emit(GetAllChallengesLoaded(result));
       }else{
         emit(GetAllChallengesError(result.message.toString()));

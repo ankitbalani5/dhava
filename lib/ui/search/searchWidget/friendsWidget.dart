@@ -17,8 +17,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class FriendsTabWidget extends StatefulWidget {
   final TabController innerTabController;
@@ -37,17 +35,16 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding:  EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+               SizedBox(height: 10),
               Text(
                 'Find Your Friends On Coherent',
                 style: CustomTextStyles.bold(fontSize: 16),
               ),
-              const SizedBox(height: 10),
-              // Search Box
+               SizedBox(height: 10),
               GestureDetector(
                 onTap: () => context.read<SearchCubit>().activateSearch(),
                 child: Container(
@@ -58,18 +55,18 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:  EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Search on Coherent', style: TextStyle(color: Colors.grey)),
+                         Text('Search on Coherent', style: TextStyle(color: Colors.grey)),
                         SvgPicture.asset(AppImageSvg.searchRed)
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+               SizedBox(height: 20),
             ],
           ),
         ),
@@ -83,18 +80,17 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
             indicatorColor: Colors.red,
             dividerColor: Colors.transparent,
             labelStyle: CustomTextStyles.semiBold(fontSize: 18),
-            tabs: const [
+            tabs:  [
               Tab(text: "Suggested"),
               Tab(text: "Contacts"),
             ],
           ),
         ),
-        const SizedBox(height: 15),
-
+         SizedBox(height: 15),
         // Suggested People
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding:  EdgeInsets.symmetric(horizontal: 15),
             child: TabBarView(
               controller: widget.innerTabController,
               children: [
@@ -135,7 +131,7 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
         }
 
         if (suggestedList.isEmpty) {
-          return const Center(child: Text("No suggestions available"));
+          return  Center(child: Text("No suggestions available"));
         }
 
         return Column(
@@ -145,15 +141,13 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
               "People You May Know",
               style: CustomTextStyles.regular(fontSize: 12),
             ),
-            const SizedBox(height: 10),
-
-            /// ✅ ListView of Suggestions
+             SizedBox(height: 10),
             Expanded(
               child: ListView.separated(
                 padding: EdgeInsets.zero,
                 itemCount: suggestedList.length,
                 separatorBuilder: (context, index) =>
-                const SizedBox(height: 15),
+                 SizedBox(height: 15),
                 itemBuilder: (context, index) {
                   final person = suggestedList[index];
                   var userId = person.userId.toString();
@@ -181,16 +175,15 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
                             debugPrint("Failed to load user image");
                           },
                         ),
-                        const SizedBox(width: 10),
+                         SizedBox(width: 10),
 
-                        /// User name + location
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "${person.firstName ?? ''} ${person.lastName ?? ''}",
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
@@ -276,7 +269,7 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
 
             /// Invite Friends Button
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding:  EdgeInsets.all(5.0),
               child: SizedBox(
                 width: double.infinity,
                 child: CustomButton(
@@ -292,56 +285,6 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
       },
     );
   }
-
-/*  Widget _buildContactsTab() {
-    return Center(
-      child: Column(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(AppImageSvg.contact),
-                const SizedBox(height: 10),
-                Text('Connect Contacts', style: CustomTextStyles.regular()),
-                const Text(
-                  "Your friends are on Strava, See what they're\nup to by connecting your phone contacts.",
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 40,
-                  width: 180,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColor.bgRed),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Connect Securely',
-                      style: CustomTextStyles.regular(textColor: AppColor.bgRed),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: CustomButton(
-                text: 'Invite Friends',
-                callback: () {
-                  // Invite Friends Logic
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
 }
 
 
@@ -357,7 +300,7 @@ class _ContactsTabState extends State<ContactsTab> {
   bool _loading = false;
   bool _connected = false;
   Future<void> _fetchContacts() async {
-    // Step 1: Check and request permission
+
     var status = await Permission.contacts.status;
     if (!status.isGranted) {
       status = await Permission.contacts.request();
@@ -372,11 +315,11 @@ class _ContactsTabState extends State<ContactsTab> {
       return;
     }
 
-    // Step 2: Start loading
+
     setState(() => _loading = true);
 
     try {
-      // Step 3: Fetch contacts using flutter_contacts
+
       final List<Contact> contacts =
       await FlutterContacts.getContacts(withProperties: true);
 
@@ -400,23 +343,22 @@ class _ContactsTabState extends State<ContactsTab> {
     }
   }
 
-  /// 🔹 Initial Connect View
   Widget _buildConnectView() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.contacts, size: 60, color: Colors.red),
-        const SizedBox(height: 10),
-        const Text(
+         Icon(Icons.contacts, size: 60, color: Colors.red),
+         SizedBox(height: 10),
+         Text(
           "Connect Contacts",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 5),
-        const Text(
+         SizedBox(height: 5),
+         Text(
           "Your friends are on Strava. See what they're\nup to by connecting your phone contacts.",
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 20),
+         SizedBox(height: 20),
         GestureDetector(
           onTap: _fetchContacts,
           child: Container(
@@ -426,7 +368,7 @@ class _ContactsTabState extends State<ContactsTab> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.red),
             ),
-            child: const Center(
+            child:  Center(
               child: Text("Connect Securely", style: TextStyle(color: Colors.red)),
             ),
           ),
@@ -435,35 +377,35 @@ class _ContactsTabState extends State<ContactsTab> {
     );
   }
 
-  /// 🔹 Show Contacts List
   Widget _buildContactList() {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
+      return  Center(child: CircularProgressIndicator());
     }
 
     if (_contacts.isEmpty) {
-      return const Center(child: Text("No contacts found."));
+      return  Center(child: Text("No contacts found."));
     }
 
     return ListView.builder(
       itemCount: _contacts.length,
       itemBuilder: (context, index) {
         final contact = _contacts[index];
-        final name = contact.displayName ?? 'Unknown';
-        final number = contact.phones?.isNotEmpty == true
-            ? contact.phones!.first.number
+        final name = contact.displayName;
+        final number = contact.phones.isNotEmpty == true
+            ? contact.phones.first.number
             : 'No number';
 
         return ListTile(
           leading: CircleAvatar(child:Image.asset(AppImageOthers.defaultUserImg)),
           title: Text(name,style: CustomTextStyles.semiBold(fontSize: 12),maxLines: 1,),
-          subtitle: Text(number ?? ''),
+          subtitle: Text(number),
           trailing: GestureDetector(
             onTap: (){
 
                 debugPrint('Invite $name');
 
             },
+
             child: Container(
               height: 35,
               width: 85,
@@ -483,7 +425,6 @@ class _ContactsTabState extends State<ContactsTab> {
               ),
             ),
           ),
-
         );
       },
     );

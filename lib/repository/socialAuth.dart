@@ -8,12 +8,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'api.dart';
+import'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 class SocialAuth{
   var fcmToken;
   final FirebaseAuth auth = FirebaseAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn.instance/*GoogleSignIn()*/;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+/*GoogleSignIn()*/
 
   // Future<void> googleLogin(BuildContext context) async {
   //   SharedPreferences pref = await SharedPreferences.getInstance();
@@ -125,78 +129,71 @@ class SocialAuth{
   // }
 
   Future<void> googleLogin(BuildContext context) async {
-      try {
-        // Authenticate the user
-        final GoogleSignInAccount? googleUser = await googleSignIn.authenticate();
-        if (googleUser == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Google sign-in cancelled")),
-          );
-          return;
-        }
-
-        // Fetch authentication details
-        final headers =
-        await googleUser.authorizationClient.authorizationHeaders([
-          'email',
-          'https://www.googleapis.com/auth/userinfo.profile',
-        ]);
-
-        if (headers == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to fetch authorization headers")),
-          );
-          return;
-        }
-
-        // Create Firebase credentials using ID token
-        final googleAuth = await googleUser.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          // accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        // Sign in to Firebase
-        UserCredential userCredential =
-        await auth.signInWithCredential(credential);
-        final User? user = userCredential.user;
-
-        if (user != null) {
-          // Save user info locally
-          final SharedPreferences pref = await SharedPreferences.getInstance();
-          pref.setString('first_name', user.displayName ?? '');
-          pref.setString('email', user.email ?? '');
-          pref.setString('image', user.photoURL ?? '');
-          pref.setBool('login', true);
-
-          // Call your API
-          await Api.socialLoginApi(
-            socailite_type: "google",
-            email: user.email.toString(),
-            socailite_id: user.uid.toString(),
-            first_name: user.displayName ?? "",
-            fcm_token: '',
-          ).then((response) async {
-            if (response['status'] == 'success') {
-              pref.setString('token', response['token'].toString());
-              pref.setString(
-                  'current_steps', response['userdata']['current_steps'].toString());
-
-              Navigator.pushReplacementNamed(context, '/home');
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(response['message'] ?? 'Login failed')),
-              );
-            }
-          });
-        }
-      } catch (e) {
-        print("Google Login Error: $e");
+    try {
+      // Authenticate the user
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Google sign-in failed: $e")),
+          const SnackBar(content: Text("Google sign-in cancelled")),
         );
+        return;
       }
+
+      // Fetch authentication details correctly
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      //  Create authorization headers manually (if you need them for APIs)
+      final headers = {
+        'Authorization': 'Bearer ${googleAuth.accessToken}',
+        'Accept': 'application/json',
+      };
+
+      // Create Firebase credentials using ID token
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      UserCredential userCredential = await auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // Save user info locally
+        final SharedPreferences pref = await SharedPreferences.getInstance();
+        pref.setString('first_name', user.displayName ?? '');
+        pref.setString('email', user.email ?? '');
+        pref.setString('image', user.photoURL ?? '');
+        pref.setBool('login', true);
+
+        // Call your API
+        await Api.socialLoginApi(
+          socailite_type: "google",
+          email: user.email.toString(),
+          socailite_id: user.uid.toString(),
+          first_name: user.displayName ?? "",
+          fcm_token: '',
+        ).then((response) async {
+          if (response['status'] == 'success') {
+            pref.setString('token', response['token'].toString());
+            pref.setString(
+                'current_steps', response['userdata']['current_steps'].toString());
+
+            Navigator.pushReplacementNamed(context, '/home');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(response['message'] ?? 'Login failed')),
+            );
+          }
+        });
+      }
+    } catch (e) {
+      print("Google Login Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Google sign-in failed: $e")),
+      );
     }
+  }
 
 
   Future<void> facebookLogin(BuildContext context) async {

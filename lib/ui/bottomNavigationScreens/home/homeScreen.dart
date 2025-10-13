@@ -363,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   itemCount: suggestedData.length,
                                   itemBuilder: (context, index) {
                                     var challenge = suggestedData[index];
-
+                                    var date = formatDateRange(challenge.startDate, challenge.endDate);
                                     Widget categoryIconWidget(String? icon) {
                                       if (icon == null || icon.isEmpty) {
                                         return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
@@ -402,8 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onTap: () {
 
                                         Navigator.push(context, MaterialPageRoute(
-                                          builder: (_) => ChallangesDetailScreen(isAlreadyJoined: challenge.isJoined,),
-                                        ));
+                                          builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
                                       },
                                       child: Container(
                                         width: 160,
@@ -445,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     SizedBox(
                                                       width: 100,
                                                       child: Text(
-                                                        challenge.startDate ?? "N/A",
+                                                        date ?? "N/A",
                                                         style: CustomTextStyles.regular(fontSize: 12),
                                                       ),
                                                     ),
@@ -763,6 +762,27 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  String formatDateRange(String? start, String? end) {
+    if (start == null || end == null) return "";
+
+    try {
+      DateTime startDate = DateTime.parse(start);
+      DateTime endDate = DateTime.parse(end);
+
+      // Month short names
+      const monthNames = [
+        "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
+
+      String startStr = "${monthNames[startDate.month]} ${startDate.day.toString().padLeft(2,'0')}";
+      String endStr = "${monthNames[endDate.month]} ${endDate.day.toString().padLeft(2,'0')}, ${endDate.year}";
+
+      return "$startStr to $endStr";
+    } catch (e) {
+      return "";
+    }
+  }
   
   static Widget likeImageWidget (FeedModelData feed){
     return BlocConsumer<ActivityBloc, ActivityState>(
@@ -816,30 +836,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-        /*if(state is FeedSuccess){
-          // var feed = state.feedModel.data!.data;
-          return feed.totalLike! > 0 ?
-            Stack(
-            children: [
-              Container(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(AppImageOthers.userImg, height: 30,),
-                  ],
-                ),
-              ),
-
-              Positioned(
-                  right: 25,
-                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
-              Positioned(
-                  right: 50,
-                  child: Image.asset(AppImageOthers.userImg, height: 30,)),
-            ],
-          ) : SizedBox();
-        }*/
         return SizedBox();
 
       },

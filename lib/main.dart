@@ -1,14 +1,17 @@
 
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
+import 'package:coherent_endurance/bloc/challengesBloc/challengesDetails_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/suggested_Bloc.dart';
 import 'package:coherent_endurance/bloc/feedDetailsBloc/feed_detail_bloc.dart';
+import 'package:coherent_endurance/bloc/myJoinedChallengesBloc/myJoinedChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/notificationBloc/notification_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/followRequest_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/bloc/saveActivityBloc/save_activity_bloc.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
+import 'package:coherent_endurance/bloc/userJoinedChallengesBloc/userJoinedChallenges_Bloc.dart';
 import 'package:coherent_endurance/ui/introScreens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +50,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<FollowRequestBloc>(create: (context) => FollowRequestBloc()),
         BlocProvider<FeedDetailBloc>(create: (context) => FeedDetailBloc()),
         BlocProvider<SuggestionBloc>(create: (context) => SuggestionBloc()),
+        BlocProvider<ChallengesDetailsBloc>(create: (context) => ChallengesDetailsBloc()),
+        BlocProvider<MyjoinedChallengesBloc>(create: (context) => MyjoinedChallengesBloc()),
+        BlocProvider<UserjoinedChallengesBloc>(create: (context) => UserjoinedChallengesBloc()),
     ],
       child:
       MaterialApp(

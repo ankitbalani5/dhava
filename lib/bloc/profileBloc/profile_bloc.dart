@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:coherent_endurance/models/profileModel.dart';
 import 'package:coherent_endurance/models/summaryModel.dart';
