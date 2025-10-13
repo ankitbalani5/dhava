@@ -50,6 +50,7 @@ class _SaveActivityState extends State<SaveActivity> {
   String selectedHiddenDetails = "None";
   bool isUploading = false;
   String? selectedCategoryImage;
+  String? categoryName;
 
 
   String convertedImage = '';
@@ -143,6 +144,7 @@ class _SaveActivityState extends State<SaveActivity> {
     );
 
     selectedRunType = matchedCategory.categoryName ?? "";
+    categoryName = matchedCategory.categoryName ?? "";
     selectedCategoryImage = matchedCategory.categoryIcon ?? '';
     categoryId = matchedCategory.categoryId ?? '';
     super.initState();
@@ -273,6 +275,7 @@ class _SaveActivityState extends State<SaveActivity> {
                           ?.firstWhere((element) => element.categoryName == selectedRunType);
 
                       categoryId = selectedCategory?.categoryId ?? "";
+                      categoryName = selectedCategory?.categoryName ?? "";
                       selectedCategoryImage = selectedCategory?.categoryIcon ?? '';
                     });
                   },
@@ -642,7 +645,7 @@ class _SaveActivityState extends State<SaveActivity> {
                 GestureDetector(
                   onTap: (){
                     Navigator.pop(context);
-                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>  TrackingScreen(categoryId)));
+                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>  TrackingScreen(categoryId, categoryName!, selectedCategoryImage!)));
                   },
                   child: Container(
                     height: 50,

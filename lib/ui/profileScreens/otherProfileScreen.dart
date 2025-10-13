@@ -746,7 +746,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => TrophyCase(),
+                                        builder: (context) => TrophyCase(categoryId: '',),
                                       ),
                                     );
                                   },

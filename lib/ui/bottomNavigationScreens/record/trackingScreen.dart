@@ -21,7 +21,9 @@ import 'package:image/image.dart' as img;
 
 class TrackingScreen extends StatefulWidget {
   String categoryId;
-  TrackingScreen(this.categoryId, {super.key});
+  String categoryName;
+  String categoryIcon;
+  TrackingScreen(this.categoryId, this.categoryName, this.categoryIcon, {super.key});
 
   @override
   State<TrackingScreen> createState() => _TrackingScreenState();
@@ -54,6 +56,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
   bool isShort = true;
   ScreenshotController screenshotController = ScreenshotController();
   String? categoryName;
+  String? categoryIcon;
 
   @override
   void initState() {
@@ -61,6 +64,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
     runType = widget.categoryId;
     print('runtype::: $runType');
 
+    categoryName = widget.categoryName;
+    categoryIcon = widget.categoryIcon;
     initTracking();
     initStepTracking();
   }
@@ -287,6 +292,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return WillPopScope(
       onWillPop: () async {
         // Back press → Endurance tab
+        print('current State from tracking:::${bottomNavKey.currentState?.currentTap}');
         bottomNavKey.currentState?.changeTab(2);
         Navigator.of(context).pop(); // Remove TrackingScreen
         return false; // prevent BottomNavBar onWillPop
@@ -383,7 +389,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text('Run', style: CustomTextStyles.medium(fontSize: 18),),
+                            Text(categoryName.toString(), style: CustomTextStyles.medium(fontSize: 18),),
                             Visibility(
                               visible: isShort,
                               child: Row(
@@ -502,6 +508,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                       setState(() {
                         runType = item.categoryId;
                         categoryName = item.categoryName;
+                        categoryIcon = item.categoryIcon;
                       });
                       Navigator.pop(context);
                     },
@@ -527,6 +534,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
     }
   }
 
+
   Widget startWidget(){
     return Expanded(
       child: Row(
@@ -535,7 +543,20 @@ class _TrackingScreenState extends State<TrackingScreen> {
           SizedBox(),
           GestureDetector(
               onTap: () => _showRunTypeBottomSheet(context),
-              child: Image.asset(AppImageOthers.runType, height: 50,)),
+              child: Container(
+                height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                        color: AppColor.bgRed,
+                    )
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.network(categoryIcon!, height: 25, color: AppColor.bgRed,),
+                  ))), //AppImageOthers.runType
           GestureDetector(
             onTap: () async {
               // showCongratulationDialog(context);

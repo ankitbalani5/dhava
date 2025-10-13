@@ -335,26 +335,51 @@ class Api {
     }
   }
 
-  static Future socialLoginApi({required String socailite_type, required String socailite_id, required String first_name, required String email, required String fcm_token}) async {
+  static Future socialLoginApi({required String socialMediaType, required String socialMediaid, required String email, required String name,
+    required String device_type, required String device_id, required String fcm_token, required BuildContext context}) async {
     var token = Constant.token;
-    var fcmToken = Constant.fcmToken;
-    final response = await http.post(Uri.parse('${BaseUrl}socailite-login'),
-        headers: {
-          'authorization': 'Bearer $token'
-        },
-        body: {
-          'socailite_type': socailite_type,
-          'socailite_id': socailite_id,
-          'first_name': first_name,
-          'email': email,
-          'fcm_token': fcmToken,
-        }
-    );
-    if (response.statusCode == 200) {
+    // var fcmToken = Constant.fcmToken;
+    var header = {
+      'Content-Type': 'application/json',
+      'authorization': 'Bearer $token'
+  };
+    var body = {
+      'social_media_type': socialMediaType,
+      'social_media_id': socialMediaid,
+      'email': email,
+      'name': name,
+      'device_type': device_type,
+      'device_id': device_id,
+      'fcm_token': fcm_token,
+    };
+    final response = await postApi(ApiEndPoint.socialLogin, body, header, context);
+    //     headers: {
+    //       'authorization': 'Bearer $token'
+    //     },
+    //     body: {
+    //       'socailite_type': socailite_type,
+    //       'socailite_id': socailite_id,
+    //       'first_name': first_name,
+    //       'email': email,
+    //       'fcm_token': fcmToken,
+    //     }
+    // );
+    if (response['status_code'] == 200) {
       try {
-        final jsonString = jsonDecode(response.body);
-        print(jsonString);
-        return jsonString;
+        if (response is Map<String, dynamic>) {
+          if (response['status'] == true || response['status_code'] == 200) {
+            print("✅ socialLoginApi success: $response");
+            return response;
+          } else {
+            print("⚠️ socialLoginApi failed: $response");
+            throw HttpException(response['message'] ?? 'Failed to login');
+          }
+        } else {
+          // ✅ Handle raw http.Response type if postApi changed later
+          final decoded = jsonDecode(response.body);
+          print("✅ socialLoginApi decoded: $decoded");
+          return decoded;
+        }
       } catch (e, stacktrace) {
         print('Error parsing JSON socialLoginApi: $e');
         print('Error stack: $stacktrace');
@@ -484,6 +509,7 @@ class Api {
 
 class ApiEndPoint {
   static const String login = '/api/v1/auth/login';
+  static const String socialLogin = '/api/v1/auth/social-media-login';
   static const String refreshToken = '/api/v1/auth/referesh-token';
   static const String sendOtp = '/api/v1/auth/send-otp';
   static const String verifyOtp = '/api/v1/auth/verify-otp';
@@ -513,5 +539,13 @@ class ApiEndPoint {
   static const String followApprove = '/api/v1/follow/approve';
   static const String followCancel = '/api/v1/follow/cancel';
   static const String unfollow = '/api/v1/unfollow';
+
+  static const String myTrophy = '/api/v1/my/trophies/all';
+
+  static const String myAllChallenge = '/api/v1/my/joined-challenges/all';
+  static const String challengeDetail = '/api/v1/challenges/details';
+
+  static const String otherUserFeed = '/api/v1/activity/user-feed';
+
 
 }

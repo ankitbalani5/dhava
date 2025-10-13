@@ -1,9 +1,11 @@
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
-import 'package:coherent_endurance/constant/Constant.dart';
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/models/profileModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/active/challangesActive.dart';
+import 'package:coherent_endurance/ui/profileScreens/allChallenge.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
 import 'package:coherent_endurance/ui/trophyCase.dart';
 import 'package:coherent_endurance/ui/profileScreens/activitiesScreen.dart';
@@ -20,6 +22,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../models/summaryModel.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String path;
@@ -39,14 +42,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   ProfileModel? profileData;
   String selectedValue = Constant.getCategory!.data!.first.categoryName.toString(); // default selected
+  String categoryId = '';
 
   @override
   void initState() {
     profileData = Constant.getProfile;
-    final categoryId = Constant.getCategory!.data!.first.categoryId.toString();
+    categoryId = Constant.getCategory!.data!.first.categoryId.toString();
     print('categoryId::::$categoryId');
     var add = context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
     super.initState();
+  }
+
+  String getCurrentFormattedDate() {
+    final now = DateTime.now();
+    return DateFormat('MMMM d, y').format(now); // July 12, 2025
   }
 
   @override
@@ -337,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           });
                                           final selectCategory = Constant.getCategory!.data!.firstWhere(
                                                 (e) => e.categoryName == selectedValue,);
-                                          final categoryId = selectCategory.categoryId.toString();
+                                          categoryId = selectCategory.categoryId.toString();
                                           context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId.toString() ));
                                         },
                                         color: Colors.white,
@@ -620,7 +629,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.activities),
                                   title: Text('Activities', style: CustomTextStyles.semiBold(fontSize: 14 )),
-                                  subtitle: Text('July 12, 2025', style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
+                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
                                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
                                 ListTile(
@@ -631,18 +640,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.statistics),
                                   title: Text('Statistics', style: CustomTextStyles.semiBold(fontSize: 14 )),
-                                  subtitle: Text('July 12, 2025', style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
+                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
                                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase(categoryId: categoryId)));
 
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.trophy),
                                   title: Text('Trophy Case', style: CustomTextStyles.semiBold(fontSize: 14 )),
-                                  subtitle: Text('July 12, 2025', style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey )),
+                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey )),
                                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
                                 SizedBox(height: 20,),
@@ -684,11 +693,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   itemCount: challenges.length,
                                   physics: NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
-                                    final duration = calculateChallengeDuration(
+                                    final duration = Constant.calculateChallengeDuration(
                                       challenges[index].startDate,
                                       challenges[index].endDate,
                                     );
                                     return ListTile(
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenges[index].challengeId.toString(),)));
+                                      },
                                         contentPadding: EdgeInsets.zero,
                                       leading: (challenges[index].challengeIcon != null && challenges[index].challengeIcon != 'null' &&
                                           challenges[index].challengeIcon!.isNotEmpty)
@@ -736,7 +748,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           children: [
                                             Row(
                                               children: [
-                                                SvgPicture.asset(AppImageSvg.run, color: Colors.grey,),
+                                                Image.network(challenges[index].categoryIcon.toString(), height: 15, color: Colors.grey,),
                                                 Text(' --/${duration['weeks']} weeks', style: TextStyle(color: Colors.grey),)
                                               ],
                                             ),
@@ -750,7 +762,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
+                                    GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => AllChallenge()));
+                                        },
+                                        child: Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),))
                                   ],
                                 ),
                                 SizedBox(height: 10,),
@@ -827,31 +843,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Map<String, dynamic> calculateChallengeDuration(String? startDateStr, String? endDateStr) {
-    try {
-      if (startDateStr == null || endDateStr == null) {
-        return {'weeks': 0, 'daysLeft': 0};
-      }
-
-      final startDate = DateTime.parse(startDateStr);
-      final endDate = DateTime.parse(endDateStr);
-      final now = DateTime.now();
-
-      // Weeks between start and end
-      final totalDays = endDate.difference(startDate).inDays;
-      final weeks = (totalDays / 7).ceil();
-
-      // Days remaining from today
-      final remainingDays = endDate.difference(now).inDays;
-
-      return {
-        'weeks': weeks > 0 ? weeks : 0,
-        'daysLeft': remainingDays > 0 ? remainingDays : 0,
-      };
-    } catch (e) {
-      return {'weeks': 0, 'daysLeft': 0};
-    }
-  }
 
 
   // Widget buildBadgeGrid(List<UserTrophies> badges) {

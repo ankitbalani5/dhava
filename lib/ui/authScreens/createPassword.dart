@@ -109,7 +109,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                   if (value == null || value.isEmpty) {
                     return 'please enter confirm password';
                   }
-                  if (value != confirmPasswordController.text) {
+                  if (value != passwordController.text) {
                     return 'please match confirm password';
                   }
                   return null;

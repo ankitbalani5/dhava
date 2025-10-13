@@ -21,6 +21,17 @@ class UserLoginEvent extends LoginEvent {
   });
 }
 
+class GoogleLoginEvent extends LoginEvent{
+  final String deviceId;
+  final String deviceType;
+  final BuildContext context;
+  GoogleLoginEvent(this.deviceId, this.deviceType, this.context);
+}
+
+class FacebookLoginEvent extends LoginEvent{
+
+}
+
 class ForgotPasswordEvent extends LoginEvent {
   final BuildContext context;
   final String email;

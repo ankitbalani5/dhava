@@ -21,6 +21,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'feedDetails.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -152,9 +153,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
-                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage),
-                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage),
-                      ) : Image.asset(AppImageOthers.defaultImage),
+                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                          height: 30,),
+                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                          height: 30,),
+                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
+                        height: 30,),
                     ),
                   ),
                 ),
@@ -622,7 +626,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text('${formatPace(double.parse(feed.pace.toString()))} /km', style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text('${Constant.formatPace(double.parse(feed.pace.toString()))} /km', style: CustomTextStyles.regular(fontSize: 16)),
                                             ],
                                           ),
                                           SizedBox(width: 20,),
@@ -684,6 +688,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                                 GestureDetector(
                                                     onTap: () {
+                                                      final activityId = feed.activityId;
+                                                      final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
+
+                                                      Share.share(
+                                                        "Check out my run on Dhava 🏃‍♂️:\n$link",
+                                                        subject: "My Activity",
+                                                      );
                                                       // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
                                                       // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
                                                     },

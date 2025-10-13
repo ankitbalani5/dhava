@@ -15,38 +15,63 @@ class SocialAuth{
   // final FirebaseAuth auth = FirebaseAuth.instance;
   // final GoogleSignIn googleSignIn = GoogleSignIn.instance/*GoogleSignIn()*/;
 
-  // FirebaseAuth instance to handle authentication.
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // GoogleSignIn instance to handle Google Sign-In.
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  /// Signs in the user with Google and returns the authenticated Firebase [User].
-  ///
-  /// Returns `null` if the sign-in process is canceled or fails.
-  Future<User?> signInWithGoogle() async {
-    try {
-
-      final googleUser = await _googleSignIn.signIn();
-
-      if (googleUser == null) return null;
-
-      final googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _auth.signInWithCredential(credential);
-
-      return userCredential.user;
-    } catch (e) {
-
-      print("Sign-in error: $e");
-      return null;
-    }
-  }
+  // Future<User?> signInWithGoogle(BuildContext context) async {
+  //   try {
+  //
+  //     final googleUser = await _googleSignIn.signIn();
+  //
+  //     if (googleUser == null) return null;
+  //
+  //     final googleAuth = await googleUser.authentication;
+  //
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //
+  //     final userCredential = await _auth.signInWithCredential(credential);
+  //
+  //     var user = userCredential.user;
+  //           if (user != null) {
+  //             // Save user info locally
+  //             final SharedPreferences pref = await SharedPreferences.getInstance();
+  //             pref.setString('first_name', user.displayName ?? '');
+  //             pref.setString('email', user.email ?? '');
+  //             pref.setString('image', user.photoURL ?? '');
+  //             pref.setBool('login', true);
+  //
+  //             // Call your API
+  //             await Api.socialLoginApi(
+  //               socailite_type: "google",
+  //               email: user.email.toString(),
+  //               socailite_id: user.uid.toString(),
+  //               first_name: user.displayName ?? "",
+  //               fcm_token: '',
+  //               context: context
+  //             ).then((response) async {
+  //               if (response['status'] == 'success') {
+  //                 pref.setString('token', response['token'].toString());
+  //                 pref.setString(
+  //                     'current_steps', response['userdata']['current_steps'].toString());
+  //
+  //                 Navigator.pushReplacementNamed(context, '/home');
+  //               } else {
+  //                 ScaffoldMessenger.of(context).showSnackBar(
+  //                   SnackBar(content: Text(response['message'] ?? 'Login failed')),
+  //                 );
+  //               }
+  //             });
+  //           }
+  //     return userCredential.user;
+  //   } catch (e) {
+  //
+  //     print("Sign-in error: $e");
+  //     return null;
+  //   }
+  // }
 
   /// Signs out the user from both Google and Firebase.
   Future<void> signOut() async {
@@ -185,23 +210,24 @@ class SocialAuth{
         // Constant.countryCode = pref.getString('country_code');
         // Constant.image = pref.getString('image');
 
-        await Api.socialLoginApi(
-          socailite_type: "facebook",
-          email: email,
-          socailite_id: id,
-          first_name: name,
-          fcm_token: fcmToken,
-          // mobile: phoneNumber,
-          // countryCode: countryCode,
-        ).then((e) async {
-          if(e['status'] == 'success'){
-            Navigator.pop(context);
-            SharedPreferences pref = await SharedPreferences.getInstance();
-            pref.setString('token', e['token'].toString());
-            pref.setString('current_steps', e['userdata']['current_steps'].toString());
-            Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)));
-          }
-        });
+        // await Api.socialLoginApi(
+        //   socailite_type: "facebook",
+        //   email: email,
+        //   socailite_id: id,
+        //   first_name: name,
+        //   fcm_token: fcmToken,
+        //   context: context
+        //   // mobile: phoneNumber,
+        //   // countryCode: countryCode,
+        // ).then((e) async {
+        //   if(e['status'] == 'success'){
+        //     Navigator.pop(context);
+        //     SharedPreferences pref = await SharedPreferences.getInstance();
+        //     pref.setString('token', e['token'].toString());
+        //     pref.setString('current_steps', e['userdata']['current_steps'].toString());
+        //     Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)));
+        //   }
+        // });
       } else {
         Navigator.pop(context);
         print(result.message);

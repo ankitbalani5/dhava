@@ -281,7 +281,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text('${feed.pace} /km', style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text('${Constant.formatPace(double.parse(feed.pace.toString()))} /km', style: CustomTextStyles.regular(fontSize: 16)),
                                             ],
                                           ),
                                           SizedBox(width: 20,),
@@ -289,7 +289,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text(feed.movingTime.toString(), style: CustomTextStyles.regular(fontSize: 16)),
+                                              Text(Constant.formatDuration(int.parse(feed.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
                                             ],
                                           ),
 
@@ -301,7 +301,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
                                       child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
-                                        fit: BoxFit.fill, height: 260,)),
+                                        fit: BoxFit.fill, height: 260,width: double.infinity)),
 
                                   SizedBox(height: 10,),
                                   Padding(

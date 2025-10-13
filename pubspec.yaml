@@ -102,6 +102,7 @@ dev_dependencies:
   image: ^4.2.0
   app_links: ^6.4.1
   firebase_core:
+  firebase_messaging: ^15.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -13,6 +13,15 @@ final class LoginSuccess extends LoginState {
   final LoginResponse loginModel;
   LoginSuccess(this.loginModel);
 }
+final class GoogleLoading extends LoginState{}
+final class GoogleSuccess extends LoginState{
+  final User? user;
+  GoogleSuccess(this.user);
+}
+final class GoogleError extends LoginState{
+  final String error;
+  GoogleError(this.error);
+}
 final class ForgotPasswordSuccess extends LoginState {
   final SendOtpModel sendOtpModel;
   ForgotPasswordSuccess(this.sendOtpModel);
