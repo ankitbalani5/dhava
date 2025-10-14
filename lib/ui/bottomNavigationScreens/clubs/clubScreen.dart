@@ -12,6 +12,9 @@ import 'clubWidgets/active/activeWidget.dart';
 import 'clubWidgets/challenges/challengesWidget.dart';
 import 'clubWidgets/club/clubsWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ClubScreen extends StatefulWidget {
   final String? initialTab;
@@ -102,19 +105,15 @@ class ClubScreenState extends State<ClubScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Constant.getProfile?.data?.profilePhoto != null
-                          ? CachedNetworkImage(
-                        imageUrl:
-                        Constant.getProfile?.data?.profilePhoto ?? '',
-                        // Replace with your back icon path
+                      child: CachedNetworkImage(
+                        imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
                         width: 30,
                         height: 30,
                         placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
-                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
-                        height: 30,),
+                      )
                     ),
                   ),
                 ),

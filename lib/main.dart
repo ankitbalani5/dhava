@@ -97,7 +97,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<MyjoinedChallengesBloc>(create: (context) => MyjoinedChallengesBloc()),
         BlocProvider<UserjoinedChallengesBloc>(create: (context) => UserjoinedChallengesBloc()),
         BlocProvider<UpdateProfileBloc>(create: (context) => UpdateProfileBloc()),
-    ],
+
           BlocProvider<TrophyBloc>(create: (_) => TrophyBloc()),
           BlocProvider<MyAllChallengeBloc>(create: (_) => MyAllChallengeBloc()),
           BlocProvider<ChallengeDetailBloc>(create: (_) => ChallengeDetailBloc()),
@@ -105,15 +105,15 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<ChallengesDetailsBloc>(create: (context) => ChallengesDetailsBloc()),
           BlocProvider<MyjoinedChallengesBloc>(create: (context) => MyjoinedChallengesBloc()),
           BlocProvider<UserjoinedChallengesBloc>(create: (context) => UserjoinedChallengesBloc()),
+    ],
 
-        ],
-      child:
-      MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Dhava',
-        theme: ThemeData(fontFamily: 'InterRegular'),
-        home: const SplashScreen(),
-      ),
+        child: MaterialApp(
+    debugShowCheckedModeBanner: false,
+    title: 'Dhava',
+    theme: ThemeData(fontFamily: 'InterRegular'),
+    home: const SplashScreen(),
+    ),
+
     );
   }
 }

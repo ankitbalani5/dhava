@@ -643,7 +643,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase()));
+                                    //Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase()));
 
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.trophy),

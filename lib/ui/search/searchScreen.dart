@@ -15,6 +15,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../constant/Constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -112,10 +114,8 @@ class _SearchScreenState extends State<SearchScreen>
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Constant.getProfile?.data?.profilePhoto != null
-                          ? CachedNetworkImage(
-                        imageUrl:
-                        Constant.getProfile?.data?.profilePhoto ?? '',
+                      child: CachedNetworkImage(
+                        imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
@@ -123,8 +123,7 @@ class _SearchScreenState extends State<SearchScreen>
                           height: 30,),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
-                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
-                        height: 30,),
+                      )
                     ),
                   ),
                 ),

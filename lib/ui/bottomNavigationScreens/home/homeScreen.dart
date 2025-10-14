@@ -7,6 +7,7 @@ import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart'
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Event.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_State.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/models/feedModel.dart';
 import 'package:coherent_endurance/repository/api.dart';
@@ -26,7 +27,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../profileScreens/otherProfileScreen.dart';
 import 'feedDetails.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -155,10 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(20),
                       child: CachedNetworkImage(
                         imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
-                      child: Constant.getProfile?.data?.profilePhoto != null
-                          ? CachedNetworkImage(
-                        imageUrl:
-                        Constant.getProfile?.data?.profilePhoto ?? '',
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
@@ -166,8 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 30,),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
-                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
-                        height: 30,),
+                      )
                     ),
                   ),
                 ),

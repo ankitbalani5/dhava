@@ -9,6 +9,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constant/Constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -64,19 +66,15 @@ class _NewsScreenState extends State<NewsScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Constant.getProfile?.data?.profilePhoto != null
-                          ? CachedNetworkImage(
-                        imageUrl:
-                        Constant.getProfile?.data?.profilePhoto ?? '',
-                        // Replace with your back icon path
+                      child: CachedNetworkImage(
+                        imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
                         width: 30,
                         height: 30,
                         placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
-                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
-                        height: 30,),
+                      )
                     ),
                   ),
                 ),
