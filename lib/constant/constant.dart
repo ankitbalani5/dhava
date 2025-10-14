@@ -37,7 +37,6 @@ class Constant {
   static var fcmToken;
   static var access_token;
   static var refresh_token;
-  static ProfileModel? getProfile;
   static CategoryModel? getCategory;
 
   static bool isJoinClub = false;

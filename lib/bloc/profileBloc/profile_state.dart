@@ -14,15 +14,6 @@ final class ProfileError extends ProfileState {
   final String error;
   ProfileError(this.error);
 }
-final class UpdateProfileLoading extends ProfileState {}
-final class UpdateProfileSuccess extends ProfileState {
-  final ProfileModel profileModel;
-  UpdateProfileSuccess(this.profileModel);
-}
-final class UpdateProfileError extends ProfileState {
-  final String error;
-  UpdateProfileError(this.error);
-}
 
 final class CategoryLoading extends ProfileState {}
 final class CategorySuccess extends ProfileState {

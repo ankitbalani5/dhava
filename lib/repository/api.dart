@@ -255,7 +255,50 @@ class Api {
       return null;
     }
   }
+  static Future updateProfileApi(
+      String endPoint,
+      Map<String, dynamic> body,
+      Map<String, String> header,
+      BuildContext context,
+      ) async {
+    try {
+      final url = Uri.parse(BaseUrl + endPoint);
+      final requestHeaders = {
+        'Content-Type': 'application/json',
+        ...header,
+      };
 
+      final response = await http.post(
+        url,
+        headers: requestHeaders,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonString = jsonDecode(response.body);
+        print('$endPoint::::$jsonString');
+        return jsonString;
+      } else if (response.statusCode == 401) {
+        // Token expired, try refreshing
+        bool success = await _refreshToken(context);
+        if (success) {
+          header['authorization'] = 'Bearer ${Constant.access_token}';
+          return updateProfileApi(endPoint, body, header, context);
+        } else {
+          return null;
+        }
+      } else {
+        print("Error: ${response.statusCode}, Response: ${response.body}");
+        return null;
+      }
+    } catch (e, st) {
+      print('error api $endPoint $e');
+      print(st);
+      return null;
+    }
+  }
+
+/*
   static Future updateProfileApi(String endPoint, Map<String, dynamic> body, Map<String, String> header, BuildContext context) async {
     try {
       var request = http.MultipartRequest("POST", Uri.parse(BaseUrl + endPoint));
@@ -304,6 +347,7 @@ class Api {
       return null;
     }
   }
+*/
 
   static Future postApiWithQuery(String endPoint, var queryParameters, var header, BuildContext context) async {
     final response = await http.post(
@@ -507,7 +551,8 @@ class ApiEndPoint {
   static const String getRecommendedChallenges = '/api/v1/challenges/recommended';
   static const String joinChallenges = '/api/v1/challenge/join';
   static const String otherProfile = '/api/v1/user/profile';
-  static const String profileSummary = '/api/v1/user/summary';
+  static const String profileSummary = '/api/v1/my/summary';
+  static const String userProfileSummary = '/api/v1/user/summary';
 
   static const String notification = '/api/v1/notifications';
   static const String notificationMarkRead = '/api/v1/notification/mark-read';

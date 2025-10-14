@@ -175,9 +175,9 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
             }
             if(state is ProfileSuccess){
            Constant.closeLoadingDialog(context);
-              Constant.getProfile = state.profileModel;
+              var profileData = state.profileModel?.data;
 
-              if(Constant.getProfile!.data!.isProfileCompleted == false){
+              if(profileData?.isProfileCompleted == false){
                 Future.microtask(() => showDialog(
                   context: this.context,
                   barrierDismissible: false,

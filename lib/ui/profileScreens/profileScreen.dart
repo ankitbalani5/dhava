@@ -36,16 +36,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     {"image": AppImageOthers.milestone, "title": "December 5K"},
   ];
 
-  ProfileModel? profileData;
+  //ProfileModel? profileData;
   String selectedValue = Constant.getCategory!.data!.first.categoryName.toString(); // default selected
   late final String categoryId ;
 
   @override
   void initState() {
-    profileData = Constant.getProfile;
+    //profileData = Constant.getProfile;
+
      categoryId = Constant.getCategory!.data!.first.categoryId.toString();
     print('categoryId::::$categoryId');
-    var add = context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
+
     super.initState();
   }
 
@@ -57,6 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             // TODO: implement listener
+      if(state is ProfileSuccess){
+
+      }
           },
           builder: (context, state) {
             if(state is ProfileLoading){
@@ -68,8 +72,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             }
             if(state is ProfileSuccess){
+              var profileData = state.profileModel!;
               final summaryData = state.summaryModel?.data;
-              final activities = state.summaryModel?.data?.thisWeekActivities ?? [];
+              final activities = summaryData?.thisWeekActivities ?? [];
               // var activity = selectedWeekIndex != null ? activities[selectedWeekIndex] : null;
               final activity = (selectedWeekIndex != null && selectedWeekIndex < activities.length)
                   ? activities[selectedWeekIndex]

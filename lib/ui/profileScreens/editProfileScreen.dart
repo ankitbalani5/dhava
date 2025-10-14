@@ -9,6 +9,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:coherent_endurance/bloc/updateProfileBloc/update_profile_bloc.dart';
 import '../../constant/constant.dart';
 import '../../models/profileModel.dart';
 import '../../resources/color/appColor.dart';
@@ -37,16 +38,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController weightController = TextEditingController();
   String? selectedSport;
   String? primaryCategoryId;
+  String? userID = '';
   String gender = '';
   String planToUse = '';
   String fitnessLevel = '';
   List<String> genderList = ["Male", "Female", "Other"];
-  String convertedImage = "";
+  late String profilePic ;
+
+
 
 
   @override
   void initState() {
-    profileData = Constant.getProfile;
+
+    profileData = context.read<ProfileBloc>().profileModel;
     firstnameController.text = profileData!.data!.firstName.toString();
     lastnameController.text = profileData!.data!.lastName.toString();
     birthdayController.text = profileData!.data!.dob.toString();
@@ -58,8 +63,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     birthdayController.text = Constant.formatDob(birthdayController.text);
     planToUse = profileData?.data?.planToUse ??"";
     fitnessLevel = profileData?.data?.fitnessLevel??"";
-    convertedImage = profileData?.data?.profilePhoto??"";
+    profilePic = profileData?.data?.profilePhoto??"";
     final profileCategoryId = profileData?.data?.primaryCategoryId;
+    userID  =profileData?.data?.userId.toString();
 
 
 
@@ -103,182 +109,188 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         titleSpacing: 0,
         actions: [
-          TextButton(
-            onPressed: () async {
-              // Agar image select hui ho to convert kare
-              if (_selectedImage != null) {
-                final bytes = await _selectedImage!.readAsBytes();
-                convertedImage = base64Encode(bytes);
+          BlocConsumer<UpdateProfileBloc, UpdateProfileState>(
+            listener: (context, state) async {
+              if (state is UpdateProfileLoading) {
+                Constant.loadingDialog(context);
               }
 
-              // Bloc me event bhejna
-              context.read<ProfileBloc>().add(UpdateProfileEvent(
-                context: context,
-                firstName: firstnameController.text,
-                lastName: lastnameController.text,
-                city: cityController.text,
-                state: stateController.text,
-                profilePic: convertedImage,
-                primaryCategoryId: primaryCategoryId.toString(),
-                bio: bioController.text,
-                weight: weightController.text,
-                dob: birthdayController.text,
-                gender: gender,
-                fitnessLevel: fitnessLevel,
-                planToUse: planToUse,
-              ));
+              if (state is UpdateProfileSuccess) {
+                Constant.closeLoadingDialog(context);
+                Fluttertoast.showToast(msg: state.profileModel.message.toString());
+                // setState(() {
+                //   profileData = state.profileModel;
+                //   profilePic = _selectedImage?.path ?? state.profileModel.data?.profilePhoto ?? "";
+                // });
+
+                //context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+
+                Navigator.pop(context);  // if you want to go back after update
+                context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+              }
+
+              if (state is UpdateProfileError) {
+                Constant.closeLoadingDialog(context);
+                Fluttertoast.showToast(msg: state.error);
+              }
             },
-            child: const Text(
-              "DONE",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+
+            builder: (context,state){
+              return    TextButton(
+                onPressed: () async {
+
+                  context.read<ProfileBloc>().profileModel = null;
+               String? imagePathToSend = _selectedImage?.path ?? profilePic;
+
+                  context.read<UpdateProfileBloc>().add(UpdateProfileEvent(
+                    context: context,
+                    firstName: firstnameController.text,
+                    lastName: lastnameController.text,
+                    city: cityController.text,
+                    state: stateController.text,
+                    profilePic: imagePathToSend,
+                    primaryCategoryId: primaryCategoryId.toString(),
+                    bio: bioController.text,
+                    weight: weightController.text,
+                    dob: birthdayController.text,
+                    gender: gender,
+                    fitnessLevel: fitnessLevel,
+                    planToUse: planToUse,
+
+                  ));
+                },
+                child:  Text(
+                  "DONE",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            },
           ),
-
         ],
-
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        child: BlocConsumer<ProfileBloc, ProfileState>(
-          listener: (context, state) {
-            if(state is UpdateProfileLoading){
-              Constant.loadingDialog(context);
-            }
-            if(state is UpdateProfileSuccess){
-              Constant.closeLoadingDialog(context);
-              Fluttertoast.showToast(msg: state.profileModel.message.toString());
-              context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
-            }
-            if(state is UpdateProfileError){
-              Constant.closeLoadingDialog(context);
-            }
-          },
-          builder: (context, state)  {
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profile Picture
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Profile Picture
-
-                Center(
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 45,
-                        backgroundColor: Colors.grey.shade200,
-                        child: _selectedImage != null
-                            ? ClipOval(
-                          child: Image.file(
-                            _selectedImage!,
-                            width: 90,
-                            height: 90,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                            : (profileData?.data?.profilePhoto != null &&
-                            profileData!.data!.profilePhoto!.isNotEmpty)
-                            ? ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: profileData!.data!.profilePhoto!,
-                            width: 90.0,
-                            height: 90.0,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => const Padding(
-                              padding: EdgeInsets.all(40.0),
-                              child: CircularProgressIndicator(
-                                color: AppColor.bgRed,
-                                strokeWidth: 1,
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Image.asset(
-                              AppImageOthers.profilePic,
-                              height: 90,
-                            ),
-                          ),
-                        )
-                            : ClipOval(
-                          child: Image.asset(
-                            AppImageOthers.profilePic,
-                            width: 90,
-                            height: 90,
-                            fit: BoxFit.cover,
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 45,
+                    backgroundColor: Colors.grey.shade200,
+                    child: _selectedImage != null
+                        ? ClipOval(
+                      child: Image.file(
+                        _selectedImage!,
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : (profilePic.isNotEmpty)
+                        ? ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: profilePic, // use String URL
+                        width: 90.0,
+                        height: 90.0,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: CircularProgressIndicator(
+                            color: AppColor.bgRed,
+                            strokeWidth: 1,
                           ),
                         ),
-                      ),
-
-
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: (){
-                            _showImageSourceSheet(context);
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 30,
-                            decoration: const BoxDecoration(
-                              color: Colors.black,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.edit, color: Colors.white, size: 16),
-                          ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          AppImageOthers.profilePic,
+                          height: 90,
                         ),
                       ),
-                    ],
+                    )
+                        : ClipOval(
+                      child: Image.asset(
+                        AppImageOthers.profilePic,
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // First Name & Last Name
-                Row(
-                  children: [
-                    Expanded(child: _buildTextField("First name", firstnameController)),
-                    const SizedBox(width: 10),
-                    Expanded(child: _buildTextField("Last name", lastnameController)),
-                  ],
-                ),
-                const SizedBox(height: 15),
-
-                // City & State
-                Row(
-                  children: [
-                    Expanded(child: _buildTextField("City", cityController)),
-                    const SizedBox(width: 10),
-                    Expanded(child: _buildTextField("State", stateController)),
-                  ],
-                ),
-                const SizedBox(height: 15),
-
-                _buildSportDropdown(),
-                const SizedBox(height: 15),
-
-                // Bio
-                _buildTextField("Bio", bioController),
-
-                const SizedBox(height: 15),
-
-                _buildBirthdayField(),
-                const SizedBox(height: 15),
-
-                // Gender
-                _buildGenderDropdown(),
-
-                // _buildDropdown("Gender", gender, genderList),
-                const SizedBox(height: 15),
 
 
-                _buildTextField("Weight (kg)", weightController),
-                const SizedBox(height: 20),
 
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: (){
+                        _showImageSourceSheet(context);
+                      },
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: const BoxDecoration(
+                          color: Colors.black,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // First Name & Last Name
+            Row(
+              children: [
+                Expanded(child: _buildTextField("First name", firstnameController)),
+                const SizedBox(width: 10),
+                Expanded(child: _buildTextField("Last name", lastnameController)),
               ],
-            );
-          },
+            ),
+            const SizedBox(height: 15),
+
+            // City & State
+            Row(
+              children: [
+                Expanded(child: _buildTextField("City", cityController)),
+                const SizedBox(width: 10),
+                Expanded(child: _buildTextField("State", stateController)),
+              ],
+            ),
+            const SizedBox(height: 15),
+
+            _buildSportDropdown(),
+            const SizedBox(height: 15),
+
+            // Bio
+            _buildTextField("Bio", bioController),
+
+            const SizedBox(height: 15),
+
+            _buildBirthdayField(),
+            const SizedBox(height: 15),
+
+            // Gender
+            _buildGenderDropdown(),
+
+            // _buildDropdown("Gender", gender, genderList),
+            const SizedBox(height: 15),
+
+
+            _buildTextField("Weight (kg)", weightController),
+            const SizedBox(height: 20),
+
+          ],
         ),
       ),
     );

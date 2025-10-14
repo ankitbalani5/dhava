@@ -1,4 +1,5 @@
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/bloc/updateProfileBloc/update_profile_bloc.dart';
 import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/data/createProfileData.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
@@ -36,7 +37,7 @@ class _Step9ScreenState extends State<Step9Screen> {
                   SizedBox(height: 5,),
                   Text('150+ million active people on\nStrava are excited to move with you.', textAlign: TextAlign.center, style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.white),),
                   SizedBox(height: 40,),
-                  BlocConsumer<ProfileBloc, ProfileState>(
+                  BlocConsumer<UpdateProfileBloc, UpdateProfileState>(
                     listener: (context, state) {
                       if(state is UpdateProfileLoading){
                         Constant.loadingDialog(context);
@@ -53,7 +54,7 @@ class _Step9ScreenState extends State<Step9Screen> {
                     },
                     builder: (context, state) {
                       return CustomButton(text: "Let's go", callback: () {
-                        context.read<ProfileBloc>().add(UpdateProfileEvent(context: context,
+                        context.read<UpdateProfileBloc>().add(UpdateProfileEvent(context: context,
                           firstName: CreateProfileData.firstName, lastName: CreateProfileData.lastName,
                           dob: CreateProfileData.dob, gender: CreateProfileData.gender, fitnessLevel: CreateProfileData.fitnessLevel,
                           planToUse: CreateProfileData.planToUse, categoryIds: CreateProfileData.categoryIds, 

@@ -17,42 +17,45 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileModel? profileModel;
   SummaryModel? summaryModel;
   ProfileBloc() : super(ProfileInitial()) {
-    on<UpdateProfileEvent>(_updateProfile);
     on<GetProfileEvent>(_getProfile);
     on<CategoryEvent>(_getCategory);
     on<GetProfileSummary>(_getProfileSummary);
   }
 
   Future<void> _getProfile(GetProfileEvent event, Emitter<ProfileState> emit) async {
-    emit(ProfileLoading());
+    if(profileModel != null){
+      emit(ProfileSuccess(profileModel, summaryModel));
+    }
+    else {
+      emit(ProfileLoading());
 
-    try{
+      try{
 
-      var body = {
-        'user_id': event.userId,
-      };
-      final headers = {
-        'Content-Type': 'application/json'
-      };
-      final response = await Api.getApiWithQuery(ApiEndPoint.getProfile, body, headers, event.context);
-      final result = ProfileModel.fromJson(response);
-      if (kDebugMode) {
-        print('_getProfile:::$result');
+        var body = {
+          'user_id': event.userId,
+        };
+        final headers = {
+          'Content-Type': 'application/json'
+        };
+        final response = await Api.getApiWithQuery(ApiEndPoint.getProfile, body, headers, event.context);
+        final result = ProfileModel.fromJson(response);
+        if (kDebugMode) {
+          print('_getProfile:::$result');
+        }
+        if(result.statusCode == 200){
+          profileModel = result;
+          emit(ProfileSuccess(profileModel, summaryModel));
+        }else{
+          emit(ProfileError(result.message.toString()));
+        }
+      }on SocketException{
+        emit(ProfileError('Please check your internet connection'));
+      }catch(e, stacktrace){
+        if (kDebugMode) {
+          print(stacktrace);
+        }
+        emit(ProfileError(e.toString()));
       }
-      if(result.statusCode == 200){
-        Constant.getProfile = result;
-        profileModel = result;
-        emit(ProfileSuccess(profileModel, summaryModel));
-      }else{
-        emit(ProfileError(result.message.toString()));
-      }
-    }on SocketException{
-      emit(ProfileError('Please check your internet connection'));
-    }catch(e, stacktrace){
-      if (kDebugMode) {
-        print(stacktrace);
-      }
-      emit(ProfileError(e.toString()));
     }
   }
 
@@ -84,56 +87,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  Future<void> _updateProfile(UpdateProfileEvent event, Emitter<ProfileState> emit) async {
-    emit(UpdateProfileLoading());
-
-    try{
-
-      var body = {
-        'first_name': event.firstName,
-        'last_name': event.lastName,
-        'profile_pic': event.profilePic,
-        'city': event.city,
-        'state': event.state,
-        'country': event.country,
-        'address': event.address,
-        'bio': event.bio,
-        'dob': event.dob,
-        'height': event.height,
-        'height_unit_id': event.heightUnitId,
-        'weight': event.weight,
-        'weight_unit_id': event.weightUnitId,
-        'gender': event.gender,
-        'latitude': event.latitude,
-        'longitude': event.longitude,
-        'fitness_level': event.fitnessLevel,
-        'plan_to_use': event.planToUse,
-        'category_str': event.categoryIds,
-        'primary_category_id': event.primaryCategoryId
-      };
-      var headers = {
-        'authorization' : 'Bearer ${Constant.access_token}'
-      };
-      final response = await Api.updateProfileApi(ApiEndPoint.updateProfile, body, headers, event.context);
-      final result = ProfileModel.fromJson(response);
-      if (kDebugMode) {
-        print('_updateProfile:::$result');
-      }
-      if(result.statusCode == 200){
-
-        emit(UpdateProfileSuccess(result));
-      }else{
-        emit(UpdateProfileError(result.message.toString()));
-      }
-    }on SocketException{
-      emit(UpdateProfileError('Please check your internet connection'));
-    }catch(e, stacktrace){
-      if (kDebugMode) {
-        print(stacktrace);
-      }
-      emit(UpdateProfileError(e.toString()));
-    }
-  }
 
   Future<void> _getCategory(CategoryEvent event, Emitter<ProfileState> emit) async {
     emit(CategoryLoading());

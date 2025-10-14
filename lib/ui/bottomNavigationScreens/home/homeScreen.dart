@@ -146,8 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: CachedNetworkImage(
-                        imageUrl:
-                        Constant.getProfile?.data?.profilePhoto ?? '',
+                        imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
