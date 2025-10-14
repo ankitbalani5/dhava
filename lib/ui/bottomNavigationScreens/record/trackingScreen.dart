@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavBar.dart' show bottomNavKey;
 import 'package:coherent_endurance/ui/bottomNavigationScreens/mapSetting.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/saveActivity.dart';
 import 'package:flutter/material.dart';
@@ -1071,80 +1072,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
               ),
             ),
           ),
-
-          // Expanded(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //         children: [
-          //           Column(
-          //             crossAxisAlignment: CrossAxisAlignment.center,
-          //             children: [
-          //               Icon(Icons.terrain, color: Colors.blue, size: 40),
-          //               SizedBox(height: 8),
-          //               Text(
-          //                 "${elevationGain.toStringAsFixed(0)} m",
-          //                 style: CustomTextStyles.semiBold(),
-          //               ),
-          //               Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
-          //             ],
-          //           ),
-          //           SizedBox(
-          //             height: 120,
-          //             child: VerticalDivider(thickness: 1, color: Colors.grey),
-          //           ),
-          //           Column(
-          //             children: [
-          //               Text('DISTANCE', style: CustomTextStyles.semiBold()),
-          //               Text(
-          //                 "${(distance / 1000).toStringAsFixed(2)}",
-          //                 style: CustomTextStyles.bold(fontSize: 50),
-          //               ),
-          //               Text('Kilometers', style: CustomTextStyles.semiBold()),
-          //             ],
-          //           ),
-          //         ],
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Divider(),
-
-          /// GRAPH (PACE/ELEVATION OVER DISTANCE)
-          // SizedBox(
-          //   height: 200,
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(8.0),
-          //     child: LineChart(
-          //       LineChartData(
-          //         gridData: FlGridData(show: true),
-          //         titlesData: FlTitlesData(
-          //           leftTitles: AxisTitles(
-          //             sideTitles: SideTitles(showTitles: true, reservedSize: 40),
-          //           ),
-          //           bottomTitles: AxisTitles(
-          //             sideTitles: SideTitles(showTitles: true),
-          //           ),
-          //         ),
-          //         borderData: FlBorderData(show: true),
-          //         lineBarsData: [
-          //           LineChartBarData(
-          //             spots: List.generate(
-          //               graphData.length,
-          //                   (i) => FlSpot(i.toDouble(), graphData[i]),
-          //             ),
-          //             isCurved: true,
-          //             color: Colors.blue,
-          //             dotData: FlDotData(show: false),
-          //             belowBarData: BarAreaData(show: false),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

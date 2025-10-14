@@ -137,7 +137,7 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                       right: 0,
                       child: SizedBox(
                         height: 80,
-                        child: Image.asset(AppImageOthers.challengesLogo),
+                        child: Image.network(challengeDetail!.trophyIcon.toString()),
                       ),
                     ),
                   ],
@@ -250,11 +250,11 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
 
                       SizedBox(height: 50),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           SizedBox(),
                           SizedBox(height: 30,child: Image.asset(AppImageOthers.calenderImg)),
-                          SizedBox(width: 5),
+                          SizedBox(width: 15,),
                           Text(formatDateRange(challengeDetail.startDate.toString(), challengeDetail.endDate.toString()),
                             textAlign: TextAlign.start,
                             // "Aug 1, 2025 to Aug 31, 2025 — 1 day left",
@@ -266,15 +266,17 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                       SizedBox(height: 20),
                       Row(
 
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          SvgPicture.asset(AppImageSvg.run,color: Colors.black,width: 30,),
+                          Image.network(challengeDetail.categoryIcon.toString(), color: Colors.black, width: 30,),
+                          SizedBox(width: 15,),
+                          // SvgPicture.asset(AppImageSvg.run,color: Colors.black,width: 30,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              Text(challengeDetail.description.toString(),
                                 textAlign: TextAlign.start,
-                                "Complete a 5 km (3.1 mi) run.",
+                                // "Complete a 5 km (3.1 mi) run.",
                                 style: CustomTextStyles.semiBold(
                                     fontSize: 12, textColor: AppColor.textBackgroundGrey),
                               ),
@@ -290,9 +292,10 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                       )   ,
                       SizedBox(height: 20),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           SizedBox(height: 30,child: Image.asset(AppImageOthers.trophyImg)),
+                          SizedBox(width: 15,),
                           Text(
                             textAlign: TextAlign.start,
                             "Earn a digital finisher's badge for your\nTrophy Case.",

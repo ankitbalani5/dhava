@@ -509,6 +509,7 @@ class Api {
 
 class ApiEndPoint {
   static const String login = '/api/v1/auth/login';
+  static const String socialLogin = '/api/v1/auth/social-media-login';
   static const String refreshToken = '/api/v1/auth/referesh-token';
   static const String sendOtp = '/api/v1/auth/send-otp';
   static const String verifyOtp = '/api/v1/auth/verify-otp';

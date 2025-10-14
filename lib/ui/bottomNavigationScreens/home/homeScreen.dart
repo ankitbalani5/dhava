@@ -1,3 +1,4 @@
+
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
@@ -544,9 +545,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               },
 
                                             ),
-                                          ),
 
                                         ],
+                                          ),
                                       ),
                                     );
                                   },

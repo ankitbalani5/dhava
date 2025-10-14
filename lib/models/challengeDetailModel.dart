@@ -39,6 +39,7 @@ class Data {
   String? title;
   String? description;
   String? challengeIcon;
+  String? trophyIcon;
   String? startDate;
   String? endDate;
   String? challengeValue;
@@ -53,6 +54,7 @@ class Data {
         this.title,
         this.description,
         this.challengeIcon,
+        this.trophyIcon,
         this.startDate,
         this.endDate,
         this.challengeValue,
@@ -67,6 +69,7 @@ class Data {
     title = json['title'];
     description = json['description'];
     challengeIcon = json['challenge_icon'];
+    trophyIcon = json['trophy_icon'];
     startDate = json['start_date'];
     endDate = json['end_date'];
     challengeValue = json['challenge_value'];
@@ -88,6 +91,7 @@ class Data {
     data['title'] = this.title;
     data['description'] = this.description;
     data['challenge_icon'] = this.challengeIcon;
+    data['trophy_icon'] = this.trophyIcon;
     data['start_date'] = this.startDate;
     data['end_date'] = this.endDate;
     data['challenge_value'] = this.challengeValue;
