@@ -131,7 +131,9 @@ class _UserAllChallengesState extends State<UserAllChallenges> {
       ),
     );
   }
-  Widget _buildChallengeCard(  List<Data>? challenge,  int index,BuildContext context) {
+
+  Widget _buildChallengeCard(  List<Data>? challenge,  int index,BuildContext context)
+  {
     var data = challenge?[index];
     var title = data?.title ?? "Challenge";
     var description = data?.description ?? "N/A";
@@ -203,20 +205,20 @@ class _UserAllChallengesState extends State<UserAllChallenges> {
                 ),
               ],
             ),
-
           ],
         ),
       ),
     );
   }
+
+
+
   String formatDateRange(String? start, String? end) {
     if (start == null || end == null) return "";
-
     try {
       DateTime startDate = DateTime.parse(start);
       DateTime endDate = DateTime.parse(end);
 
-      // Month short names
       const monthNames = [
         "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -224,12 +226,15 @@ class _UserAllChallengesState extends State<UserAllChallenges> {
 
       String startStr = "${monthNames[startDate.month]} ${startDate.day.toString().padLeft(2,'0')}";
       String endStr = "${monthNames[endDate.month]} ${endDate.day.toString().padLeft(2,'0')}, ${endDate.year}";
-
       return "$startStr to $endStr";
     } catch (e) {
       return "";
     }
   }
+
+
+
+
 }
 
 
