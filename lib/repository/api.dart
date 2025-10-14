@@ -509,7 +509,6 @@ class Api {
 
 class ApiEndPoint {
   static const String login = '/api/v1/auth/login';
-  static const String socialLogin = '/api/v1/auth/social-media-login';
   static const String refreshToken = '/api/v1/auth/referesh-token';
   static const String sendOtp = '/api/v1/auth/send-otp';
   static const String verifyOtp = '/api/v1/auth/verify-otp';
@@ -527,6 +526,9 @@ class ApiEndPoint {
   static const String activityLike = '/api/v1/activity/like';
   static const String userFind = '/api/v1/user/find';
   static const String postAllChallenges = '/api/v1/challenges/all';
+  static const String challengesDetail = '/api/v1/challenges/details';
+  static const String myJoinedChallenges = '/api/v1/my/joined-challenges/all';
+  static const String userJoinedChallenges = '/api/v1/user/joined-challenges/all';
   static const String getRecommendedChallenges = '/api/v1/challenges/recommended';
   static const String joinChallenges = '/api/v1/challenge/join';
   static const String otherProfile = '/api/v1/user/profile';
@@ -547,5 +549,7 @@ class ApiEndPoint {
 
   static const String otherUserFeed = '/api/v1/activity/user-feed';
 
+
+  static const String suggestions = '/api/v1/user/suggestions';
 
 }

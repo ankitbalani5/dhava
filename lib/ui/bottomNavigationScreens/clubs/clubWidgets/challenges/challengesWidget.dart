@@ -32,6 +32,8 @@ class _challengesWidgetState extends State<challengesWidget> {
   final RefreshController _refreshController = RefreshController();
   List<CategoryModelData> categories = [];
   late String isJoined ;
+
+
   @override
   void initState() {
 
@@ -226,15 +228,13 @@ class _challengesWidgetState extends State<challengesWidget> {
     var title = challenge.title ?? "Challenge";
     var description = challenge.description ?? "N/A";
     var date = formatDateRange(challenge.startDate, challenge.endDate);
-
     var icon = challenge.categoryIcon ?? "";
     final imageUrl = icon.startsWith("http") ? icon : "${Api.BaseUrl}$icon";
-
     var challengesId = challenge.challengeId!;
 
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesDetailScreen(isAlreadyJoined: challenge.isJoined)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesDetailScreen(challengeId: challengesId,)));
 
       },
       child: Container(

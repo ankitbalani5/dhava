@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/mapSetting.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/saveActivity.dart';
 import 'package:flutter/material.dart';
@@ -1150,7 +1149,4 @@ class _TrackingScreenState extends State<TrackingScreen> {
       ),
     );
   }
-
 }
-
-

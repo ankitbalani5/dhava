@@ -7,12 +7,14 @@ import 'package:coherent_endurance/bloc/profileBloc/otherProfile_state.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/allChallenges/userAllChallenges.dart';
 import 'package:coherent_endurance/ui/profileScreens/settingScreen.dart';
 import 'package:coherent_endurance/ui/profileScreens/statisticsScreen.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
 import 'package:coherent_endurance/ui/trophyCase.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,9 +25,9 @@ import 'editProfileScreen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OtherProfileScreen extends StatefulWidget {
- final String path;
+  final String userId;
 
-  OtherProfileScreen({this.path = 'user', super.key});
+  OtherProfileScreen({this.userId = 'user', super.key});
 
   @override
   State<OtherProfileScreen> createState() => _OtherProfileScreenState();
@@ -40,7 +42,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
   @override
   void initState() {
-    var userId = widget.path;
+    var userId = widget.userId;
     context.read<OtherProfileBloc>().add(
       OtherProfileDataEvent(context: context, userId: userId),
     );
@@ -119,7 +121,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   ),
                                   child: Row(
                                     children: [
-                                      widget.path == 'user'
+                                      widget.userId == 'user'
                                           ? GestureDetector(
                                             onTap: () {
                                               Navigator.push(
@@ -149,7 +151,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                       ),
                                       SizedBox(width: 10),
 
-                                      widget.path == 'user'
+                                      widget.userId == 'user'
                                           ? GestureDetector(
                                             onTap: () {
                                               Navigator.push(
@@ -164,7 +166,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                             child: Icon(
                                               Icons.settings,
                                               color: Colors.white,
-                                            ) ,
+                                            ),
                                           )
                                           : IconButton(
                                             icon: Icon(
@@ -255,7 +257,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         bottom: 0,
                         child: Container(height: 60, color: AppColor.bgRed),
                       ),
-                      widget.path == 'user'
+                      widget.userId == 'user'
                           ? Positioned(
                             right: 15,
                             bottom: 20,
@@ -374,26 +376,12 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   BlocConsumer<FollowRequestBloc, FollowRequestState>(
                     listener: (context, state) {
                       if (state is FollowRequestLoading) {
-                        Center(
-                          child: LoadingAnimationWidget.inkDrop(
-                            color: AppColor.bgRed,
-                            size: 20,
-                          ),
-                        );
+                        debugPrint("FollowRequest: Loading...");
                       }
+
                       if (state is FollowRequestSuccess) {
-                        var message = state.followRequestModel.message.toString();
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(message)),
-                        );
-
-                        setState(() {
-                          profileData?.isFollowRequested = true;
-                        });
+                        // var message = state.followRequestModel.message.toString();
                       }
-
-
 
                       if (state is FollowRequestError) {
                         ScaffoldMessenger.of(
@@ -402,23 +390,37 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       }
                     },
                     builder: (context, state) {
-                      // Followed
-                      if (profileData?.isFollowed == true) {
-                        return Padding(
-                          padding:  EdgeInsets.all(8.0),
-                          child: Container(
-                            height: 35,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: AppColor.bgRed,
-                            ),
-                            child:  Padding(
-                              padding:  EdgeInsets.all(8.0),
+                      Color buttonColor;
+                      Color textColor;
+                      String buttonText;
+
+                      //  --- FOLLOWING ---
+                      if (profileData?.isFollowed == true && profileData?.isFollowRequested == false) {
+                        buttonColor = Colors.green;
+                        textColor = Colors.white;
+                        buttonText = "Following";
+
+                        return GestureDetector(
+                          onTap: () {
+                            var userId = profileData?.userId.toString() ?? "";
+                            showUnfollowDialog(context, userId, profileData!);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 35,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: buttonColor,
+                              ),
                               child: Center(
                                 child: Text(
-                                  "Following",
-                                  style: TextStyle(color: Colors.white),
+                                  buttonText,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
@@ -426,23 +428,40 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         );
                       }
 
-                      // Requested
+                      //  --- REQUESTED ---
                       if (profileData?.isFollowRequested == true) {
-                        return Padding(
-                          padding:  EdgeInsets.all(8.0),
-                          child: Container(
-                            height: 35,
-                            width:100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: AppColor.bgRed,
-                            ),
-                            child:  Padding(
-                              padding: const EdgeInsets.all(8.0),
+                        buttonColor = Colors.grey;
+                        textColor = Colors.white;
+                        buttonText = "Requested";
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              profileData?.isFollowRequested = false;
+                            });
+                            context.read<FollowRequestBloc>().add(
+                              FollowRequestDataEvent(
+                                context: context,
+                                toUserId: profileData?.userId ?? "",
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 35,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: buttonColor,
+                              ),
                               child: Center(
                                 child: Text(
-                                  "Requested",
-                                  style: TextStyle(color: Colors.white),
+                                  buttonText,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
@@ -450,29 +469,39 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         );
                       }
 
-                      // Default: Follow button
+                      // 🟩 --- FOLLOW ---
+                      buttonColor = AppColor.bgRed;
+                      textColor = Colors.white;
+                      buttonText = "Follow";
+
                       return GestureDetector(
                         onTap: () {
-                          context.read<FollowRequestBloc>().add(
-                            FollowRequestDataEvent(
-                              context: context,
-                              toUserId: profileData?.userId ?? "",
-                            ),
-                          );
+                          if (profileData?.isFollowed == false &&
+                              profileData?.isFollowRequested == false) {
+                            setState(() {
+                              profileData?.isFollowRequested = true;
+                            });
+                            context.read<FollowRequestBloc>().add(
+                              FollowRequestDataEvent(
+                                context: context,
+                                toUserId: profileData?.userId ?? "",
+                              ),
+                            );
+                          }
                         },
                         child: Padding(
-                          padding:  EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Container(
                             height: 35,
                             width: 100,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: AppColor.bgRed,
+                              color: buttonColor,
                             ),
                             child: Center(
                               child:
                                   state is FollowRequestLoading
-                                      ?  SizedBox(
+                                      ? const SizedBox(
                                         height: 12,
                                         width: 12,
                                         child: CircularProgressIndicator(
@@ -480,11 +509,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                           color: Colors.white,
                                         ),
                                       )
-                                      :  Padding(
-                                        padding:  EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "Follow",
-                                          style: TextStyle(color: Colors.white),
+                                      : Text(
+                                        buttonText,
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                             ),
@@ -865,16 +894,21 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'All Challenge',
-                                      style: CustomTextStyles.regular(
-                                        textColor: AppColor.bgRed,
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserAllChallenges(user_Id: widget.userId,)));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'All Challenge',
+                                        style: CustomTextStyles.regular(
+                                          textColor: AppColor.bgRed,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: 20),
                                 Row(
@@ -969,6 +1003,71 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
           return SizedBox();
         },
       ),
+    );
+  }
+
+  void showUnfollowDialog(
+    BuildContext parentContext,
+    String userId,
+    dynamic profileData,
+  ) {
+    showDialog(
+      context: parentContext,
+      barrierDismissible: false,
+      builder:
+          (_) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            backgroundColor: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Are you sure you want to unfollow?',
+                    style: CustomTextStyles.bold(
+                      fontSize: 16,
+                      textColor: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomButton(
+                        text: 'Yes',
+                        width: 110,
+                        callback: () {
+                          Navigator.pop(parentContext);
+                          // ✅ Unfollow confirmed
+                          (parentContext as Element).markNeedsBuild();
+                          profileData.isFollowed = false;
+                          profileData.isFollowRequested = false;
+
+                          parentContext.read<FollowRequestBloc>().add(
+                            FollowRequestDataEvent(
+                              context: parentContext,
+                              toUserId: userId,
+                            ),
+                          );
+                        },
+                      ),
+                      CustomButton(
+                        text: 'No',
+                        width: 110,
+                        callback: () {
+                          Navigator.pop(parentContext);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
     );
   }
 

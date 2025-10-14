@@ -621,7 +621,6 @@ class _SaveActivityState extends State<SaveActivity> {
                     GestureDetector(
                       onTap: () {
                         isPublish = !isPublish;
-                        print("ispublish :  ${isPublish}");
                         setState(() {
 
                         });
@@ -890,6 +889,4 @@ class _ResultScreenState extends State<ResultScreen> {
     );
 
   }
-
-
 }

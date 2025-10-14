@@ -12,7 +12,8 @@ class JoinChalllengesBloc extends Bloc<PostJoinChallengesEvent, JoinchallengesSt
   }
 
   Future<void> joinChallenges(
-      PostJoinChallengesEvent event, Emitter<JoinchallengesState> emit) async {
+      PostJoinChallengesEvent event, Emitter<JoinchallengesState> emit)
+  async {
 
     emit(PostJoinchallengesLoading(event.challenges_Id));
 

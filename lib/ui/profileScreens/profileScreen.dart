@@ -4,6 +4,7 @@ import 'package:coherent_endurance/models/profileModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/allChallenges/myAllChallenges.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/active/challangesActive.dart';
 import 'package:coherent_endurance/ui/profileScreens/allChallenge.dart';
 import 'package:coherent_endurance/ui/search/searchScreen.dart';
