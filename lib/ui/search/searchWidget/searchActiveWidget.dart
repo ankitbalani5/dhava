@@ -1,5 +1,5 @@
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_bloc.dart';
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_event.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_bloc.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_event.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_event.dart';
 import 'package:coherent_endurance/constant/Constant.dart';

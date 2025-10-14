@@ -95,7 +95,7 @@ class _ActiveWidgetState extends State<ActiveWidget> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ChallangesActiveScreen()));
+                        builder: (context) => ChallangesActiveScreen(challengeId: '',)));
                 },
               child: ListView.builder(
                 shrinkWrap: true,

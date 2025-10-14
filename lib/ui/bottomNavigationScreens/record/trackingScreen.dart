@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
-import 'package:coherent_endurance/ui/bottomNavBar.dart';
+import 'package:coherent_endurance/ui/bottomNavBar.dart' show bottomNavKey;
 import 'package:coherent_endurance/ui/bottomNavigationScreens/mapSetting.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/saveActivity.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,9 @@ import 'package:image/image.dart' as img;
 
 class TrackingScreen extends StatefulWidget {
   String categoryId;
-  TrackingScreen(this.categoryId, {super.key});
+  String categoryName;
+  String categoryIcon;
+  TrackingScreen(this.categoryId, this.categoryName, this.categoryIcon, {super.key});
 
   @override
   State<TrackingScreen> createState() => _TrackingScreenState();
@@ -51,7 +53,10 @@ class _TrackingScreenState extends State<TrackingScreen> {
   String country = '';
   int initialSteps = 0;
   List<DateTime> pointTimestamps = [];
-
+  bool isShort = true;
+  ScreenshotController screenshotController = ScreenshotController();
+  String? categoryName;
+  String? categoryIcon;
 
   @override
   void initState() {
@@ -59,6 +64,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
     runType = widget.categoryId;
     print('runtype::: $runType');
 
+    categoryName = widget.categoryName;
+    categoryIcon = widget.categoryIcon;
     initTracking();
     initStepTracking();
   }
@@ -222,37 +229,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     };
   }
 
-  Future<void> sendTrackingData() async {
-    final url = Uri.parse("https://yourapi.com/save-activity");
-
-    final results = calculateResults();
-
-    final body = {
-      "distance": results["totalDistance"],
-      "time": results["elapsedTime"],
-      "avgPace": results["avgPace"],
-      "fastestSplit": results["fastestSplit"],
-      "segments": results["segments"],
-      "elevationGain": elevationGain,
-      "maxElevation": maxElevation,
-      "steps": steps,
-      "path": pathPoints.map((p) => {"lat": p.latitude, "lng": p.longitude}).toList(),
-      "splits": results["splits"]
-    };
-
-    final response = await http.post(
-      url,
-      body: json.encode(body),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      print("✅ Data sent successfully");
-    } else {
-      print("❌ Error: ${response.body}");
-    }
-  }
-
   String formatPace(double paceInSec) {
     if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
     int min = (paceInSec / 60).floor();
@@ -290,20 +266,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return {
       Polyline(
         polylineId: const PolylineId("track"),
-        color: Colors.blue,
+        color: AppColor.bgRed/*Colors.blue*/,
         width: 5,
         points: pathPoints,
       )
     };
   }
-
-  @override
-  void dispose() {
-    positionStream?.cancel();
-    super.dispose();
-  }
-
-  bool isShort = true;
 
   String getPace(double distance, double durationInSeconds) {
     if (distance <= 0) return "0:00";
@@ -312,19 +280,23 @@ class _TrackingScreenState extends State<TrackingScreen> {
     int sec = (paceInSec % 60).floor();
     return "${min}:${sec.toString().padLeft(2, '0')}";
   }
-  ScreenshotController screenshotController = ScreenshotController();
 
+  @override
+  void dispose() {
+    positionStream?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-
-        bottomNavKey.currentState?.changeTab(2); // 👈 Endurance tab pe redirect
-        Navigator.of(context).pop(); // Tracking screen se pop
-        return false;
+        // Back press → Endurance tab
+        print('current State from tracking:::${bottomNavKey.currentState?.currentTap}');
+        bottomNavKey.currentState?.changeTab(2);
+        Navigator.of(context).pop(); // Remove TrackingScreen
+        return false; // prevent BottomNavBar onWillPop
       },
-
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -348,12 +320,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: isShort
-                  ? GestureDetector(
+                  ? SizedBox()/*GestureDetector(
                   onTap: () {
                     Navigator.push(
                         context, MaterialPageRoute(builder: (context) => MapSetting()));
                   },
-                  child: Icon(Icons.settings))
+                  child: Icon(Icons.settings))*/
                   : GestureDetector(
                   onTap: () {
                     isShort = !isShort;
@@ -363,18 +335,18 @@ class _TrackingScreenState extends State<TrackingScreen> {
             )
           ],
         ),
-      
+
         body: pathPoints.isEmpty
             ? const Center(child: CircularProgressIndicator())
-            : isShort ? Screenshot(
-          controller: screenshotController,
-              child: Stack(
-                children: [
-                  GoogleMap(
+            : Stack(
+              children: [
+                Screenshot(
+                  controller: screenshotController,
+                  child: GoogleMap(
                     initialCameraPosition: CameraPosition(
                       target: pathPoints.first,
                       zoom: 17,
-              
+
                     ),
                     polylines: getPolyline(),
                     myLocationEnabled: true,
@@ -382,151 +354,111 @@ class _TrackingScreenState extends State<TrackingScreen> {
                       mapController = controller;
                     },
                   ),
-                  Visibility(
-                    visible: isShort,
-                    child: Positioned(
-                      bottom: 0,
+                ),
+                Visibility(
+                  visible: !isShort,
+                  child: Positioned(
+                      top: 0,
                       left: 0,
                       right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          isShort = !isShort;
-                          setState(() {
-              
-                          });
-                        },
-                        child: Container(
-                          height: 230,
-                          // color: AppColor.textBackgroundGrey,
-                          color: Colors.white,
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              gradient: LinearGradient(colors: [AppColor.bgRed.withOpacity(.5), Colors.white], begin: Alignment.topCenter, end: Alignment.bottomCenter)
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text('Run', style: CustomTextStyles.medium(fontSize: 18),),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            Text("${elapsed.inMinutes.remainder(60)}m ",
-                                                style: CustomTextStyles.regular(fontSize: 20)),
-                                            Text("${elapsed.inSeconds.remainder(60)}s",
-                                                style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.black)),
-                                          ],
-                                        ),
-                                        Text('Time', style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(formatPace(avgPace),
-                                            style: CustomTextStyles.bold(fontSize: 20)),
-                                        Text('Split avg. pace (/km)',
-                                            style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text((totalDistance / 1000).toStringAsFixed(2),
-                                            style: CustomTextStyles.bold(fontSize: 20)),
-                                        Text('Distance (km)',
-                                            style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5,),
-                                SizedBox(height: isShort ? 80 : 80,
-                                  child: isShort ? Column(children: [
-                                    Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      bottom: !isShort ? 150 : 220,
+                      child: expandTimeWidget(elapsed: elapsed, distance: totalDistance)
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      isShort = !isShort;
+                      setState(() {
+
+                      });
+                    },
+                    child: Container(
+                      height: !isShort ? 150 : 220,
+                      // color: AppColor.textBackgroundGrey,
+                      color: Colors.white,
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(colors: [AppColor.bgRed.withOpacity(.5), Colors.white], begin: Alignment.topCenter, end: Alignment.bottomCenter)
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(categoryName.toString(), style: CustomTextStyles.medium(fontSize: 18),),
+                            Visibility(
+                              visible: isShort,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
-                                          !start ? startWidget() : !pause ? pauseWidget() : resume()
+                                          Text("${elapsed.inMinutes.remainder(60)}m ",
+                                              style: CustomTextStyles.regular(fontSize: 20)),
+                                          Text("${elapsed.inSeconds.remainder(60)}s",
+                                              style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.black)),
                                         ],
                                       ),
+                                      Text('Time', style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
                                     ],
-                                  )
-                                      : Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    height: 50,
-                                    child: Center(
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                height: 50,
-                                                padding: EdgeInsets.all(15),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    color: AppColor.bgRed
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.resume, height: 24),
-                                                    SizedBox(width: 5,),
-                                                    Text('Resume', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 5,),
-                                            Expanded(
-                                              child: Container(
-                                                height: 50,
-                                                padding: EdgeInsets.all(15),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    color: Colors.black
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.finish, height: 24,),
-                                                    SizedBox(width: 5,),
-                                                    Text('Finish', style: CustomTextStyles.semiBold(fontSize: 20, textColor: Colors.white),)
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-      
-                                          ],
-                                        )),
                                   ),
-                                ),
-      
-                              ],
+                                  Column(
+                                    children: [
+                                      Text(formatPace(avgPace),
+                                          style: CustomTextStyles.bold(fontSize: 20)),
+                                      Text('Split avg. pace (/km)',
+                                          style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text((totalDistance / 1000).toStringAsFixed(2),
+                                          style: CustomTextStyles.bold(fontSize: 20)),
+                                      Text('Distance (km)',
+                                          style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                            SizedBox(height: 5,),
+
+                            bottomButton()
+
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-            ) : GestureDetector(
-            onTap: () {
-              isShort = !isShort;
-              setState(() {
-      
-              });
-            },
-            child: expandTimeWidget()
-        ),
-      
+                ),
+              ],
+            )
+
       ),
     );
   }
+
+  Widget bottomButton(){
+    return SizedBox(height: isShort ? 70 : 70,
+        child: Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              !start ? startWidget() : !pause ? pauseWidget() : resume()
+            ],
+          ),
+        ],
+        )
+      );
+  }
+
  // selected runType ka naam/id store karne ke liye
   void _showRunTypeBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -536,65 +468,71 @@ class _TrackingScreenState extends State<TrackingScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 40,),
-                  const Text(
-                    "Choose A Sport",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: Constant.getCategory!.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final item = Constant.getCategory!.data![index];
-                      final isSelected = runType == item.categoryId; // check if selected
-                      return ListTile(
-                        leading: Image.network(
-                          item.categoryIcon ?? "",
-                          height: 28,
-                          width: 28,
-                          color: isSelected ? Colors.red : null, // icon color
-                          errorBuilder: (_, __, ___) => const Icon(Icons.error),
-                        ),
-                        title: Text(
-                          item.categoryName ?? "",
-                          style: TextStyle(
-                            color: isSelected ? Colors.red : Colors.black, // text color
-                          ),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: Colors.red)
-                            : null,
-                        onTap: () {
-                          setState(() {
-                            runType = item.categoryId; // Save selected
-                          });
-                          Navigator.pop(context, item.categoryId);
-                        },
-                      );
-                    },
-                  ),
-                ],
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40),
+              const Text(
+                "Choose A Sport",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            );
-          },
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: Constant.getCategory?.data?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final item = Constant.getCategory!.data![index];
+                  final isSelected = runType == item.categoryId;
+                  return ListTile(
+                    leading: Image.network(
+                      item.categoryIcon ?? "",
+                      height: 28,
+                      width: 28,
+                      color: isSelected ? Colors.red : null,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.error),
+                    ),
+                    title: Text(
+                      item.categoryName ?? "",
+                      style: TextStyle(
+                        color: isSelected ? Colors.red : Colors.black,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? const Icon(Icons.check, color: Colors.red)
+                        : null,
+                    onTap: () {
+                      // ✅ main fix: parent setState call
+                      setState(() {
+                        runType = item.categoryId;
+                        categoryName = item.categoryName;
+                        categoryIcon = item.categoryIcon;
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
-    ).then((selectedValue) {
-      if (selectedValue != null) {
-        runType = selectedValue;
-      }
-    });
+    );
   }
 
+  String formatElapsed(Duration elapsed) {
+    int hours = elapsed.inHours;
+    int minutes = elapsed.inMinutes.remainder(60);
+    int seconds = elapsed.inSeconds.remainder(60);
+
+    if (hours > 0) {
+      return "${hours}h ${minutes}m ${seconds}s";
+    } else {
+      return "${minutes}m ${seconds}s";
+    }
+  }
 
 
   Widget startWidget(){
@@ -605,7 +543,20 @@ class _TrackingScreenState extends State<TrackingScreen> {
           SizedBox(),
           GestureDetector(
               onTap: () => _showRunTypeBottomSheet(context),
-              child: Image.asset(AppImageOthers.runType, height: 50,)),
+              child: Container(
+                height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                        color: AppColor.bgRed,
+                    )
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.network(categoryIcon!, height: 25, color: AppColor.bgRed,),
+                  ))), //AppImageOthers.runType
           GestureDetector(
             onTap: () async {
               // showCongratulationDialog(context);
@@ -624,9 +575,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
               });
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SaveActivity()));
             },
-            child: SizedBox(height: 65,width: 65,
+            child: SizedBox(height: 60,width: 60,
               child: Center(
-                  child: SvgPicture.asset(AppImageSvg.play,height: 65,width: 65,)
+                  child: SvgPicture.asset(AppImageSvg.play,height: 60,width: 60,)
               ),
             ),
           ),
@@ -735,7 +686,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 child: Container(
                     height: 50,
                     // width: MediaQuery.of(context).size.width - 40,
-                    padding: EdgeInsets.all(15),
+                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: AppColor.bgRed
@@ -786,8 +737,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       ),
     );
   }
-
-
 
   Future<void> onFinishTracking() async {
     if (pathPoints.isEmpty || pointTimestamps.isEmpty) {
@@ -842,7 +791,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 "maxElevation": maxElevation,
                 "steps": steps,
                 "path": pathPoints
-                    .map((p) => {"lat": p.latitude, "lng": p.longitude})
+                    .map((p) => {"latitude": p.latitude.toString(), "longitude": p.longitude.toString()})
                     .toList(),
                 "photo": base64Image,
                 "city": city,
@@ -856,10 +805,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       }
     }
   }
-
-
-
-
 
   void startTimer() {
     _timer?.cancel();
@@ -878,51 +823,254 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
 
-  static Widget expandTimeWidget(){
+  // Widget expandTimeWidget({
+  //   required Duration elapsed,
+  //   required double distance,          // meters
+  //   required double avgPace,           // seconds per km
+  //   required double elevationGain,required List<double> graphData,}){
+  //   return Container(
+  //     width: double.infinity,
+  //     color: Colors.white,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         Text('Time', style: CustomTextStyles.semiBold()),
+  //         Text(
+  //             formatElapsed(elapsed), style: CustomTextStyles.bold(fontSize: 80),),
+  //         Divider(),
+  //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
+  //         Text(formatPace(avgPace), style: CustomTextStyles.bold(fontSize: 100),),
+  //         Text('/KM', style: CustomTextStyles.semiBold()),
+  //         Divider(),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 Container(
+  //                   height: 80,
+  //                   width: 50,
+  //                   color: Colors.blue,
+  //                 ),
+  //                 Text('0:00', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //
+  //             SizedBox(
+  //               height: 200,
+  //               child: VerticalDivider(
+  //                 thickness: 1,
+  //                 color: Colors.grey,
+  //                 // width: 20,
+  //               ),
+  //             ),
+  //             Column(
+  //               children: [
+  //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
+  //                 Text("${(distance / 1000).toStringAsFixed(2)}", style: CustomTextStyles.bold(fontSize: 70),),
+  //                 Text('KILOMETERS', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget expandTimeWidget({
+  //   required Duration elapsed,
+  //   required double distance,          // meters
+  //   required double avgPace,           // seconds per km
+  //   required double elevationGain,
+  //   required List<double> graphData,   // pace over time
+  // }) {
+  //   // Ensure graph data is safe (no NaN or Infinity values)
+  //   final safeGraphData = graphData.isNotEmpty
+  //       ? graphData.map((e) => e.isFinite ? e : 0.0).toList()
+  //       : [0.0]; // fallback if empty
+  //
+  //   return Container(
+  //     width: double.infinity,
+  //     color: Colors.white,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         Text('Time', style: CustomTextStyles.semiBold()),
+  //         Text(
+  //           formatElapsed(elapsed),
+  //           style: CustomTextStyles.bold(fontSize: 80),
+  //         ),
+  //         Divider(),
+  //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
+  //         Text(
+  //           formatPace(avgPace),
+  //           style: CustomTextStyles.bold(fontSize: 100),
+  //         ),
+  //         Text('/KM', style: CustomTextStyles.semiBold()),
+  //         Divider(),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 // Dynamic Pace Graph
+  //                 Padding(
+  //                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //                   child: SizedBox(
+  //                     height: 150,
+  //                     width: 200,
+  //                     // child: LineChart(
+  //                     //   LineChartData(
+  //                     //     gridData: FlGridData(show: true),
+  //                     //     borderData: FlBorderData(show: true),
+  //                     //     titlesData: FlTitlesData(
+  //                     //       leftTitles: AxisTitles(
+  //                     //         sideTitles: SideTitles(showTitles: true),
+  //                     //       ),
+  //                     //       bottomTitles: AxisTitles(
+  //                     //         sideTitles: SideTitles(showTitles: false),
+  //                     //       ),
+  //                     //     ),
+  //                     //     lineBarsData: [
+  //                     //       LineChartBarData(
+  //                     //         spots: List.generate(
+  //                     //           safeGraphData.length,
+  //                     //               (index) => FlSpot(index.toDouble(), safeGraphData[index]),
+  //                     //         ),
+  //                     //         isCurved: true,
+  //                     //         barWidth: 2,
+  //                     //         color: Colors.red,
+  //                     //         dotData: FlDotData(show: false),
+  //                     //       ),
+  //                     //     ],
+  //                     //   ),
+  //                     // ),
+  //                   ),
+  //                 ),
+  //
+  //                 // Small reference box
+  //                 Container(
+  //                   height: 80,
+  //                   width: 50,
+  //                   color: Colors.blue,
+  //                 ),
+  //                 Text('0:00', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //
+  //             // Divider
+  //             SizedBox(
+  //               height: 200,
+  //               child: VerticalDivider(
+  //                 thickness: 1,
+  //                 color: Colors.grey,
+  //               ),
+  //             ),
+  //
+  //             // Distance display
+  //             Column(
+  //               children: [
+  //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
+  //                 Text(
+  //                   "${(distance / 1000).toStringAsFixed(2)}",
+  //                   style: CustomTextStyles.bold(fontSize: 70),
+  //                 ),
+  //                 Text('KILOMETERS', style: CustomTextStyles.semiBold()),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+
+  Widget expandTimeWidget({required Duration elapsed, required double distance,}) {
     return Container(
       width: double.infinity,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Time', style: CustomTextStyles.semiBold()),
-          Text('00:00:00', style: CustomTextStyles.bold(fontSize: 80),),
-          Divider(),
-          Text('AVG PACE', style: CustomTextStyles.semiBold()),
-          Text('0:00', style: CustomTextStyles.bold(fontSize: 150),),
-          Text('/KM', style: CustomTextStyles.semiBold()),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 80,
-                    width: 50,
-                    color: Colors.blue,
-                  ),
-                  Text('0:00', style: CustomTextStyles.semiBold()),
-                ],
-              ),
-
-              SizedBox(
-                height: 200,
-                child: VerticalDivider(
-                  thickness: 1,
-                  color: Colors.grey,
-                  // width: 20,
+          /// TIME
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Time', style: CustomTextStyles.semiBold()),
+                Text(
+                  formatElapsed(elapsed),
+                  style: CustomTextStyles.bold(fontSize: 40),
                 ),
-              ),
-              Column(
+              ],
+            ),
+          ),
+
+          Divider(),
+
+          /// AVG PACE
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('AVG PACE', style: CustomTextStyles.semiBold()),
+                Text(
+                  formatPace(avgPace),
+                  style: CustomTextStyles.bold(fontSize: 70),
+                ),
+                Text('/KM', style: CustomTextStyles.semiBold()),
+              ],
+            ),
+          ),
+          Divider(),
+
+          /// DISTANCE + ELEVATION
+          Expanded(
+            child: IntrinsicHeight( // 👈 Added this wrapper
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text('DISTANCE', style: CustomTextStyles.semiBold()),
-                  Text('0:00', style: CustomTextStyles.bold(fontSize: 70),),
-                  Text('KILOMETERS', style: CustomTextStyles.semiBold()),
+                  /// ELEVATION
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.terrain, color: Colors.blue, size: 40),
+                      SizedBox(height: 8),
+                      Text(
+                        "${elevationGain.toStringAsFixed(0)} m",
+                        style: CustomTextStyles.semiBold(),
+                      ),
+                      Text("Elevation", style: CustomTextStyles.regular(fontSize: 12)),
+                    ],
+                  ),
+
+                  /// 👇 Vertical Divider (Now dynamic)
+                  VerticalDivider(
+                    thickness: 1,
+                    color: Colors.grey,
+                    width: 20,
+                  ),
+
+                  /// DISTANCE
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('DISTANCE', style: CustomTextStyles.semiBold()),
+                      Text(
+                        "${(distance / 1000).toStringAsFixed(2)}",
+                        style: CustomTextStyles.bold(fontSize: 50),
+                      ),
+                      Text('Kilometers', style: CustomTextStyles.semiBold()),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ],
       ),

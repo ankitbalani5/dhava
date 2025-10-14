@@ -18,6 +18,8 @@ class _EnduranceState extends State<Endurance> {
   int selectedIndex = 1;
 
   String categoryId = '';
+  String categoryName = '';
+  String categoryIcon = '';
   final List<String> icons = [
     AppImageSvg.walk,
     AppImageSvg.run,
@@ -40,6 +42,7 @@ class _EnduranceState extends State<Endurance> {
   @override
   void initState() {
 
+    print('current State from endurance:::${bottomNavKey.currentState?.currentTap}');
     final defaultCategory = Constant.getCategory?.data?.firstWhere(
           (e) => e.categoryName?.toLowerCase() == "walk",
       // orElse: () => Constant.getCategory?.data.first,
@@ -48,6 +51,8 @@ class _EnduranceState extends State<Endurance> {
     bgImg = Constant.getCategory!.data!.map((e) => e.backgroundImage).toList();
 
     categoryId = defaultCategory!.categoryId!;
+    categoryName = defaultCategory!.categoryName!;
+    categoryIcon = defaultCategory!.categoryIcon!;
     super.initState();
   }
 
@@ -55,7 +60,8 @@ class _EnduranceState extends State<Endurance> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return true; // Allow BottomNavScreen to handle it
+        bottomNavKey.currentState?.changeTab(0);
+        return false; // prevent BottomNavBar onWillPop from firing immediately
       },
       child: Scaffold(
         appBar: AppBar(
@@ -130,6 +136,8 @@ class _EnduranceState extends State<Endurance> {
                             setState(() {
                               selectedIndex = index;
                               categoryId = Constant.getCategory!.data![index].categoryId.toString();
+                              categoryName = Constant.getCategory!.data![index].categoryName.toString();
+                              categoryIcon = Constant.getCategory!.data![index].categoryIcon.toString();
                             });
                           },
                           child: Container(
@@ -185,17 +193,14 @@ class _EnduranceState extends State<Endurance> {
                       textColor: Colors.white,
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
+                      Navigator.of(bottomNavKey.currentContext!).push(
                         MaterialPageRoute(
-                          builder: (_) => TrackingScreen(categoryId),
+                          builder: (_) => TrackingScreen(categoryId, categoryName, categoryIcon),
                         ),
                       );
-
                     },
 
                     child: Container(

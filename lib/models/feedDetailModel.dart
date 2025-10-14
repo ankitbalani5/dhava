@@ -3,7 +3,7 @@ class FeedDetailModel {
   int? statusCode;
   String? message;
   Null? errorMessage;
-  Data? data;
+  FeedDetailData? data;
 
   FeedDetailModel(
       {this.status,
@@ -17,7 +17,7 @@ class FeedDetailModel {
     statusCode = json['status_code'];
     message = json['message'];
     errorMessage = json['error_message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new FeedDetailData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -33,7 +33,7 @@ class FeedDetailModel {
   }
 }
 
-class Data {
+class FeedDetailData {
   String? firstName;
   String? userId;
   String? lastName;
@@ -54,13 +54,13 @@ class Data {
   int? steps;
   double? fastestSplit;
   List<Path>? path;
-  Null? runType;
-  Null? typeOfRun;
-  Null? feeling;
-  Null? privateNote;
-  Null? gear;
-  Null? visibility;
-  Null? hiddenDetails;
+  String? runType;
+  String? typeOfRun;
+  String? feeling;
+  String? privateNote;
+  String? gear;
+  String? visibility;
+  String? hiddenDetails;
   bool? muteActivity;
   String? type;
   double? avgElapsedPace;
@@ -71,7 +71,7 @@ class Data {
   String? createdDate;
   List<LikedUsers>? likedUsers;
 
-  Data(
+  FeedDetailData(
       {this.firstName,
         this.userId,
         this.lastName,
@@ -109,7 +109,7 @@ class Data {
         this.createdDate,
         this.likedUsers});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  FeedDetailData.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
     userId = json['user_id'];
     lastName = json['last_name'];
@@ -135,13 +135,13 @@ class Data {
         path!.add(new Path.fromJson(v));
       });
     }
-    runType = json['run_type'];
-    typeOfRun = json['type_of_run'];
-    feeling = json['feeling'];
-    privateNote = json['private_note'];
-    gear = json['gear'];
-    visibility = json['visibility'];
-    hiddenDetails = json['hidden_details'];
+    runType = json['run_type'].toString();
+    typeOfRun = json['type_of_run'].toString();
+    feeling = json['feeling'].toString();
+    privateNote = json['private_note'].toString();
+    gear = json['gear'].toString();
+    visibility = json['visibility'].toString();
+    hiddenDetails = json['hidden_details'].toString();
     muteActivity = json['mute_activity'];
     type = json['type'];
     avgElapsedPace = json['avg_elapsed_pace'];

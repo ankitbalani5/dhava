@@ -46,6 +46,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     super.initState();
     _currentIndex = widget.i;
     _initializePreferences();
+
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
   }
@@ -150,23 +151,20 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
           return false;
         }
 
-        // double back to exit
+
         DateTime now = DateTime.now();
         if (currentBackPressTime == null ||
             now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
           currentBackPressTime = now;
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Press back again to exit")),
           );
           return false;
         }
 
-        return true; // exit app
+        return true;
       },
-
-
-
-
       child: Scaffold(
         body: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {

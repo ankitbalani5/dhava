@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "365106345715",
+    "project_id": "dhava-91034",
+    "storage_bucket": "dhava-91034.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365106345715:android:03348219a97e6e9b3b2986",
+        "android_client_info": {
+          "package_name": "com.app.coherent_endurance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHDWMLWsP3gy_OP5ItoF1Kl7svo4yE25A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

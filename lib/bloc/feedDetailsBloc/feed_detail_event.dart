@@ -8,3 +8,9 @@ class FetchFeedDetailEvent extends FeedDetailEvent{
   final String activityId;
   FetchFeedDetailEvent(this.context, this.activityId);
 }
+
+class ActivityLikeEvent extends FeedDetailEvent{
+  final BuildContext context;
+  final String activityId;
+  ActivityLikeEvent({required this.context , required this.activityId});
+}

@@ -49,6 +49,8 @@ class _SaveActivityState extends State<SaveActivity> {
   String selectedVisibility = "Everyone";
   String selectedHiddenDetails = "None";
   bool isUploading = false;
+  String? selectedCategoryImage;
+  String? categoryName;
 
 
   String convertedImage = '';
@@ -142,6 +144,8 @@ class _SaveActivityState extends State<SaveActivity> {
     );
 
     selectedRunType = matchedCategory.categoryName ?? "";
+    categoryName = matchedCategory.categoryName ?? "";
+    selectedCategoryImage = matchedCategory.categoryIcon ?? '';
     categoryId = matchedCategory.categoryId ?? '';
     super.initState();
   }
@@ -271,6 +275,8 @@ class _SaveActivityState extends State<SaveActivity> {
                           ?.firstWhere((element) => element.categoryName == selectedRunType);
 
                       categoryId = selectedCategory?.categoryId ?? "";
+                      categoryName = selectedCategory?.categoryName ?? "";
+                      selectedCategoryImage = selectedCategory?.categoryIcon ?? '';
                     });
                   },
                   items: (String? filter, _) => Constant.getCategory?.data
@@ -297,7 +303,8 @@ class _SaveActivityState extends State<SaveActivity> {
                       fillColor: AppColor.bgTile,
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: Icon(Icons.directions_run, color: Colors.black),
+                        child: Image.network(selectedCategoryImage!, height: 25, width: 25,)
+                        /*Icon(Icons.directions_run, color: Colors.black),*/
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       border: OutlineInputBorder(
@@ -614,7 +621,6 @@ class _SaveActivityState extends State<SaveActivity> {
                     GestureDetector(
                       onTap: () {
                         isPublish = !isPublish;
-                        print("ispublish :  ${isPublish}");
                         setState(() {
 
                         });
@@ -638,7 +644,7 @@ class _SaveActivityState extends State<SaveActivity> {
                 GestureDetector(
                   onTap: (){
                     Navigator.pop(context);
-                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>  TrackingScreen(categoryId)));
+                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>  TrackingScreen(categoryId, categoryName!, selectedCategoryImage!)));
                   },
                   child: Container(
                     height: 50,
@@ -883,6 +889,4 @@ class _ResultScreenState extends State<ResultScreen> {
     );
 
   }
-
-
 }

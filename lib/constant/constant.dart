@@ -14,6 +14,7 @@ import '../widgets/customButton.dart';
 import '../widgets/loadingAnimation.dart';
 import 'errorDialog.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class PrefKey {
   static String isLogin = 'isLogin';
@@ -23,6 +24,7 @@ class PrefKey {
   static String rememberMe = 'remember_me';
   static var accessToken = 'accessToken';
   static var refreshToken = 'refreshToken';
+  static var fcmToken = 'fcmToken';
 }
 
 class Constant {
@@ -45,6 +47,22 @@ class Constant {
     return '9';
   }
 
+  static Widget loadingAnimation(){
+    return Center(
+      child: LoadingAnimationWidget.inkDrop(
+        color: AppColor.bgRed,
+        size: 20,
+      ),
+    );
+  }
+
+
+  static String formatPace(double paceInSec) {
+    if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
+    int min = (paceInSec / 60).floor();
+    int sec = (paceInSec % 60).floor();
+    return "$min:${sec.toString().padLeft(2, '0')}";
+  }
 
   static String formatDuration(int seconds) {
     final int hours = seconds ~/ 3600;
@@ -57,6 +75,33 @@ class Constant {
     if (secs > 0 || result.isEmpty) result += "${secs}s";
 
     return result.trim();
+  }
+
+
+  static Map<String, dynamic> calculateChallengeDuration(String? startDateStr, String? endDateStr) {
+    try {
+      if (startDateStr == null || endDateStr == null) {
+        return {'weeks': 0, 'daysLeft': 0};
+      }
+
+      final startDate = DateTime.parse(startDateStr);
+      final endDate = DateTime.parse(endDateStr);
+      final now = DateTime.now();
+
+      // Weeks between start and end
+      final totalDays = endDate.difference(startDate).inDays;
+      final weeks = (totalDays / 7).ceil();
+
+      // Days remaining from today
+      final remainingDays = endDate.difference(now).inDays;
+
+      return {
+        'weeks': weeks > 0 ? weeks : 0,
+        'daysLeft': remainingDays > 0 ? remainingDays : 0,
+      };
+    } catch (e) {
+      return {'weeks': 0, 'daysLeft': 0};
+    }
   }
 
   static loadingDialog(BuildContext context) {

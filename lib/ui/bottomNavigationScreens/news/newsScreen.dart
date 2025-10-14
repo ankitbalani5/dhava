@@ -7,6 +7,9 @@ import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../constant/Constant.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
 
@@ -54,11 +57,27 @@ class _NewsScreenState extends State<NewsScreen> {
                       ),
                     );
                   },
-                  child: Image.asset(
-                    AppImageOthers.defaultImage,
-                    // Replace with your back icon path
-                    width: 30,
-                    height: 30,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColor.bgRed)
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Constant.getProfile?.data?.profilePhoto != null
+                          ? CachedNetworkImage(
+                        imageUrl:
+                        Constant.getProfile?.data?.profilePhoto ?? '',
+                        // Replace with your back icon path
+                        width: 30,
+                        height: 30,
+                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                          height: 30,),
+                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                          height: 30,),
+                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
+                        height: 30,),
+                    ),
                   ),
                 ),
               ],

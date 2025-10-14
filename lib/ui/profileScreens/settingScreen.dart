@@ -10,6 +10,8 @@ import 'package:coherent_endurance/ui/settingScreens/legalScreen.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -164,6 +166,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     // Log Out Button
                     TextButton(
                       onPressed: () async {
+                        final FirebaseAuth _auth = FirebaseAuth.instance;
+                        final GoogleSignIn _googleSignIn = GoogleSignIn();
+                        await _googleSignIn.signOut();
+                        await _auth.signOut();
                         Navigator.pop(context);
                         SharedPreferences prefs = await SharedPreferences.getInstance();
                         await prefs.clear(); // or just remove saved_email/saved_password

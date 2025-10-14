@@ -1,13 +1,19 @@
+import 'package:coherent_endurance/bloc/loginBloc/login_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
+import 'package:coherent_endurance/repository/socialAuth.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/ui/authScreens/sendCode.dart';
+import 'package:coherent_endurance/ui/bottomNavBar.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   var _formKey = GlobalKey<FormState>();
 
+  final SocialAuth _authService = SocialAuth();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,21 +58,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // Google Register Button
 
-                Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(6)
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                BlocConsumer<LoginBloc, LoginState>(
+                  listener: (context, state) async {
+                    if(state is GoogleLoading){
+                      Constant.loadingDialog(context);
+                    }
+                    if(state is GoogleSuccess){
+                      Constant.closeLoadingDialog(context);
+                      SharedPreferences pref = await SharedPreferences.getInstance();
+                      pref.setBool(PrefKey.isLogin, true);
+                      print('isLogin::::::::::${pref.getBool(PrefKey.isLogin)}');
+                      // pref.setString(PrefKey.accessToken, state.loginModel.data!.accessToken.toString());
+                      // pref.setString(PrefKey.refreshToken, state.loginModel.data!.refreshToken.toString());
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => BottomNavBar(key: bottomNavKey,)),);
+                    }
+                    if(state is GoogleError){
+                      Constant.closeLoadingDialog(context);
+                    }
+                  },
+                  builder: (context, state) {
+                    return GestureDetector(
+                      onTap: () async {
+                        context.read<LoginBloc>().add(GoogleLoginEvent('', 'android',context));
+                        // User? user = await _authService.signInWithGoogle(context);
+                        // if (user != null) {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(builder: (_) => BottomNavBar(key: bottomNavKey,)),
+                        //   );
+                        // }
+                      },
+                      child: Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(6)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
 
-                      Image.asset(AppImageOthers.google, height: 24),
-                      SizedBox(width: 10,),
-                      Text("Continue With Google", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
+                            Image.asset(AppImageOthers.google, height: 24),
+                            SizedBox(width: 10,),
+                            Text("Continue With Google", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 15),
