@@ -339,51 +339,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('This week', style: CustomTextStyles.semiBold(fontSize: 16),),
-                                      PopupMenuButton<String>(
-                                        initialValue: selectedValue,
-                                        onSelected: (value) {
-                                          setState(() {
-                                            selectedValue = value;
-                                          });
-                                          final selectCategory = Constant.getCategory!.data!.firstWhere(
-                                                (e) => e.categoryName == selectedValue,);
-                                          categoryId = selectCategory.categoryId.toString();
-                                          context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId.toString() ));
-                                        },
-                                        color: Colors.white,
-                                        itemBuilder: (BuildContext context) {
-                                          return Constant.getCategory!.data!.map((category) {
-                                            final isSelected = selectedValue == category.categoryName;
-                                            return PopupMenuItem<String>(
-                                              value: category.categoryName,
-                                              child: SizedBox(
-                                                width: 100,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Image.network(category.categoryIcon.toString(),
-                                                          height: 18,
-                                                          color: isSelected ? Colors.red : Colors.black,),
-                                                        const SizedBox(width: 8),
-                                                        Text(
-                                                          category.categoryName.toString(),
-                                                          style: TextStyle(
-                                                            color: isSelected ? Colors.red : Colors.black,
-                                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                      SizedBox(
+                                        width: 20,
+                                        child: PopupMenuButton<String>(
+                                          initialValue: selectedValue,
+                                          onSelected: (value) {
+                                            setState(() {
+                                              selectedValue = value;
+                                            });
+                                            final selectCategory = Constant.getCategory!.data!.firstWhere(
+                                                  (e) => e.categoryName == selectedValue,);
+                                            categoryId = selectCategory.categoryId.toString();
+                                            context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId.toString() ));
+                                          },
+                                          color: Colors.white,
+                                          itemBuilder: (BuildContext context) {
+                                            return Constant.getCategory!.data!.map((category) {
+                                              final isSelected = selectedValue == category.categoryName;
+                                              return PopupMenuItem<String>(
+                                                value: category.categoryName,
+                                                child: SizedBox(
+                                                  width: 100,
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Image.network(category.categoryIcon.toString(),
+                                                            height: 18,
+                                                            color: isSelected ? Colors.red : Colors.black,),
+                                                          const SizedBox(width: 8),
+                                                          Text(
+                                                            category.categoryName.toString(),
+                                                            style: TextStyle(
+                                                              color: isSelected ? Colors.red : Colors.black,
+                                                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    if (isSelected)
-                                                      Icon(Icons.check, color: isSelected ? Colors.red : Colors.black),
-                                                  ],
+                                                        ],
+                                                      ),
+                                                      if (isSelected)
+                                                        Icon(Icons.check, color: isSelected ? Colors.red : Colors.black),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          }).toList();
-                                        },
+                                              );
+                                            }).toList();
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),

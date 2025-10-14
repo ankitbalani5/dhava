@@ -71,7 +71,7 @@ class _TrophyCaseState extends State<TrophyCase> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Milestone', style: CustomTextStyles.bold(fontSize: 16),),
+                        // Text('Milestone', style: CustomTextStyles.bold(fontSize: 16),),
                         // GestureDetector(
                         //     onTap: () {
                         //       Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));

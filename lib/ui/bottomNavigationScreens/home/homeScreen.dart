@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../profileScreens/otherProfileScreen.dart';
 import 'feedDetails.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
@@ -66,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onRefresh() {
     page = 1;
+    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
     context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
     // context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
@@ -178,594 +180,616 @@ class _HomeScreenState extends State<HomeScreen> {
         enablePullUp: true,
         onRefresh: _onRefresh,
         onLoading: _onLoading,
-        child: BlocConsumer<ActivityBloc, ActivityState>(
-          listener: (context, state) {
-            if(state is FeedLoading){
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
 
-            }
-            if(state is FeedSuccess){
-              _refreshController.refreshCompleted();
-            }
-          },
-          builder: (context, state) {
-            if(state is FeedLoading){
-              return Center(
-                child: LoadingAnimationWidget.inkDrop(
-                  color: AppColor.bgRed,
-                  size: 20,
-                ),
-              );
-            }
-            if(state is FeedSuccess){
-              var feedData = state.feedModel.data!.data;
+              BlocConsumer<ProfileBloc, ProfileState > (
 
+                listener: (context, state) {
+                  if (state is ProfileLoading) {
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                  }
+                  if (state is ProfileSuccess) {
 
-                      BlocConsumer<ProfileBloc, ProfileState > (
-
-                  listener: (context, state) {
-                    if (state is ProfileLoading) {
-
-                    }
-                    if (state is ProfileSuccess) {
-
-                    }
-                  },
-                  builder:(context, state) {
-                    if (state is ProfileLoading) {
-                      return Center(
-                        child: LoadingAnimationWidget.inkDrop(
-                          color: AppColor.bgRed,
-                          size: 20,
-                        ),
-                      );
-                    }
-                    if (state is ProfileSuccess) {
-                      var totalFollowing = state.profileModel?.data?.totalFollowing ?? 0;
-                      var photo = state.profileModel?.data?.profilePhoto ?? "";
-                      int ActivityUploaded = state.profileModel?.data?.totalActivity?? 0;
-                      int completedSteps = getCompletedSteps(ActivityUploaded, totalFollowing, photo);
-                      return Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Keep that momentum going!',
-                              style: CustomTextStyles.semiBold(fontSize: 24),
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: TweenAnimationBuilder<double>(
-                                      tween: Tween<double>(
-                                        begin: 0,
-                                        end: completedSteps / maxProgress,
-                                      ),
-                                      duration: Duration(milliseconds: 500),
-                                      builder: (context, value, _) {
-                                        return LinearProgressIndicator(
-                                          value: value,
-                                          minHeight: 5,
-                                          backgroundColor: Colors.grey[300],
-                                          valueColor: AlwaysStoppedAnimation<Color>(AppColor.bgRed),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text("$completedSteps/$maxProgress"),
-                              ],
-                            ),
-
-                            SizedBox(height: 10),
-
-                            // STEP 1
-                            GestureDetector(
-                              onTap: () {
-                                bottomNavKey.currentState?.changeTab(2);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color:ActivityUploaded == 0? AppColor.bgTile :AppColor.bgTile.withAlpha(80),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: ListTile(
-                                  leading: SvgPicture.asset(AppImageSvg.run, color: Colors.black, height: 42, width: 42),
-                                  title: Text('Upload your first activity', style: CustomTextStyles.semiBold(fontSize: 14)),
-                                  subtitle: Text('You can record it right in the app.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                  trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 10),
-
-                            // STEP 2
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: totalFollowing == 0 ?  AppColor.bgTile : AppColor.bgTile.withAlpha(80),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: ListTile(
-                                  leading: SvgPicture.asset(AppImageSvg.groupImage, color: Colors.black, height: 42, width: 42),
-                                  title: Text('Follow three people', style: CustomTextStyles.semiBold(fontSize: 14)),
-                                  subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                  trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 10),
-
-                            // STEP 3
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: photo.isEmpty ? AppColor.bgTile :AppColor.bgTile.withAlpha(80) ,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: ListTile(
-                                  leading: SvgPicture.asset(AppImageSvg.person, color: Colors.black, height: 42, width: 42),
-                                  title: Text('Add your profile photo', style: CustomTextStyles.semiBold(fontSize: 14)),
-                                  subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                  trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return SizedBox.shrink();
-                  },
-                  ),
-
-
-                  // Suggested Challenges Section
-                  BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
-                    // bloc: GetAllChallengesBloc(),
-                    listener: (context, state) {},
-                    builder: (context, state) {
-                      if (state is GetAllChallengesLoading) {
-                        return Center(
-                          child: LoadingAnimationWidget.inkDrop(
-                            color: AppColor.bgRed,
-                            size: 20,
+                  }
+                },
+                builder:(context, state) {
+                  if (state is ProfileLoading) {
+                    return Center(
+                      child: LoadingAnimationWidget.inkDrop(
+                        color: AppColor.bgRed,
+                        size: 20,
+                      ),
+                    );
+                  }
+                  if (state is ProfileSuccess) {
+                    var totalFollowing = state.profileModel?.data?.totalFollowing ?? 0;
+                    var photo = state.profileModel?.data?.profilePhoto ?? "";
+                    int ActivityUploaded = state.profileModel?.data?.totalActivity?? 0;
+                    int completedSteps = getCompletedSteps(ActivityUploaded, totalFollowing, photo);
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Keep that momentum going!',
+                            style: CustomTextStyles.semiBold(fontSize: 24),
                           ),
-                        );
-                      }
-
-                      if (state is GetAllChallengesError) {
-                        return Text(state.error.toString());
-                      }
-                      if (state is GetAllChallengesLoaded) {
-                        var suggestedData = state.responseData.data;
-
-                        if (suggestedData == null || suggestedData.isEmpty) {
-                          return SizedBox.shrink();
-                        }
-
-                        return Container(
-                          color: AppColor.bgTile,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          SizedBox(height: 10),
+                          Row(
                             children: [
-                              SizedBox(height: 20),
-                              SizedBox(
-                                height: 210,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: suggestedData.length,
-                                  itemBuilder: (context, index) {
-                                    var challenge = suggestedData[index];
-                                    var date = formatDateRange(challenge.startDate, challenge.endDate);
-                                    Widget categoryIconWidget(String? icon) {
-                                      // Null ya empty check
-                                      if (icon == null || icon.isEmpty) {
-                                        return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
-                                      }
-
-                                      // Relative path ko absolute URL me convert karo
-                                      final url = icon.startsWith("http")
-                                          ? icon
-                                          : "${Api.BaseUrl}$icon";
-
-                                      // Web safe check
-                                      Uri? uri;
-                                      try {
-                                        uri = Uri.parse(url);
-                                        if (!uri.hasScheme || !uri.hasAuthority) {
-                                          throw FormatException("Invalid URI");
-                                        }
-                                      } catch (_) {
-                                        return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
-                                      }
-
-                                      return CachedNetworkImage(
-                                        imageUrl: url,
-                                        height: 24,
-                                        width: 24,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => SizedBox(
-                                          height: 24,
-                                          width: 24,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            SvgPicture.asset(AppImageSvg.run, color: Colors.black),
-                                      );
-                                    }
-
-                                    return GestureDetector(
-                                      onTap: () {
-
-                                        Navigator.push(context, MaterialPageRoute(
-                                          builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
-                                      },
-                                      child: Container(
-                                        width: 160,
-                                        margin: EdgeInsets.symmetric(horizontal: 5),
-                                        padding: EdgeInsets.all(15),
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage('assets/image/others/bgChallenge.png'),
-                                            fit: BoxFit.cover,
-                                          ),
-                                          borderRadius: BorderRadius.circular(15),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              challenge.title ?? "N/A",
-                                              style: CustomTextStyles.semiBold(fontSize: 16),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            SizedBox(height: 4),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                categoryIconWidget(challenge.categoryIcon),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: Text(
-                                                        challenge.description ?? "N/A",
-                                                        style: CustomTextStyles.regular(fontSize: 12),
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 100,
-                                                      child: Text(
-                                                        date ?? "N/A",
-                                                        style: CustomTextStyles.regular(fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 15),
-                                            Spacer(),
-                                            BlocConsumer<JoinChalllengesBloc, JoinchallengesState>(
-                                              listener: (context, state) {
-                                                if (state is PostJoinchallengesSuccess && state.challengeId == challenge.challengeId) {
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: Text(state.joinChallengesModel.message.toString())),
-                                                  );
-
-                                                  setState(() {
-                                                    challenge.isJoined = true;
-                                                  });
-
-                                                }
-
-                                                if (state is PostJoinchallengesError && state.challengeId == challenge.challengeId) {
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(content: Text(state.error)),
-                                                  );
-                                                }
-                                              },
-                                              builder: (context, state) {
-                                                bool isLoading = state is PostJoinchallengesLoading && state.challengeId == challenge.challengeId;
-
-
-                                                return SizedBox(
-                                                  height: 35,
-                                                  width: double.infinity,
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor: AppColor.bgRed,
-                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                                      padding: const EdgeInsets.symmetric(vertical: 2),
-                                                    ),
-                                                    onPressed: () {
-                                                      if (isLoading) return;
-
-                                                      if (challenge.isJoined == true) {
-                                                        if (state is PostJoinchallengesSuccess &&
-                                                            state.challengeId == challenge.challengeId) {
-                                                          ScaffoldMessenger.of(context).showSnackBar(
-                                                            SnackBar(content: Text(state.joinChallengesModel.message ?? "Already Joined")),
-                                                          );
-                                                        } else {
-                                                          ScaffoldMessenger.of(context).showSnackBar(
-                                                            const SnackBar(content: Text("You have already joined this challenge")),
-                                                          );
-                                                        }
-                                                        return;
-                                                      }
-                                                      context.read<JoinChalllengesBloc>().add(
-                                                        PostJoinChallengesEvent(
-                                                          challenges_Id: challenge.challengeId.toString(),
-                                                          context: context,
-                                                        ),
-                                                      );
-
-
-                                                    },
-                                                    child: isLoading
-                                                        ? LoadingAnimationWidget.inkDrop(
-                                                      color: Colors.white,
-                                                      size: 20,
-                                                    )
-                                                        : Text(
-                                                      challenge.isJoined == true ? "Joined" : "Join Now",
-                                                      style: CustomTextStyles.bold(
-                                                        textColor: Colors.white,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-
-                                            ),
-
-                                        ],
-                                          ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Center(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      bottomNavKey.currentState?.openClubChallenges();
-                                    },
-                                    child: Text(
-                                      "Explore all Challenges",
-                                      style: CustomTextStyles.semiBold(
-                                          textColor: AppColor.bgRed,
-                                          fontSize: 16),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(
+                                      begin: 0,
+                                      end: completedSteps / maxProgress,
                                     ),
+                                    duration: Duration(milliseconds: 500),
+                                    builder: (context, value, _) {
+                                      return LinearProgressIndicator(
+                                        value: value,
+                                        minHeight: 5,
+                                        backgroundColor: Colors.grey[300],
+                                        valueColor: AlwaysStoppedAnimation<Color>(AppColor.bgRed),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
+                              SizedBox(width: 10),
+                              Text("$completedSteps/$maxProgress"),
                             ],
                           ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
-                  ),
 
-                  SizedBox(height: 10,),
+                          SizedBox(height: 10),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: ListView.builder(
-                        itemCount: feedData!.length,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          var feed = feedData[index];
-                          return GestureDetector(
+                          // STEP 1
+                          GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails(activityId: feed.activityId.toString(),)));
+                              bottomNavKey.currentState?.changeTab(2);
                             },
                             child: Container(
-                              color: Colors.white24,
-                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Column(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(color: Colors.red, width: 1),
-                                            ),
-                                            child: ClipOval(
-                                              child: CachedNetworkImage(
-                                                imageUrl: feed.profilePic.toString()
-                                                /*AppImageOthers.userImg*/,
-                                                height: 30, width: 30, fit: BoxFit.fill,
-                                                errorWidget: (context,
-                                                    url, error) =>
-                                                    Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
-                                              SizedBox(
-                                                width: MediaQuery.of(context).size.width*.75,
-                                                child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.feedRun, height: 16,),
-                                                    SizedBox(width: 5,),
-                                                    Expanded(
-                                                      child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
-                                                          // maxLines: 2,
-                                                          style: CustomTextStyles.regular(fontSize: 11,
-                                                              textColor: Colors.grey)),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        ],
+                              decoration: BoxDecoration(
+                                color:ActivityUploaded == 0? AppColor.bgTile :AppColor.bgTile.withAlpha(80),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ListTile(
+                                leading: SvgPicture.asset(AppImageSvg.run, color: Colors.black, height: 42, width: 42),
+                                title: Text('Upload your first activity', style: CustomTextStyles.semiBold(fontSize: 14)),
+                                subtitle: Text('You can record it right in the app.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 10),
+
+                          // STEP 2
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: totalFollowing == 0 ?  AppColor.bgTile : AppColor.bgTile.withAlpha(80),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ListTile(
+                                leading: SvgPicture.asset(AppImageSvg.groupImage, color: Colors.black, height: 42, width: 42),
+                                title: Text('Follow three people', style: CustomTextStyles.semiBold(fontSize: 14)),
+                                subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 10),
+
+                          // STEP 3
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: photo.isEmpty ? AppColor.bgTile :AppColor.bgTile.withAlpha(80) ,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ListTile(
+                                leading: SvgPicture.asset(AppImageSvg.person, color: Colors.black, height: 42, width: 42),
+                                title: Text('Add your profile photo', style: CustomTextStyles.semiBold(fontSize: 14)),
+                                subtitle: Text('Find friends and fan favorites to follow.', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                trailing: Icon(Icons.arrow_forward_ios, color: AppColor.bgRed),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  if(state is ProfileError){
+                    return Center(
+                      child: Text(state.error),
+                    );
+                  }
+                  return SizedBox.shrink();
+                },
+              ),
+
+
+              // Suggested Challenges Section
+              BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
+                // bloc: GetAllChallengesBloc(),
+                listener: (context, state) {},
+                builder: (context, state) {
+                  if (state is GetAllChallengesLoading) {
+                    return Center(
+                      child: LoadingAnimationWidget.inkDrop(
+                        color: AppColor.bgRed,
+                        size: 20,
+                      ),
+                    );
+                  }
+
+                  if (state is GetAllChallengesError) {
+                    return Text(state.error.toString());
+                  }
+                  if (state is GetAllChallengesLoaded) {
+                    var suggestedData = state.responseData.data;
+
+                    if (suggestedData == null || suggestedData.isEmpty) {
+                      return SizedBox.shrink();
+                    }
+
+                    return Container(
+                      color: AppColor.bgTile,
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 20),
+                          SizedBox(
+                            height: 210,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: suggestedData.length,
+                              itemBuilder: (context, index) {
+                                var challenge = suggestedData[index];
+                                var date = formatDateRange(challenge.startDate, challenge.endDate);
+                                Widget categoryIconWidget(String? icon) {
+                                  // Null ya empty check
+                                  if (icon == null || icon.isEmpty) {
+                                    return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
+                                  }
+
+                                  // Relative path ko absolute URL me convert karo
+                                  final url = icon.startsWith("http")
+                                      ? icon
+                                      : "${Api.BaseUrl}$icon";
+
+                                  // Web safe check
+                                  Uri? uri;
+                                  try {
+                                    uri = Uri.parse(url);
+                                    if (!uri.hasScheme || !uri.hasAuthority) {
+                                      throw FormatException("Invalid URI");
+                                    }
+                                  } catch (_) {
+                                    return SvgPicture.asset(AppImageSvg.run, color: Colors.black);
+                                  }
+
+                                  return CachedNetworkImage(
+                                    imageUrl: url,
+                                    height: 24,
+                                    width: 24,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        SvgPicture.asset(AppImageSvg.run, color: Colors.black),
+                                  );
+                                }
+
+                                return GestureDetector(
+                                  onTap: () {
+
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
+                                  },
+                                  child: Container(
+                                    width: 160,
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(15),
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage('assets/image/others/bgChallenge.png'),
+                                        fit: BoxFit.cover,
                                       ),
-                                      SizedBox(height: 20,),
-                                      Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
-                                      SizedBox(height: 15,),
-                                      Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
-                                              Text(
-                                                (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
-                                                    ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
-                                                    : '${feed.distance} m',
-                                                style: CustomTextStyles.regular(fontSize: 16),
-                                              )                                          ],
-                                          ),
-                                          SizedBox(width: 20,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text('${Constant.formatPace(double.parse(feed.pace.toString()))} /km', style: CustomTextStyles.regular(fontSize: 16)),
-                                            ],
-                                          ),
-                                          SizedBox(width: 20,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                                              Text(Constant.formatDuration(int.parse(feed.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
-                                            ],
-                                          ),
-
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(height: 10,),
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
-                                        fit: BoxFit.fill, height: 260,width: double.infinity,)),
-
-                                  SizedBox(height: 10,),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
                                     child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
+                                        Text(
+                                          challenge.title ?? "N/A",
+                                          style: CustomTextStyles.semiBold(fontSize: 16),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 4),
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
+                                            categoryIconWidget(challenge.categoryIcon),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                likeImageWidget(feed),
-                                                SizedBox(width: 10,),
-                                                Text('${feed.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-
-                                              ],
-                                            ),
-
-                                            Row(
-                                              children: [
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
-                                                    },
-                                                    child: SizedBox(
-                                                        height: 30,
-                                                        width: 30,
-                                                        child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
-
-                                                SizedBox(width: 10,),
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      final activityId = feed.activityId;
-                                                      final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
-
-                                                      Share.share(
-                                                        "Check out my run on Dhava 🏃‍♂️:\n$link",
-                                                        subject: "My Activity",
-                                                      );
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                                      // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
-                                                    },
-                                                    child: SizedBox(
-                                                        height: 30,
-                                                        width: 30,
-                                                        child: Icon(Icons.share, color: Colors.black,))),
+                                                SizedBox(
+                                                  width: 100,
+                                                  child: Text(
+                                                    challenge.description ?? "N/A",
+                                                    style: CustomTextStyles.regular(fontSize: 12),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 100,
+                                                  child: Text(
+                                                    date ?? "N/A",
+                                                    style: CustomTextStyles.regular(fontSize: 12),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 20,),
+                                        SizedBox(height: 15),
+                                        Spacer(),
+                                        BlocConsumer<JoinChalllengesBloc, JoinchallengesState>(
+                                          listener: (context, state) {
+                                            if (state is PostJoinchallengesSuccess && state.challengeId == challenge.challengeId) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text(state.joinChallengesModel.message.toString())),
+                                              );
+
+                                              setState(() {
+                                                challenge.isJoined = true;
+                                              });
+
+                                            }
+
+                                            if (state is PostJoinchallengesError && state.challengeId == challenge.challengeId) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text(state.error)),
+                                              );
+                                            }
+                                          },
+                                          builder: (context, state) {
+                                            bool isLoading = state is PostJoinchallengesLoading && state.challengeId == challenge.challengeId;
+
+
+                                            return SizedBox(
+                                              height: 35,
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: AppColor.bgRed,
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                                ),
+                                                onPressed: () {
+                                                  if (isLoading) return;
+
+                                                  if (challenge.isJoined == true) {
+                                                    if (state is PostJoinchallengesSuccess &&
+                                                        state.challengeId == challenge.challengeId) {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(content: Text(state.joinChallengesModel.message ?? "Already Joined")),
+                                                      );
+                                                    } else {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        const SnackBar(content: Text("You have already joined this challenge")),
+                                                      );
+                                                    }
+                                                    return;
+                                                  }
+                                                  context.read<JoinChalllengesBloc>().add(
+                                                    PostJoinChallengesEvent(
+                                                      challenges_Id: challenge.challengeId.toString(),
+                                                      context: context,
+                                                    ),
+                                                  );
+
+
+                                                },
+                                                child: isLoading
+                                                    ? LoadingAnimationWidget.inkDrop(
+                                                  color: Colors.white,
+                                                  size: 20,
+                                                )
+                                                    : Text(
+                                                  challenge.isJoined == true ? "Joined" : "Join Now",
+                                                  style: CustomTextStyles.bold(
+                                                    textColor: Colors.white,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+
+                                        ),
 
                                       ],
                                     ),
                                   ),
-                                  // SizedBox(height: 20,),
-                                  // Divider(color: Colors.black,)
-                                ],
+                                );
+                              },
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Center(
+                              child: GestureDetector(
+                                onTap: () {
+                                  bottomNavKey.currentState?.openClubChallenges();
+                                },
+                                child: Text(
+                                  "Explore all Challenges",
+                                  style: CustomTextStyles.semiBold(
+                                      textColor: AppColor.bgRed,
+                                      fontSize: 16),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                },
               ),
-            );
-            }
-            if(state is FeedError){
-              return Center(
-                child: Text(state.error),
-              );
-            }
-            return SizedBox();
-          },
+              BlocConsumer<ActivityBloc, ActivityState>(
+                listener: (context, state) {
+                  if(state is FeedLoading){
+
+                  }
+                  if(state is FeedSuccess){
+                    _refreshController.refreshCompleted();
+                  }
+                },
+                builder: (context, state) {
+                  if(state is FeedLoading){
+                    return Center(
+                      child: LoadingAnimationWidget.inkDrop(
+                        color: AppColor.bgRed,
+                        size: 20,
+                      ),
+                    );
+                  }
+                  if(state is FeedSuccess){
+                    var feedData = state.feedModel.data!.data;
+
+
+                    return Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+
+
+                            SizedBox(height: 10,),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: ListView.builder(
+                            itemCount: feedData!.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              var feed = feedData[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => FeedDetails(activityId: feed.activityId.toString(),)));
+                                },
+                                child: Container(
+                                  color: Colors.white24,
+                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      OtherProfileScreen(userId: feed.userId.toString()),
+                                                ),
+                                              );
+                                            },
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(color: Colors.red, width: 1),
+                                                  ),
+                                                  child: ClipOval(
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: feed.profilePic.toString()
+                                                      /*AppImageOthers.userImg*/,
+                                                      height: 30, width: 30, fit: BoxFit.fill,
+                                                      errorWidget: (context,
+                                                          url, error) =>
+                                                          Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
+                                                    SizedBox(
+                                                      width: MediaQuery.of(context).size.width*.75,
+                                                      child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Image.network(feed.categoryIcon.toString(), height: 15, color: AppColor.bgRed,),
+                                                          // Image.asset(AppImageOthers.feedRun, height: 16,),
+                                                          SizedBox(width: 5,),
+                                                          Expanded(
+                                                            child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
+                                                                // maxLines: 2,
+                                                                style: CustomTextStyles.regular(fontSize: 11,
+                                                                    textColor: Colors.grey)),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(height: 20,),
+                                          Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),
+                                          SizedBox(height: 15,),
+                                          Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                                  // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
+                                                  Text(
+                                                    (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
+                                                        ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
+                                                        : '${feed.distance} m',
+                                                    style: CustomTextStyles.regular(fontSize: 16),
+                                                  )                                          ],
+                                              ),
+                                              SizedBox(width: 20,),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                                  Text('${Constant.formatPace(double.parse(feed.pace.toString()))} /km', style: CustomTextStyles.regular(fontSize: 16)),
+                                                ],
+                                              ),
+                                              SizedBox(width: 20,),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Time', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                                  Text(Constant.formatDuration(int.parse(feed.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
+                                                ],
+                                              ),
+
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(height: 10,),
+                                      ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: CachedNetworkImage(imageUrl: feed.photo.toString()/*AppImageOthers.feedImg*/,
+                                            fit: BoxFit.fill, height: 260,width: double.infinity,)),
+
+                                      SizedBox(height: 10,),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(/*horizontal: 10.0, */vertical: 5),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    likeImageWidget(feed),
+                                                    SizedBox(width: 10,),
+                                                    Text('${feed.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+
+                                                  ],
+                                                ),
+
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                        onTap: () {
+                                                          context.read<ActivityBloc>().add(ActivityLikeEvent(context: context, activityId: feed.activityId.toString()));
+                                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => KudosScreen()));
+                                                        },
+                                                        child: SizedBox(
+                                                            height: 30,
+                                                            width: 30,
+                                                            child: Icon(Icons.thumb_up, color: feed.isLiked == true ? AppColor.bgRed : Colors.black,))),
+
+                                                    SizedBox(width: 10,),
+                                                    GestureDetector(
+                                                        onTap: () {
+                                                          final activityId = feed.activityId;
+                                                          final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
+
+                                                          Share.share(
+                                                            "Check out my run on Dhava 🏃‍♂️:\n$link",
+                                                            subject: "My Activity",
+                                                          );
+                                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
+                                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
+                                                        },
+                                                        child: SizedBox(
+                                                            height: 30,
+                                                            width: 30,
+                                                            child: Icon(Icons.share, color: Colors.black,))),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 20,),
+
+                                          ],
+                                        ),
+                                      ),
+                                      // SizedBox(height: 20,),
+                                      // Divider(color: Colors.black,)
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                                        );
+                  }
+                  if(state is FeedError){
+                    return Center(
+                      child: Text(state.error),
+                    );
+                  }
+                  return SizedBox();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

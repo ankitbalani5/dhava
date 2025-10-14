@@ -1,9 +1,10 @@
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_bloc.dart';
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_event.dart';
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_state.dart';
-import 'package:coherent_endurance/bloc/profileBloc/otherProfile_bloc.dart';
-import 'package:coherent_endurance/bloc/profileBloc/otherProfile_event.dart';
-import 'package:coherent_endurance/bloc/profileBloc/otherProfile_state.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_bloc.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_event.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_state.dart';
+import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_bloc.dart';
+import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_event.dart';
+import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_state.dart';
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/suggestionBloc/suggestion_event.dart';
 import 'activitiesScreen.dart';
 import 'editProfileScreen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -123,21 +125,21 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                     children: [
                                       widget.userId == 'user'
                                           ? GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (context) =>
-                                                          SearchScreen(),
-                                                ),
-                                              );
-                                            },
-                                            child: Image.asset(
-                                              'assets/image/others/profileSearch.png',
-                                              height: 28,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                  SearchScreen(),
                                             ),
-                                          )
+                                          );
+                                        },
+                                        child: Image.asset(
+                                          'assets/image/others/profileSearch.png',
+                                          height: 28,
+                                        ),
+                                      )
                                           : SizedBox(),
                                       SizedBox(width: 10),
                                       GestureDetector(
@@ -153,30 +155,30 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
                                       widget.userId == 'user'
                                           ? GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (context) =>
-                                                          SettingScreen(),
-                                                ),
-                                              );
-                                            },
-                                            child: Icon(
-                                              Icons.settings,
-                                              color: Colors.white,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                  SettingScreen(),
                                             ),
-                                          )
+                                          );
+                                        },
+                                        child: Icon(
+                                          Icons.settings,
+                                          color: Colors.white,
+                                        ),
+                                      )
                                           : IconButton(
-                                            icon: Icon(
-                                              Icons.more_vert,
-                                              color: Colors.white,
-                                            ),
-                                            onPressed:
-                                                () =>
-                                                    _showCupertinoMenu(context),
-                                          ),
+                                        icon: Icon(
+                                          Icons.more_vert,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed:
+                                            () =>
+                                            _showCupertinoMenu(context),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -234,17 +236,17 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                       fit: BoxFit.cover,
                                       placeholder:
                                           (context, url) => Padding(
-                                            padding: EdgeInsets.all(40.0),
-                                            child: CircularProgressIndicator(
-                                              color: AppColor.bgRed,
-                                              strokeWidth: 1,
-                                            ),
-                                          ),
+                                        padding: EdgeInsets.all(40.0),
+                                        child: CircularProgressIndicator(
+                                          color: AppColor.bgRed,
+                                          strokeWidth: 1,
+                                        ),
+                                      ),
                                       errorWidget:
                                           (context, url, error) => Image.asset(
-                                            AppImageOthers.profilePic,
-                                            height: 90,
-                                          ),
+                                        AppImageOthers.profilePic,
+                                        height: 90,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -259,31 +261,31 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       ),
                       widget.userId == 'user'
                           ? Positioned(
-                            right: 15,
-                            bottom: 20,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditProfileScreen(),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: AppColor.bgRed,
-                                ),
-                                child: Icon(
-                                  Icons.edit,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
+                        right: 15,
+                        bottom: 20,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfileScreen(),
                               ),
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColor.bgRed,
                             ),
-                          )
+                            child: Icon(
+                              Icons.edit,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
                           : SizedBox(),
                     ],
                   ),
@@ -301,7 +303,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                             Icon(Icons.location_on),
                             Text(
                               '${city ?? ''} ${stateName ?? ''}'
-                              ' ${country ?? ''}',
+                                  ' ${country ?? ''}',
                               style: CustomTextStyles.medium(fontSize: 17),
                             ),
                           ],
@@ -380,6 +382,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       }
 
                       if (state is FollowRequestSuccess) {
+                        context.read<SuggestionBloc>().add(GetSuggestionEvent(perPage: '10', page: '1', context: context));
                         // var message = state.followRequestModel.message.toString();
                       }
 
@@ -500,22 +503,22 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                             ),
                             child: Center(
                               child:
-                                  state is FollowRequestLoading
-                                      ? const SizedBox(
-                                        height: 12,
-                                        width: 12,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                      : Text(
-                                        buttonText,
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                              state is FollowRequestLoading
+                                  ? const SizedBox(
+                                height: 12,
+                                width: 12,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                                  : Text(
+                                buttonText,
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -550,11 +553,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                     width: 200,
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Distance',
@@ -573,7 +576,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                         ),
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Pace',
@@ -592,7 +595,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                         ),
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Elev Gain',
@@ -801,7 +804,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Trophy Case',
@@ -823,7 +826,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 SizedBox(height: 10),
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'All Trophies',
@@ -842,7 +845,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Challenges',
@@ -859,40 +862,78 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   ],
                                 ),
                                 SizedBox(height: 20),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SvgPicture.asset(
-                                    AppImageSvg.activeUser,
-                                    height: 51,
-                                  ),
-                                  title: Text(
-                                    'Timeout Streaks Challenge\nJuly 2025',
-                                  ),
-                                  subtitle: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            AppImageSvg.run,
-                                            color: Colors.grey,
-                                          ),
-                                          Text(
-                                            ' --/4 weeks',
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        '10 days left',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+
+                                // ListView.builder(
+                                //   padding: EdgeInsets.zero,
+                                //   shrinkWrap: true,
+                                //   itemCount: challenges.length,
+                                //   physics: NeverScrollableScrollPhysics(),
+                                //   itemBuilder: (context, index) {
+                                //     final duration = Constant.calculateChallengeDuration(
+                                //       challenges[index].startDate,
+                                //       challenges[index].endDate,
+                                //     );
+                                //     return ListTile(
+                                //       onTap: () {
+                                //         Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenges[index].challengeId.toString(),)));
+                                //       },
+                                //       contentPadding: EdgeInsets.zero,
+                                //       leading: (challenges[index].challengeIcon != null && challenges[index].challengeIcon != 'null' &&
+                                //           challenges[index].challengeIcon!.isNotEmpty)
+                                //           ? CachedNetworkImage(
+                                //         imageUrl: challenges[index].challengeIcon!,
+                                //         height: 50,
+                                //         width: 50,
+                                //         imageBuilder: (context, imageProvider) => ClipOval(
+                                //           child: Image(
+                                //             image: imageProvider,
+                                //             height: 50,
+                                //             width: 50,
+                                //             fit: BoxFit.cover,
+                                //           ),
+                                //         ),
+                                //         placeholder: (context, url) => ClipOval(
+                                //           child: SvgPicture.asset(
+                                //             AppImageSvg.activeUser,
+                                //             height: 50,
+                                //             width: 50,
+                                //             fit: BoxFit.cover,
+                                //           ),
+                                //         ),
+                                //         errorWidget: (context, url, error) => ClipOval(
+                                //           child: SvgPicture.asset(
+                                //             AppImageSvg.activeUser,
+                                //             height: 50,
+                                //             width: 50,
+                                //             fit: BoxFit.cover,
+                                //           ),
+                                //         ),
+                                //       )
+                                //           : ClipOval(
+                                //         child: SvgPicture.asset(
+                                //           AppImageSvg.activeUser,
+                                //           height: 50,
+                                //           width: 50,
+                                //           fit: BoxFit.cover,
+                                //         ),
+                                //       ),
+                                //
+                                //       title: Text(challenges[index].title.toString()/*'Timeout Streaks Challenge\nJuly 2025'*/),
+                                //       subtitle: Row(
+                                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //         children: [
+                                //           Row(
+                                //             children: [
+                                //               Image.network(challenges[index].categoryIcon.toString(), height: 15, color: Colors.grey,),
+                                //               Text(' --/${duration['weeks']} weeks', style: TextStyle(color: Colors.grey),)
+                                //             ],
+                                //           ),
+                                //           Text('${duration['daysLeft']} days left', style: TextStyle(color: Colors.grey))
+                                //         ],
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
                                 SizedBox(height: 10),
                                 GestureDetector(
                                   onTap: (){
@@ -911,79 +952,79 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   ),
                                 ),
                                 SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Clubs',
-                                      style: CustomTextStyles.semiBold(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Text(
-                                      '2',
-                                      style: CustomTextStyles.regular(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                GridView.builder(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        mainAxisSpacing: 8,
-                                        crossAxisSpacing: 8,
-                                        mainAxisExtent: 110,
-                                      ),
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  // ✅ Important
-                                  itemCount: 2,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: AppColor.bgTile,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Center(
-                                            child: Image.asset(
-                                              AppImageOthers.clubDP,
-                                              height: 55,
-                                            ),
-                                          ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            'Pinkcity Runners',
-                                            style: CustomTextStyles.semiBold(
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'All clubs',
-                                      style: CustomTextStyles.regular(
-                                        textColor: AppColor.bgRed,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text(
+                                //       'Clubs',
+                                //       style: CustomTextStyles.semiBold(
+                                //         fontSize: 16,
+                                //       ),
+                                //     ),
+                                //     Text(
+                                //       '2',
+                                //       style: CustomTextStyles.regular(
+                                //         fontSize: 16,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                // SizedBox(height: 20),
+                                // GridView.builder(
+                                //   gridDelegate:
+                                //       SliverGridDelegateWithFixedCrossAxisCount(
+                                //         crossAxisCount: 2,
+                                //         mainAxisSpacing: 8,
+                                //         crossAxisSpacing: 8,
+                                //         mainAxisExtent: 110,
+                                //       ),
+                                //   padding: EdgeInsets.symmetric(vertical: 10),
+                                //   shrinkWrap: true,
+                                //   physics: NeverScrollableScrollPhysics(),
+                                //   // ✅ Important
+                                //   itemCount: 2,
+                                //   itemBuilder: (context, index) {
+                                //     return Container(
+                                //       padding: EdgeInsets.all(10),
+                                //       decoration: BoxDecoration(
+                                //         color: AppColor.bgTile,
+                                //         borderRadius: BorderRadius.circular(12),
+                                //       ),
+                                //       child: Column(
+                                //         crossAxisAlignment:
+                                //             CrossAxisAlignment.center,
+                                //         children: [
+                                //           Center(
+                                //             child: Image.asset(
+                                //               AppImageOthers.clubDP,
+                                //               height: 55,
+                                //             ),
+                                //           ),
+                                //           SizedBox(height: 5),
+                                //           Text(
+                                //             'Pinkcity Runners',
+                                //             style: CustomTextStyles.semiBold(
+                                //               fontSize: 15,
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.end,
+                                //   children: [
+                                //     Text(
+                                //       'All clubs',
+                                //       style: CustomTextStyles.regular(
+                                //         textColor: AppColor.bgRed,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                // SizedBox(height: 10),
                               ],
                             ),
                           ),
@@ -992,7 +1033,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                     ),
                   ),
                 ],
-              ),
+              )
             );
           }
 

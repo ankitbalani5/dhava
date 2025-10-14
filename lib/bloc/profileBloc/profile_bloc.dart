@@ -120,7 +120,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         print('_updateProfile:::$result');
       }
       if(result.statusCode == 200){
-
+        event.context.read<ProfileBloc>().add(GetProfileEvent(event.context, ''));
         emit(UpdateProfileSuccess(result));
       }else{
         emit(UpdateProfileError(result.message.toString()));

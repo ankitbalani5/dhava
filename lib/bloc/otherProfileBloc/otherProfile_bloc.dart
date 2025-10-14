@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
-import 'package:coherent_endurance/bloc/profileBloc/otherProfile_event.dart';
-import 'package:coherent_endurance/bloc/profileBloc/otherProfile_state.dart';
+import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_event.dart';
+import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_state.dart';
 import 'package:coherent_endurance/models/otherProfileModel.dart';
 import 'package:coherent_endurance/models/postSuggestedModel.dart';
 import 'package:coherent_endurance/repository/api.dart';
@@ -14,8 +14,7 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
   }
 
 
-  Future<void> getOtherProfile(OtherProfileDataEvent event,
-      Emitter<OtherProfileState> emit) async {
+  Future<void> getOtherProfile(OtherProfileDataEvent event, Emitter<OtherProfileState> emit) async {
     emit(OtherProfileLoading());
 
     try {

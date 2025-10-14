@@ -152,6 +152,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Constant.closeLoadingDialog(context);
               Fluttertoast.showToast(msg: state.profileModel.message.toString());
               context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+              context.read<ProfileBloc>().emit(ProfileSuccess(
+                  state.profileModel, context.read<ProfileBloc>().summaryModel));
               // Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar()));
             }
             if(state is UpdateProfileError){

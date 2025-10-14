@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'clubWidgets/active/activeWidget.dart';
 import 'clubWidgets/challenges/challengesWidget.dart';
 import 'clubWidgets/club/clubsWidget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ClubScreen extends StatefulWidget {
   final String? initialTab;
@@ -94,11 +95,27 @@ class ClubScreenState extends State<ClubScreen> {
                       ),
                     );
                   },
-                  child: Image.asset(
-                    AppImageOthers.defaultImage,
-                    // Replace with your back icon path
-                    width: 30,
-                    height: 30,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColor.bgRed)
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Constant.getProfile?.data?.profilePhoto != null
+                          ? CachedNetworkImage(
+                        imageUrl:
+                        Constant.getProfile?.data?.profilePhoto ?? '',
+                        // Replace with your back icon path
+                        width: 30,
+                        height: 30,
+                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                          height: 30,),
+                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                          height: 30,),
+                      ) : Image.asset(AppImageOthers.defaultImage,width: 30,
+                        height: 30,),
+                    ),
                   ),
                 ),
               ],

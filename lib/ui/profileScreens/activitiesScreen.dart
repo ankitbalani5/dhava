@@ -6,6 +6,7 @@ import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart' show AppImageOthers, AppImageSvg;
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/home/feedDetails.dart';
+import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -215,49 +216,62 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(color: Colors.red, width: 1), // 🔴 red border
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileScreen(),
                                             ),
-                                            child: ClipOval(
-                                              child: CachedNetworkImage(
-                                                imageUrl: feed.profilePic.toString()
-                                                /*AppImageOthers.userImg*/,
-                                                height: 30, width: 30, fit: BoxFit.fill,
-                                                errorWidget: (context,
-                                                    url, error) =>
-                                                    Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
+                                          );
+                                        },
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(color: Colors.red, width: 1), // 🔴 red border
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
-                                              SizedBox(
-                                                width: MediaQuery.of(context).size.width*.75,
-                                                child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Image.asset(AppImageOthers.feedRun, height: 16,),
-                                                    SizedBox(width: 5,),
-                                                    Expanded(
-                                                      child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
-                                                          // maxLines: 2,
-                                                          style: CustomTextStyles.regular(fontSize: 11,
-                                                              textColor: Colors.grey)),
-                                                    ),
-                                                  ],
+                                              child: ClipOval(
+                                                child: CachedNetworkImage(
+                                                  imageUrl: feed.profilePic.toString()
+                                                  /*AppImageOthers.userImg*/,
+                                                  height: 30, width: 30, fit: BoxFit.fill,
+                                                  errorWidget: (context,
+                                                      url, error) =>
+                                                      Image.asset(AppImageOthers.userImg, height: 30, width: 30,),
                                                 ),
                                               ),
-                                            ],
-                                          )
-                                        ],
+                                            ),
+                                            SizedBox(width: 10,),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text('${feed.firstName.toString()} ${feed.lastName}', style: CustomTextStyles.regular(fontSize: 14),),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context).size.width*.75,
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+
+                                                      Image.network(feed.categoryIcon.toString(), height: 15, color: AppColor.bgRed,),
+                                                      // Image.asset(AppImageOthers.feedRun, height: 16,),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: Text('${feed.location}'/*'August 15, 2024 at 8:20 AM Iskandar Puteri, Malaysia'*/,
+                                                            // maxLines: 2,
+                                                            style: CustomTextStyles.regular(fontSize: 11,
+                                                                textColor: Colors.grey)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
                                       SizedBox(height: 20,),
                                       Text(feed.title.toString(), style: CustomTextStyles.semiBold(fontSize: 16),),

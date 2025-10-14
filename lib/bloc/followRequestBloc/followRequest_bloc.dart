@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_event.dart';
-import 'package:coherent_endurance/bloc/profileBloc/followRequest_state.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_event.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_state.dart';
 import 'package:coherent_endurance/models/followRequestModel.dart';
 import 'package:coherent_endurance/repository/api.dart';
 

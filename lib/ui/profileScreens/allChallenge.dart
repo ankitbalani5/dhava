@@ -10,6 +10,7 @@ import '../../models/categoryModel.dart';
 import '../../resources/image/appImages.dart';
 import '../../resources/style/textStyle.dart';
 import '../../widgets/backButton.dart';
+import '../bottomNavigationScreens/clubs/clubWidgets/active/challangesActive.dart';
 
 class AllChallenge extends StatefulWidget {
   const AllChallenge({super.key});
@@ -99,6 +100,9 @@ class _AllChallengeState extends State<AllChallenge> {
                   challenges[index].endDate,
                 );
                 return ListTile(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenges[index].challengeId.toString(),)));
+                  },
                   contentPadding: EdgeInsets.zero,
                   leading: (challenges![index].challengeIcon != null && challenges[index].challengeIcon != 'null' &&
                       challenges[index].challengeIcon!.isNotEmpty)
