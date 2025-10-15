@@ -140,7 +140,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () async {
 
                   context.read<ProfileBloc>().profileModel = null;
-               String? imagePathToSend = _selectedImage?.path ?? profilePic;
+               String? imagePathToSend = _selectedImage?.path;
 
                   context.read<UpdateProfileBloc>().add(UpdateProfileEvent(
                     context: context,

@@ -5,7 +5,7 @@ class UpdateProfileEvent {
   final BuildContext context;
   final String firstName;
   final String lastName;
-  final String profilePic;
+  final String? profilePic;
   final String city;
   final String state;
   final String country;
