@@ -159,7 +159,8 @@ class _SearchScreenState extends State<SearchScreen>
     return
       Column(
         children: [
-          TextField(
+          TextFormField(
+            textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               hintText: "Search on Coherent",
               // prefixIcon: const Icon(Icons.search),

@@ -5,7 +5,7 @@ sealed class JoinChallengesEvent {}
 
 class PostJoinChallengesEvent extends JoinChallengesEvent {
   final BuildContext context;
-  final String challenges_Id;
+  final String? challenges_Id;
 
 
   PostJoinChallengesEvent({

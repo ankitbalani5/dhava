@@ -5,12 +5,13 @@ import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../../bloc/challengeDetailBloc/challenge_detail_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
+
 class ChallangesActiveScreen extends StatefulWidget {
-  String challengeId;
+  final String challengeId;
   ChallangesActiveScreen({required this.challengeId, super.key});
 
   @override
@@ -18,7 +19,7 @@ class ChallangesActiveScreen extends StatefulWidget {
 }
 
 class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
-  bool isjoinChallenges = false;
+
   double _progress = 0.4;
   double _oldProgress = 0.0;
 
@@ -50,11 +51,12 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
           }
           if(state is ChallengeDetailSuccess){
             var challengeDetail = state.challengeDetailModel.data;
+            var isJoined = challengeDetail?.isJoined;
             return Column(
               children: [
                 Stack(
                   children: [
-                    if(isjoinChallenges == false)   Container(
+                    if(isJoined == false)   Container(
                       height: 220,
                       width: double.infinity,
                       decoration: const BoxDecoration(
@@ -166,7 +168,7 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                         ),
                       ),
                       SizedBox(height: 30),
-                      if(isjoinChallenges == false)
+                      if(isJoined == false)
                         Center(
                           child: SizedBox(
                             width: 250,
@@ -180,7 +182,8 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                               ),
                               onPressed: () {
                                 setState(() {
-                                  isjoinChallenges = true;
+                                  challengeDetail.isJoined = true;
+                                  context.read<ChallengeDetailBloc>().add(ChallengeDetailEvent(context: context, challengeId: widget.challengeId));
                                 });
                               },
                               child: Text(
@@ -191,7 +194,7 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                             ),
                           ),
                         ),
-                      if(isjoinChallenges==true)
+                      if(isJoined==true)
                         Container(
                           margin: EdgeInsets.symmetric(vertical: 5),
                           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -309,7 +312,7 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                   ),
                 ),
                 Spacer(),
-                if(isjoinChallenges==true)
+                if(isJoined==true)
                   Center(
                     child: SizedBox(
                       width: 250,

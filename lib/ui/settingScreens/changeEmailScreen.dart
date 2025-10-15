@@ -39,7 +39,8 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Email TextField (Read-only)
-                TextField(
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   controller: TextEditingController(text: email),
                   readOnly: true, // User edit nahi kar paayega
                   decoration: InputDecoration(

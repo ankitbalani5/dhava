@@ -76,7 +76,8 @@ class _SearchActiveWidgetState extends State<SearchActiveWidget> {
             child: Column(
               children: [
                 SizedBox(height: 50),
-                TextField(
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   controller: _controller,
                   onChanged: _onChanged,
                   decoration: InputDecoration(

@@ -2,6 +2,8 @@
 import 'package:coherent_endurance/bloc/challengesBloc/challengesDetails_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/challengesDetails_Event.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/challengesDetails_State.dart';
+import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart';
+import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Event.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -200,7 +202,26 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            context.read<JoinChalllengesBloc>().add(
+                              PostJoinChallengesEvent(
+                                challenges_Id: widget.challengeId,
+                                context: context,
+                              ),
+                            );
+
+                            await Future.delayed(const Duration(seconds: 1));
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChallangesDetailScreen(
+                                  challengeId: widget.challengeId,
+                                ),
+                              ),
+                            );
+                          },
+
                           child: Text("Join Challenges",
                               style: CustomTextStyles.semiBold(
                                   fontSize: 14, textColor: Colors.white)),
@@ -211,7 +232,7 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                      SizedBox(height: 10),
 
                     /// Invite Friends Button
-                    Center(
+               /*     Center(
                       child: SizedBox(
                         width: 250,
                         child: OutlinedButton(
@@ -232,7 +253,7 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                         ),
                       ),
                     ),
-
+*/
                      SizedBox(height: 20),
 
                     /// All remaining content
@@ -246,7 +267,8 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                               SizedBox(
                                   height: 30,
                                   child: Image.asset(AppImageOthers.calenderImg)),
-                              SizedBox(width: 5),
+
+                              SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   date,
@@ -355,10 +377,10 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                             ],
                           ),
 
-                           SizedBox(height: 20),
+
 
                           /// Club Row
-                          Row(
+       /*                   Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Image.asset(AppImageOthers.clubDP, width: 70),
@@ -388,12 +410,12 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                                 ],
                               ),
                             ],
-                          ),
+                          ),*/
 
                           const SizedBox(height: 20),
 
                           /// Join Club Button
-                          Center(
+                       /*   Center(
                             child: SizedBox(
                               width: 250,
                               child: ElevatedButton(
@@ -411,11 +433,9 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                               ),
                             ),
                           ),
-
+*/
                           /// Overall Stats Widget
-                          overAllStats(),
-
-                          /// Challenge Description + Tabs
+                  /*        overAllStats(),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Column(
@@ -432,9 +452,9 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                                 ),
                               ],
                             ),
-                          ),
+                          ),*/
 
-                          TabBar(
+                         /* TabBar(
                             controller: _tabController,
                             indicatorColor: Colors.orange,
                             labelColor: Colors.black,
@@ -454,7 +474,7 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                                 _overAllList(),
                               ],
                             ),
-                          ),
+                          ),*/
                         ],
                       ),
                     ),

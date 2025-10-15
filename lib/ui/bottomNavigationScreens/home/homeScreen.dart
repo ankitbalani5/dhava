@@ -462,9 +462,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 return GestureDetector(
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenge.challengeId.toString(),)));
-                                    // Navigator.push(context, MaterialPageRoute(
-                                    //     builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
+                                 //   Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenge.challengeId.toString(),)));
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
                                   },
                                   child: Container(
                                     width: 160,

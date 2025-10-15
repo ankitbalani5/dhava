@@ -205,7 +205,8 @@ class _EditClubProfileState extends State<EditClubProfile> {
   Widget _textField(TextEditingController controller, {bool showClear = false}) {
     return Padding(
       padding:  EdgeInsets.symmetric(horizontal: 16),
-      child: TextField(
+      child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         controller: controller,
         decoration: InputDecoration(
           filled: true,
@@ -228,7 +229,8 @@ class _EditClubProfileState extends State<EditClubProfile> {
   Widget _multilineTextField(TextEditingController controller) {
     return Padding(
       padding:  EdgeInsets.symmetric(horizontal: 16),
-      child: TextField(
+      child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         controller: controller,
         maxLines: 5,
         decoration: InputDecoration(
