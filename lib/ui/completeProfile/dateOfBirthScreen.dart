@@ -120,42 +120,44 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> with WidgetsBindi
           ),
           SizedBox(height: 20),
           Expanded(
-            child: Column(
-              children: [
-                SizedBox(height: 30),
-                Text(
-                  "$selectedDay / $selectedMonth / $selectedYear",
-                  style: CustomTextStyles.semiBold(fontSize: 30, textColor: AppColor.textBackgroundGrey),
-                ),
-                SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildPicker(
-                      days,
-                      int.parse(selectedDay),
-                          (value) {
-                        setState(() => selectedDay = value.toString().padLeft(2, '0'));
-                      },
-                    ),
-                    buildPicker(
-                      months,
-                      int.parse(selectedMonth),
-                          (value) {
-                        setState(() => selectedMonth = value.toString().padLeft(2, '0'));
-                      },
-                    ),
-                    buildPicker(
-                      years.map((y) => y).toList(),
-                      int.parse(selectedYear),
-                          (value) {
-                        setState(() => selectedYear = value.toString());
-                      },
-                    ),
+            child:SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  Text(
+                    "$selectedDay / $selectedMonth / $selectedYear",
+                    style: CustomTextStyles.semiBold(fontSize: 30, textColor: AppColor.textBackgroundGrey),
+                  ),
+                  SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildPicker(
+                        days,
+                        int.parse(selectedDay),
+                            (value) {
+                          setState(() => selectedDay = value.toString().padLeft(2, '0'));
+                        },
+                      ),
+                      buildPicker(
+                        months,
+                        int.parse(selectedMonth),
+                            (value) {
+                          setState(() => selectedMonth = value.toString().padLeft(2, '0'));
+                        },
+                      ),
+                      buildPicker(
+                        years.map((y) => y).toList(),
+                        int.parse(selectedYear),
+                            (value) {
+                          setState(() => selectedYear = value.toString());
+                        },
+                      ),
 
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
 

@@ -52,20 +52,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
 
     profileData = context.read<ProfileBloc>().profileModel;
-    firstnameController.text = profileData!.data!.firstName.toString();
-    lastnameController.text = profileData!.data!.lastName.toString();
-    birthdayController.text = profileData!.data!.dob.toString();
-    cityController.text = profileData!.data!.city.toString();
-    stateController.text = profileData!.data!.state.toString();
-    bioController.text = profileData!.data!.bio.toString();
-    weightController.text = profileData!.data!.weight.toString();
+    var data = profileData?.data;
+    firstnameController.text = data!.firstName ?? '';
+    lastnameController.text = data.lastName?? '';
+    var dob =data.dob?? '';
+    cityController.text = data.city?? '';
+    stateController.text = data.state?? '';
+    bioController.text = data.bio?? '';
+    weightController.text = (data.weight ?? 50.00).toString();
     // primaryCategoryId = profileData!.data!.primaryCategoryId.toString();
-    birthdayController.text = Constant.formatDob(birthdayController.text);
-    planToUse = profileData?.data?.planToUse ??"";
-    fitnessLevel = profileData?.data?.fitnessLevel??"";
-    profilePic = profileData?.data?.profilePhoto??"";
-    final profileCategoryId = profileData?.data?.primaryCategoryId;
-    userID  =profileData?.data?.userId.toString();
+    birthdayController.text = Constant.formatDob(dob);
+    planToUse = data.planToUse ??"";
+    fitnessLevel = data.fitnessLevel??"";
+    profilePic = data.profilePhoto??"";
+    final profileCategoryId = data.primaryCategoryId;
+    userID  = data.userId.toString();
 
 
 
