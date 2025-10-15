@@ -118,14 +118,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               if (state is UpdateProfileSuccess) {
                 Constant.closeLoadingDialog(context);
                 Fluttertoast.showToast(msg: state.profileModel.message.toString());
-                // setState(() {
-                //   profileData = state.profileModel;
-                //   profilePic = _selectedImage?.path ?? state.profileModel.data?.profilePhoto ?? "";
-                // });
-
-                //context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
 
                 Navigator.pop(context);  // if you want to go back after update
+
+                context.read<ProfileBloc>().profileModel = null;
                 context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
               }
 
