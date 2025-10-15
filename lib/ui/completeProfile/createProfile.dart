@@ -1,9 +1,12 @@
 
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_event.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/nameScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CreateProfile extends StatefulWidget {
   const CreateProfile({super.key});
@@ -19,6 +22,7 @@ class CreateProfileState extends State<CreateProfile> with SingleTickerProviderS
   @override
   void initState() {
     super.initState();
+    context.read<SuggestionBloc>().add(GetSuggestionEvent(perPage: '10', page: '1', context: context));
 
   }
 

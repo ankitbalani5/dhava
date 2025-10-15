@@ -125,163 +125,162 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
           );
         }
 
-        List<UserData> suggestedList = [];
+
         if (state is SuggestionSuccess) {
-          suggestedList = state.suggestionModel.data?.data ?? [];
-        }
+          var suggestedList = state.suggestionModel.data?.data ?? [];
 
-        if (suggestedList.isEmpty) {
-          return  Center(child: Text("No suggestions available"));
-        }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "People You May Know",
-              style: CustomTextStyles.regular(fontSize: 12),
-            ),
-             SizedBox(height: 10),
-            Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.zero,
-                itemCount: suggestedList.length,
-                separatorBuilder: (context, index) =>
-                 SizedBox(height: 15),
-                itemBuilder: (context, index) {
-                  final person = suggestedList[index];
-                  var userId = person.userId.toString();
+          return  suggestedList.isEmpty ? Center(child: Text("No suggestions available")) :Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "People You May Know",
+                style: CustomTextStyles.regular(fontSize: 12),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child: ListView.separated(
+                  padding: EdgeInsets.zero,
+                  itemCount: suggestedList.length,
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: 15),
+                  itemBuilder: (context, index) {
+                    final person = suggestedList[index];
+                    var userId = person.userId.toString();
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              OtherProfileScreen(userId: userId),
-                        ),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundImage: person.profilePhoto != null &&
-                              person.profilePhoto!.isNotEmpty
-                              ? NetworkImage(person.profilePhoto!)
-                              : AssetImage(AppImageOthers.defaultUserImg)
-                          as ImageProvider,
-                          onBackgroundImageError: (_, __) {
-                            debugPrint("Failed to load user image");
-                          },
-                        ),
-                         SizedBox(width: 10),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${person.firstName ?? ''} ${person.lastName ?? ''}",
-                                style:  TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              if (person.location != null &&
-                                  person.location!.isNotEmpty)
-                                Text(
-                                  person.location!,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                            ],
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                OtherProfileScreen(userId: userId),
                           ),
-                        ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundImage: person.profilePhoto != null &&
+                                person.profilePhoto!.isNotEmpty
+                                ? NetworkImage(person.profilePhoto!)
+                                : AssetImage(AppImageOthers.defaultUserImg)
+                            as ImageProvider,
+                            onBackgroundImageError: (_, __) {
+                              debugPrint("Failed to load user image");
+                            },
+                          ),
+                          SizedBox(width: 10),
 
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                                        /// ---- FOLLOW ----
-                              if (person.isFollowed == false && person.isFollowRequested == false) {
-                                person.isFollowRequested = true;
-                                context.read<FollowRequestBloc>().add(
-                                  FollowRequestDataEvent(
-                                    context: context,
-                                    toUserId: person.userId.toString(),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${person.firstName ?? ''} ${person.lastName ?? ''}",
+                                  style:  TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
-                                );
-                              }
-
-                              /// ---- CANCEL REQUEST ----
-                              else if (person.isFollowRequested == true) {
-                                person.isFollowRequested = false;
-                                context.read<FollowRequestBloc>().add(
-                                  FollowRequestDataEvent(
-                                    context: context,
-                                    toUserId: person.userId.toString(),
+                                ),
+                                if (person.location != null &&
+                                    person.location!.isNotEmpty)
+                                  Text(
+                                    person.location!,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                );
-                                // TODO: cancel follow request API if available
-                              }
-
-
-                            });
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 95,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: person.isFollowed == true
-                                    ? Colors.green
-                                    : person.isFollowRequested == true
-                                    ? Colors.grey
-                                    : AppColor.bgRed,
-                              ),
+                              ],
                             ),
-                            child: Center(
-                              child: Text(
-                                person.isFollowRequested == true
-                                    ? "Requested"
-                                    : "Follow",
-                                style: TextStyle(
+                          ),
+
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                /// ---- FOLLOW ----
+                                if (person.isFollowed == false && person.isFollowRequested == false) {
+                                  person.isFollowRequested = true;
+                                  context.read<FollowRequestBloc>().add(
+                                    FollowRequestDataEvent(
+                                      context: context,
+                                      toUserId: person.userId.toString(),
+                                    ),
+                                  );
+                                }
+
+                                /// ---- CANCEL REQUEST ----
+                                else if (person.isFollowRequested == true) {
+                                  person.isFollowRequested = false;
+                                  context.read<FollowRequestBloc>().add(
+                                    FollowRequestDataEvent(
+                                      context: context,
+                                      toUserId: person.userId.toString(),
+                                    ),
+                                  );
+                                  // TODO: cancel follow request API if available
+                                }
+
+
+                              });
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 95,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
                                   color: person.isFollowed == true
                                       ? Colors.green
                                       : person.isFollowRequested == true
                                       ? Colors.grey
                                       : AppColor.bgRed,
-                                  fontSize: 13,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  person.isFollowRequested == true
+                                      ? "Requested"
+                                      : "Follow",
+                                  style: TextStyle(
+                                    color: person.isFollowed == true
+                                        ? Colors.green
+                                        : person.isFollowRequested == true
+                                        ? Colors.grey
+                                        : AppColor.bgRed,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            /// Invite Friends Button
-            Padding(
-              padding:  EdgeInsets.all(5.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: CustomButton(
-                  text: 'Invite Friends',
-                  callback: () {
-                    // Invite Friends Logic
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
-            ),
-          ],
-        );
+
+              /// Invite Friends Button
+              Padding(
+                padding:  EdgeInsets.all(5.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: 'Invite Friends',
+                    callback: () {
+                      // Invite Friends Logic
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+         return SizedBox();
+
       },
     );
   }
