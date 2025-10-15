@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         var isFirstTime = sharedPreferences.getBool(PrefKey.isFirstTime);
         Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => isFirstTime == true ? SliderScreen() : RegisterScreen(),),
+          MaterialPageRoute(builder: (_) => /*isFirstTime == true ? */SliderScreen() /*: RegisterScreen()*/,),
         );
       }
     }

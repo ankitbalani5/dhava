@@ -34,10 +34,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+        //   onPressed: () => Navigator.pop(context),
+        // ),
       ),
       body: Form(
         key: _formKey,
@@ -47,12 +47,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Log in to Coherent\nEndurance",
-                  style: GoogleFonts.inter(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Log in to  ",
+                      style: GoogleFonts.inter(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Image.asset('assets/image/others/logoDhava.png', height: 25,)
+                  ],
                 ),
                 const SizedBox(height: 30),
 
@@ -111,21 +116,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 15),
 
                 // Facebook Register Button
-                Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(6)
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(AppImageOthers.facebook, height: 24),
-                      SizedBox(width: 10,),
-                      Text("Continue With Facebook", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ),
+                // Container(
+                //   height: 56,
+                //   decoration: BoxDecoration(
+                //     border: Border.all(color: Colors.grey),
+                //     borderRadius: BorderRadius.circular(6)
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Image.asset(AppImageOthers.facebook, height: 24),
+                //       SizedBox(width: 10,),
+                //       Text("Continue With Facebook", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(height: 20),
 
                 Row(

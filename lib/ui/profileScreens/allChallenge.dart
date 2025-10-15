@@ -13,7 +13,8 @@ import '../../widgets/backButton.dart';
 import '../bottomNavigationScreens/clubs/clubWidgets/active/challangesActive.dart';
 
 class AllChallenge extends StatefulWidget {
-  const AllChallenge({super.key});
+  String userId;
+  AllChallenge({this.userId = '', super.key});
 
   @override
   State<AllChallenge> createState() => _AllChallengeState();
@@ -46,7 +47,12 @@ class _AllChallengeState extends State<AllChallenge> {
 
   @override
   void initState() {
-    context.read<MyAllChallengeBloc>().add(MyAllChallengeEvent(perPage: '10', page: page.toString(), categoryId: '', context: context));
+    if(widget.userId.isNotEmpty){
+      print('userId::::::::${widget.userId}');
+      context.read<MyAllChallengeBloc>().add(UserAllChallengeEvent(perPage: '10', page: page.toString(),userId: widget.userId, categoryId: '', context: context));
+    }else{
+      context.read<MyAllChallengeBloc>().add(MyAllChallengeEvent(perPage: '10', page: page.toString(), categoryId: '', context: context));
+    }
 
 
     // categoryData = CategoryModel(

@@ -592,6 +592,7 @@ class ApiEndPoint {
   static const String myTrophy = '/api/v1/my/trophies/all';
 
   static const String myAllChallenge = '/api/v1/my/joined-challenges/all';
+  static const String userAllChallenge = '/api/v1/user/joined-challenges/all';
   static const String challengeDetail = '/api/v1/challenges/details';
 
   static const String otherUserFeed = '/api/v1/activity/user-feed';

@@ -5,6 +5,7 @@ import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_bloc.dart'
 import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_event.dart';
 import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_state.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
+import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -22,9 +23,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/suggestionBloc/suggestion_event.dart';
+import '../../models/summaryModel.dart';
+import '../bottomNavigationScreens/clubs/clubWidgets/active/challangesActive.dart';
 import 'activitiesScreen.dart';
+import 'allChallenge.dart';
 import 'editProfileScreen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:intl/intl.dart';
 
 class OtherProfileScreen extends StatefulWidget {
   final String userId;
@@ -42,6 +47,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     {"image": AppImageOthers.milestone, "title": "December 5K"},
   ];
 
+  int selectedWeekIndex = 0;
+  String selectedValue = Constant.getCategory!.data!.first.categoryName.toString(); // default selected
+  String categoryId = '';
+
   @override
   void initState() {
     var userId = widget.userId;
@@ -49,6 +58,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       OtherProfileDataEvent(context: context, userId: userId),
     );
     super.initState();
+  }
+
+  String getCurrentFormattedDate() {
+    final now = DateTime.now();
+    return DateFormat('MMMM d, y').format(now); // July 12, 2025
   }
 
   @override
@@ -67,7 +81,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             );
           }
           if (state is OtherProfileSuccess) {
-            var profileData = state.otherProfileModel.data;
+            var profileData = state.otherProfileModel?.data;
             var photoUrl = profileData?.profilePhoto ?? "N/A";
             var firstName = profileData?.firstName ?? "N/A";
             var lastName = profileData?.lastName ?? "N/A";
@@ -79,6 +93,14 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             var totalFollowers = profileData?.totalFollowers ?? "";
             var totalFollowing = profileData?.totalFollowing ?? "";
 
+            final summaryData = state.summaryModel?.data;
+            final activities = state.summaryModel?.data?.thisWeekActivities ?? [];
+            // var activity = selectedWeekIndex != null ? activities[selectedWeekIndex] : null;
+            final activity = (selectedWeekIndex != null && selectedWeekIndex < activities.length)
+                ? activities[selectedWeekIndex]
+                : null;
+            final trophies = state.summaryModel?.data?.userTrophies ?? [];
+            final challenges = state.summaryModel?.data?.userChallenges ?? [];
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -527,8 +549,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   ),
 
                   SizedBox(height: 20),
+
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Column(
@@ -537,452 +560,472 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           Container(
                             color: AppColor.bgTile,
                             child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 10),
-                                  Text(
-                                    'This week',
-                                    style: CustomTextStyles.semiBold(
-                                      fontSize: 16,
-                                    ),
+                                  SizedBox(height: 10,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('This week', style: CustomTextStyles.semiBold(fontSize: 16),),
+                                      SizedBox(
+                                        width: 20,
+                                        child: PopupMenuButton<String>(
+                                          initialValue: selectedValue,
+                                          onSelected: (value) {
+                                            setState(() {
+                                              selectedValue = value;
+                                            });
+                                            final selectCategory = Constant.getCategory!.data!.firstWhere(
+                                                  (e) => e.categoryName == selectedValue,);
+                                            categoryId = selectCategory.categoryId.toString();
+                                            context.read<OtherProfileBloc>().add(GetOtherProfileSummary(context: context, categoryId: categoryId.toString(), userId: profileData!.userId.toString()));
+                                          },
+                                          color: Colors.white,
+                                          itemBuilder: (BuildContext context) {
+                                            return Constant.getCategory!.data!.map((category) {
+                                              final isSelected = selectedValue == category.categoryName;
+                                              return PopupMenuItem<String>(
+                                                value: category.categoryName,
+                                                child: SizedBox(
+                                                  width: 100,
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Image.network(category.categoryIcon.toString(),
+                                                            height: 18,
+                                                            color: isSelected ? Colors.red : Colors.black,),
+                                                          const SizedBox(width: 8),
+                                                          Text(
+                                                            category.categoryName.toString(),
+                                                            style: TextStyle(
+                                                              color: isSelected ? Colors.red : Colors.black,
+                                                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      if (isSelected)
+                                                        Icon(Icons.check, color: isSelected ? Colors.red : Colors.black),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList();
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 20,),
                                   SizedBox(
                                     width: 200,
                                     child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
+                                            Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                            // Text('${double.parse(activity.distance.toString())/1000} km', style: CustomTextStyles.regular(fontSize: 16 )),
+
                                             Text(
-                                              'Distance',
-                                              style: CustomTextStyles.regular(
-                                                fontSize: 12,
-                                                textColor: Colors.grey,
-                                              ),
-                                            ),
-                                            Text(
-                                              '0 km',
-                                              style: CustomTextStyles.regular(
-                                                fontSize: 16,
-                                              ),
+                                              activity != null ? "${(double.parse(activity.distance.toString())/1000).toStringAsFixed(1)} km" : "--",
+                                              style: CustomTextStyles.regular(fontSize: 16),
                                             ),
                                           ],
                                         ),
                                         Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
+                                            Text('Pace', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                            // Text('${activity.pace}', style: CustomTextStyles.regular(fontSize: 16 )),
+
                                             Text(
-                                              'Pace',
-                                              style: CustomTextStyles.regular(
-                                                fontSize: 12,
-                                                textColor: Colors.grey,
-                                              ),
-                                            ),
-                                            Text(
-                                              '0 m',
-                                              style: CustomTextStyles.regular(
-                                                fontSize: 16,
-                                              ),
+                                              activity != null ? "${activity.pace}" : "--",
+                                              style: CustomTextStyles.regular(fontSize: 16),
                                             ),
                                           ],
                                         ),
                                         Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
+                                            Text('Elev Gain', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                            // Text('${activity.elavationGain}', style: CustomTextStyles.regular(fontSize: 16 )),
+
                                             Text(
-                                              'Elev Gain',
-                                              style: CustomTextStyles.regular(
-                                                fontSize: 12,
-                                                textColor: Colors.grey,
-                                              ),
-                                            ),
-                                            Text(
-                                              '0 m',
-                                              style: CustomTextStyles.regular(
-                                                fontSize: 16,
-                                              ),
+                                              activity != null ? "${activity.elavationGain}" : "--",
+                                              style: CustomTextStyles.regular(fontSize: 16),
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 20,),
+                                  // Container(
+                                  //   height: 200,
+                                  //   color: AppColor.bgTile, // background color
+                                  //   padding: const EdgeInsets.all(8),
+                                  //   child: LineChart(
+                                  //     LineChartData(
+                                  //       backgroundColor: AppColor.bgTile,
+                                  //       gridData: FlGridData(show: false), // grid lines hide
+                                  //       titlesData: FlTitlesData(
+                                  //         leftTitles: AxisTitles(
+                                  //           sideTitles: SideTitles(
+                                  //             showTitles: true,
+                                  //             reservedSize: 40,
+                                  //             getTitlesWidget: (value, meta) {
+                                  //               return Text(
+                                  //                 '${value.toInt()} km',
+                                  //                 style: const TextStyle(color: Colors.black, fontSize: 10),
+                                  //               );
+                                  //             },
+                                  //           ),
+                                  //         ),
+                                  //         bottomTitles: AxisTitles(
+                                  //           sideTitles: SideTitles(
+                                  //             showTitles: true,
+                                  //             reservedSize: 30,
+                                  //             getTitlesWidget: (value, meta) {
+                                  //               return Text(
+                                  //                 '${value.toInt()} m',
+                                  //                 style: const TextStyle(color: Colors.black, fontSize: 10),
+                                  //               );
+                                  //             },
+                                  //           ),
+                                  //         ),
+                                  //         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                  //         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                  //       ),
+                                  //       borderData: FlBorderData(
+                                  //         show: true,
+                                  //         border: Border.all(color: Colors.grey, width: 0.5),
+                                  //       ),
+                                  //       lineBarsData: [
+                                  //         LineChartBarData(
+                                  //           spots: const [
+                                  //             FlSpot(0, 0),
+                                  //             FlSpot(1, 0),
+                                  //             FlSpot(2, 0),
+                                  //             FlSpot(3, 2),
+                                  //             FlSpot(4, 0),
+                                  //             FlSpot(5, 0),
+                                  //             FlSpot(6, 0),
+                                  //           ],
+                                  //           isCurved: false,
+                                  //           color: Colors.redAccent,
+                                  //           barWidth: 2,
+                                  //           dotData: FlDotData(show: true),
+                                  //           belowBarData: BarAreaData(show: false),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   Container(
-                                    height: 200,
-                                    color: AppColor.bgTile,
-                                    // background color
-                                    padding: const EdgeInsets.all(8),
+                                    // padding: const EdgeInsets.symmetric(vertical: 10),
+                                    height: 180,
                                     child: LineChart(
                                       LineChartData(
-                                        backgroundColor: AppColor.bgTile,
                                         gridData: FlGridData(show: false),
-                                        // grid lines hide
                                         titlesData: FlTitlesData(
+                                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                                           leftTitles: AxisTitles(
                                             sideTitles: SideTitles(
                                               showTitles: true,
-                                              reservedSize: 40,
+                                              reservedSize: 50,
+                                              interval: 50, // ✅ हर 50 km पर tick
                                               getTitlesWidget: (value, meta) {
-                                                return Text(
-                                                  '${value.toInt()} km',
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 10,
+                                                return Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                                    child: Text(
+                                                      "${value.toInt()} km",
+                                                      style: const TextStyle(
+                                                        fontSize: 10,   // ✅ font size 10
+                                                        color: Colors.black, // optional
+                                                      ),
+                                                    ),
                                                   ),
                                                 );
                                               },
                                             ),
                                           ),
+
+                                          // leftTitles: AxisTitles(
+                                          //   sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                                          // ),
                                           bottomTitles: AxisTitles(
                                             sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 30,
+                                              showTitles: false,
                                               getTitlesWidget: (value, meta) {
-                                                return Text(
-                                                  '${value.toInt()} m',
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 10,
-                                                  ),
-                                                );
+                                                if (value.toInt() < activities.length) {
+                                                  final week = activities[value.toInt()];
+                                                  return Text(
+                                                    "${DateTime.parse(week.startDate!).day}", // सिर्फ़ दिन show किया
+                                                    style: const TextStyle(fontSize: 10),
+                                                  );
+                                                }
+                                                return const Text("");
                                               },
-                                            ),
-                                          ),
-                                          topTitles: AxisTitles(
-                                            sideTitles: SideTitles(
-                                              showTitles: false,
-                                            ),
-                                          ),
-                                          rightTitles: AxisTitles(
-                                            sideTitles: SideTitles(
-                                              showTitles: false,
                                             ),
                                           ),
                                         ),
+                                        // borderData: FlBorderData(show: false),
+                                        // ✅ अब maxY को round figure तक ले जाएंगे
+                                        minY: 0,
+                                        // maxY: () {
+                                        //   double maxDist = activities
+                                        //       .map((e) => double.parse(e.distance.toString()) / 1000)
+                                        //       .reduce((a, b) => a > b ? a : b);
+                                        //
+                                        //   // ✅ अब maxDist को अगले 50 के multiple तक round कर देंगे
+                                        //   int rounded = ((maxDist / 50).ceil() * 50);
+                                        //   return rounded.toDouble();
+                                        // }(),
+                                        maxY: () {
+                                          if (activities.isEmpty) {
+                                            return 0.0; // ✅ default value अगर कोई data नहीं है
+                                          }
+                                          double maxDist = activities
+                                              .map((e) => double.parse(e.distance.toString()) / 1000)
+                                              .reduce((a, b) => a > b ? a : b);
+
+                                          int rounded = ((maxDist / 50).ceil() * 50);
+                                          return rounded.toDouble();
+                                        }(),
                                         borderData: FlBorderData(
                                           show: true,
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: 0.5,
-                                          ),
+                                          border: Border.all(color: Colors.grey, width: 0.5),
                                         ),
                                         lineBarsData: [
                                           LineChartBarData(
-                                            spots: const [
-                                              FlSpot(0, 0),
-                                              FlSpot(1, 0),
-                                              FlSpot(2, 0),
-                                              FlSpot(3, 2),
-                                              FlSpot(4, 0),
-                                              FlSpot(5, 0),
-                                              FlSpot(6, 0),
-                                            ],
+                                            spots: activities.asMap().entries.map((e) {
+                                              return FlSpot(e.key.toDouble(), double.parse(e.value.distance.toString())/1000);
+                                            }).toList(),
                                             isCurved: false,
                                             color: Colors.redAccent,
                                             barWidth: 2,
                                             dotData: FlDotData(show: true),
-                                            belowBarData: BarAreaData(
-                                              show: false,
-                                            ),
                                           ),
                                         ],
+
+                                        // 👇 Handle Touch
+                                        lineTouchData: LineTouchData(
+                                          enabled: true,
+                                          touchCallback: (event, response) {
+                                            if (response != null &&
+                                                response.lineBarSpots != null &&
+                                                response.lineBarSpots!.isNotEmpty) {
+                                              setState(() {
+                                                selectedWeekIndex = response.lineBarSpots!.first.x.toInt();
+                                              });
+                                            }
+                                          },
+                                          touchTooltipData: LineTouchTooltipData(
+                                            tooltipBgColor: Colors.black54,
+                                            getTooltipItems: (touchedSpots) {
+                                              return touchedSpots.map((spot) {
+                                                final activity = activities[spot.x.toInt()];
+                                                return LineTooltipItem(
+                                                  "Dist: ${double.parse(activity.distance.toString())/1000} km\n"
+                                                      "Pace: ${activity.pace}\n"
+                                                      "Elev: ${activity.elavationGain}",
+                                                  const TextStyle(color: Colors.white),
+                                                );
+                                              }).toList();
+                                            },
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
+                                  SizedBox(height: 40,)
                                 ],
                               ),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Column(
                               children: [
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => ActivitiesScreen(),
-                                      ),
-                                    );
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ActivitiesScreen()));
                                   },
-                                  leading: SvgPicture.asset(
-                                    AppImageSvg.activities,
-                                  ),
-                                  title: Text(
-                                    'Activities',
-                                    style: CustomTextStyles.semiBold(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    'July 12, 2025',
-                                    style: CustomTextStyles.regular(
-                                      fontSize: 10,
-                                      textColor: Colors.grey,
-                                    ),
-                                  ),
-                                  trailing: Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.black,
-                                  ),
+                                  leading: SvgPicture.asset(AppImageSvg.activities),
+                                  title: Text('Activities', style: CustomTextStyles.semiBold(fontSize: 14 )),
+                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
+                                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => StatisticsScreen(),
-                                      ),
-                                    );
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsScreen()));
+
                                   },
-                                  leading: SvgPicture.asset(
-                                    AppImageSvg.statistics,
-                                  ),
-                                  title: Text(
-                                    'Statistics',
-                                    style: CustomTextStyles.semiBold(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    'July 12, 2025',
-                                    style: CustomTextStyles.regular(
-                                      fontSize: 10,
-                                      textColor: Colors.grey,
-                                    ),
-                                  ),
-                                  trailing: Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.black,
-                                  ),
+                                  leading: SvgPicture.asset(AppImageSvg.statistics),
+                                  title: Text('Statistics', style: CustomTextStyles.semiBold(fontSize: 14 )),
+                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
+                                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TrophyCase(categoryId: '',),
-                                      ),
-                                    );
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase(categoryId: categoryId)));
+
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.trophy),
-                                  title: Text(
-                                    'Trophy Case',
-                                    style: CustomTextStyles.semiBold(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    'July 12, 2025',
-                                    style: CustomTextStyles.regular(
-                                      fontSize: 10,
-                                      textColor: Colors.grey,
-                                    ),
-                                  ),
-                                  trailing: Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.black,
-                                  ),
+                                  title: Text('Trophy Case', style: CustomTextStyles.semiBold(fontSize: 14 )),
+                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10, textColor: Colors.grey )),
+                                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 20,),
                                 Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Trophy Case',
-                                      style: CustomTextStyles.semiBold(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Text(
-                                      '3',
-                                      style: CustomTextStyles.regular(
-                                        fontSize: 16,
-                                      ),
-                                    ),
+                                    Text('Trophy Case', style: CustomTextStyles.semiBold(fontSize: 16),),
+                                    // Text('3', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 20,),
 
-                                buildBadgeGrid(milestone),
-                                SizedBox(height: 10),
+                                buildBadgeGrid(trophies),
+
+                                SizedBox(height: 10,),
                                 Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'All Trophies',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                      ) /*CustomTextStyles.regular(fontSize: 16)*/,
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
+                                    Text('All Trophies', style: TextStyle(fontSize: 16)/*CustomTextStyles.regular(fontSize: 16)*/,),
+                                    Icon(Icons.arrow_forward_ios, color: Colors.white, size: 15,)
                                   ],
                                 ),
+                                SizedBox(height: 10,),
 
-                                SizedBox(height: 20),
+                                Divider(height: 20,color: AppColor.bgTile,thickness: 2,),
+
+                                SizedBox(height: 10,),
                                 Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Challenges',
-                                      style: CustomTextStyles.semiBold(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Text(
-                                      '1',
-                                      style: CustomTextStyles.regular(
-                                        fontSize: 16,
-                                      ),
-                                    ),
+                                    Text('Challenges', style: CustomTextStyles.semiBold(fontSize: 16),),
+                                    // Text('1', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
-                                SizedBox(height: 20),
-
-                                // ListView.builder(
-                                //   padding: EdgeInsets.zero,
-                                //   shrinkWrap: true,
-                                //   itemCount: challenges.length,
-                                //   physics: NeverScrollableScrollPhysics(),
-                                //   itemBuilder: (context, index) {
-                                //     final duration = Constant.calculateChallengeDuration(
-                                //       challenges[index].startDate,
-                                //       challenges[index].endDate,
-                                //     );
-                                //     return ListTile(
-                                //       onTap: () {
-                                //         Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenges[index].challengeId.toString(),)));
-                                //       },
-                                //       contentPadding: EdgeInsets.zero,
-                                //       leading: (challenges[index].challengeIcon != null && challenges[index].challengeIcon != 'null' &&
-                                //           challenges[index].challengeIcon!.isNotEmpty)
-                                //           ? CachedNetworkImage(
-                                //         imageUrl: challenges[index].challengeIcon!,
-                                //         height: 50,
-                                //         width: 50,
-                                //         imageBuilder: (context, imageProvider) => ClipOval(
-                                //           child: Image(
-                                //             image: imageProvider,
-                                //             height: 50,
-                                //             width: 50,
-                                //             fit: BoxFit.cover,
-                                //           ),
-                                //         ),
-                                //         placeholder: (context, url) => ClipOval(
-                                //           child: SvgPicture.asset(
-                                //             AppImageSvg.activeUser,
-                                //             height: 50,
-                                //             width: 50,
-                                //             fit: BoxFit.cover,
-                                //           ),
-                                //         ),
-                                //         errorWidget: (context, url, error) => ClipOval(
-                                //           child: SvgPicture.asset(
-                                //             AppImageSvg.activeUser,
-                                //             height: 50,
-                                //             width: 50,
-                                //             fit: BoxFit.cover,
-                                //           ),
-                                //         ),
-                                //       )
-                                //           : ClipOval(
-                                //         child: SvgPicture.asset(
-                                //           AppImageSvg.activeUser,
-                                //           height: 50,
-                                //           width: 50,
-                                //           fit: BoxFit.cover,
-                                //         ),
-                                //       ),
-                                //
-                                //       title: Text(challenges[index].title.toString()/*'Timeout Streaks Challenge\nJuly 2025'*/),
-                                //       subtitle: Row(
-                                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //         children: [
-                                //           Row(
-                                //             children: [
-                                //               Image.network(challenges[index].categoryIcon.toString(), height: 15, color: Colors.grey,),
-                                //               Text(' --/${duration['weeks']} weeks', style: TextStyle(color: Colors.grey),)
-                                //             ],
-                                //           ),
-                                //           Text('${duration['daysLeft']} days left', style: TextStyle(color: Colors.grey))
-                                //         ],
-                                //       ),
-                                //     );
-                                //   },
-                                // ),
-                                SizedBox(height: 10),
-                                GestureDetector(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserAllChallenges(user_Id: widget.userId,)));
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'All Challenge',
-                                        style: CustomTextStyles.regular(
-                                          textColor: AppColor.bgRed,
+                                SizedBox(height: 20,),
+                                ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemCount: challenges.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    final duration = Constant.calculateChallengeDuration(
+                                      challenges[index].startDate,
+                                      challenges[index].endDate,
+                                    );
+                                    return ListTile(
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenges[index].challengeId.toString(),)));
+                                      },
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: (challenges[index].challengeIcon != null && challenges[index].challengeIcon != 'null' &&
+                                          challenges[index].challengeIcon!.isNotEmpty)
+                                          ? CachedNetworkImage(
+                                        imageUrl: challenges[index].challengeIcon!,
+                                        height: 50,
+                                        width: 50,
+                                        imageBuilder: (context, imageProvider) => ClipOval(
+                                          child: Image(
+                                            image: imageProvider,
+                                            height: 50,
+                                            width: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        placeholder: (context, url) => ClipOval(
+                                          child: SvgPicture.asset(
+                                            AppImageSvg.activeUser,
+                                            height: 50,
+                                            width: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) => ClipOval(
+                                          child: SvgPicture.asset(
+                                            AppImageSvg.activeUser,
+                                            height: 50,
+                                            width: 50,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      )
+                                          : ClipOval(
+                                        child: SvgPicture.asset(
+                                          AppImageSvg.activeUser,
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                    ],
-                                  ),
+
+                                      title: Text(challenges[index].title.toString()/*'Timeout Streaks Challenge\nJuly 2025'*/),
+                                      subtitle: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Image.network(challenges[index].categoryIcon.toString(), height: 15, color: Colors.grey,),
+                                              Text(' --/${duration['weeks']} weeks', style: TextStyle(color: Colors.grey),)
+                                            ],
+                                          ),
+                                          Text('${duration['daysLeft']} days left', style: TextStyle(color: Colors.grey))
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 10,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => AllChallenge(userId: profileData!.userId.toString(),)));
+                                        },
+                                        child: Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),))
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+
+                                // Divider(height: 20,color: AppColor.bgTile,thickness: 2,),
+                                //
+                                // SizedBox(height: 10,),
                                 // Row(
-                                //   mainAxisAlignment:
-                                //       MainAxisAlignment.spaceBetween,
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 //   children: [
-                                //     Text(
-                                //       'Clubs',
-                                //       style: CustomTextStyles.semiBold(
-                                //         fontSize: 16,
-                                //       ),
-                                //     ),
-                                //     Text(
-                                //       '2',
-                                //       style: CustomTextStyles.regular(
-                                //         fontSize: 16,
-                                //       ),
-                                //     ),
+                                //     Text('Clubs', style: CustomTextStyles.semiBold(fontSize: 16),),
+                                //     Text('2', style: CustomTextStyles.regular(fontSize: 16)),
                                 //   ],
                                 // ),
-                                // SizedBox(height: 20),
+                                // SizedBox(height: 20,),
                                 // GridView.builder(
-                                //   gridDelegate:
-                                //       SliverGridDelegateWithFixedCrossAxisCount(
-                                //         crossAxisCount: 2,
-                                //         mainAxisSpacing: 8,
-                                //         crossAxisSpacing: 8,
-                                //         mainAxisExtent: 110,
-                                //       ),
+                                //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                //       crossAxisCount: 2,
+                                //       mainAxisSpacing: 8,
+                                //       crossAxisSpacing: 8,
+                                //       mainAxisExtent: 110
+                                //   ),
                                 //   padding: EdgeInsets.symmetric(vertical: 10),
                                 //   shrinkWrap: true,
                                 //   physics: NeverScrollableScrollPhysics(),
-                                //   // ✅ Important
                                 //   itemCount: 2,
                                 //   itemBuilder: (context, index) {
                                 //     return Container(
@@ -992,22 +1035,12 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 //         borderRadius: BorderRadius.circular(12),
                                 //       ),
                                 //       child: Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.center,
+                                //         crossAxisAlignment: CrossAxisAlignment.center,
                                 //         children: [
-                                //           Center(
-                                //             child: Image.asset(
-                                //               AppImageOthers.clubDP,
-                                //               height: 55,
-                                //             ),
-                                //           ),
+                                //           Center(child: Image.asset(AppImageOthers.clubDP, height: 55,)),
                                 //           SizedBox(height: 5),
-                                //           Text(
-                                //             'Pinkcity Runners',
-                                //             style: CustomTextStyles.semiBold(
-                                //               fontSize: 15,
-                                //             ),
-                                //           ),
+                                //           Text('Pinkcity Runners', style: CustomTextStyles.semiBold(fontSize: 15),),
+                                //
                                 //         ],
                                 //       ),
                                 //     );
@@ -1016,18 +1049,14 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 // Row(
                                 //   mainAxisAlignment: MainAxisAlignment.end,
                                 //   children: [
-                                //     Text(
-                                //       'All clubs',
-                                //       style: CustomTextStyles.regular(
-                                //         textColor: AppColor.bgRed,
-                                //       ),
-                                //     ),
+                                //     Text('All clubs', style: CustomTextStyles.regular(textColor: AppColor.bgRed),)
                                 //   ],
                                 // ),
-                                // SizedBox(height: 10),
+                                // SizedBox(height: 10,),
                               ],
                             ),
                           ),
+
                         ],
                       ),
                     ),
@@ -1112,7 +1141,51 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
-  Widget buildBadgeGrid(List<Map<String, String>> badges) {
+  // Widget buildBadgeGrid(List<Map<String, String>> badges) {
+  //   List<Widget> rows = [];
+  //
+  //   for (int i = 0; i < badges.length; i += 3) {
+  //     final rowItems = badges.skip(i).take(3).toList();
+  //
+  //     rows.add(
+  //       Container(
+  //         margin: EdgeInsets.symmetric(vertical: 8),
+  //         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+  //         decoration: BoxDecoration(
+  //           color: Colors.grey.shade200, // ✅ background per row
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children:
+  //               rowItems.map((badge) {
+  //                 return Column(
+  //                   children: [
+  //                     Image.asset(badge["image"]!, height: 75, width: 70),
+  //                     SizedBox(height: 8),
+  //                     Text(
+  //                       badge["title"]!,
+  //                       style: CustomTextStyles.semiBold(fontSize: 12),
+  //                     ),
+  //
+  //                     if (badge["subTitle"] != null &&
+  //                         badge["subTitle"]!.isNotEmpty)
+  //                       Text(
+  //                         badge['subTitle']!,
+  //                         style: CustomTextStyles.regular(fontSize: 12),
+  //                       ),
+  //                   ],
+  //                 );
+  //               }).toList(),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  //
+  //   return Column(children: rows);
+  // }
+
+  Widget buildBadgeGrid(List<UserTrophies> badges) {
     List<Widget> rows = [];
 
     for (int i = 0; i < badges.length; i += 3) {
@@ -1120,34 +1193,55 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
       rows.add(
         Container(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: Colors.grey.shade200, // ✅ background per row
+            color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children:
-                rowItems.map((badge) {
-                  return Column(
-                    children: [
-                      Image.asset(badge["image"]!, height: 75, width: 70),
-                      SizedBox(height: 8),
-                      Text(
-                        badge["title"]!,
-                        style: CustomTextStyles.semiBold(fontSize: 12),
-                      ),
+            children: rowItems.map((badge) {
+              return Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 🏆 Trophy Image
+                    badge.trophyIcon != null && badge.trophyIcon!.isNotEmpty
+                        ? Image.network(
+                      badge.trophyIcon!,
+                      height: 75,
+                      width: 70,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.emoji_events, size: 50, color: Colors.grey);
+                      },
+                    )
+                        : const Icon(Icons.emoji_events, size: 50, color: Colors.grey),
 
-                      if (badge["subTitle"] != null &&
-                          badge["subTitle"]!.isNotEmpty)
-                        Text(
-                          badge['subTitle']!,
-                          style: CustomTextStyles.regular(fontSize: 12),
-                        ),
-                    ],
-                  );
-                }).toList(),
+                    const SizedBox(height: 8),
+
+                    // 🏷️ Title
+                    Text(
+                      badge.title ?? "",
+                      textAlign: TextAlign.center,
+                      style: CustomTextStyles.semiBold(fontSize: 12),
+                    ),
+
+                    // 📜 Optional Description
+                    // if (badge.description != null && badge.description!.isNotEmpty)
+                    //   Padding(
+                    //     padding: const EdgeInsets.only(top: 4),
+                    //     child: Text(
+                    //       badge.description!,
+                    //       textAlign: TextAlign.center,
+                    //       style: CustomTextStyles.regular(fontSize: 12),
+                    //     ),
+                    //   ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ),
       );

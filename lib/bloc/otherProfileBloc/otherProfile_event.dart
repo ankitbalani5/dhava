@@ -12,4 +12,10 @@ class OtherProfileDataEvent extends OtherProfileEvent{
     required this.userId, });
 }
 
+class GetOtherProfileSummary extends OtherProfileEvent{
+  final BuildContext context;
+  final String categoryId;
+  final String userId;
+  GetOtherProfileSummary({required this.context, required this.categoryId, required this.userId});
+}
 
