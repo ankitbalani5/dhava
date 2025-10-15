@@ -711,13 +711,21 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => ActivitiesScreen(),
-                                      ),
-                                    );
+                                    var userId = profileData?.userId;
+                                    if(userId != null){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => ActivitiesScreen(userId: userId,),
+                                        ),
+                                      );
+                                    }
+                                    else{
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(content: Text("There is some issue while getting user")),
+                                                   );
+                                    }
                                   },
                                   leading: SvgPicture.asset(
                                     AppImageSvg.activities,

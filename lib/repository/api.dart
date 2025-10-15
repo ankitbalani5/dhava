@@ -560,6 +560,7 @@ class ApiEndPoint {
   static const String getFeed = '/api/v1/activity/feed';
   static const String getFeedDetail = '/api/v1/activity/feed-details';
   static const String getMyFeed = '/api/v1/activity/my-feed';
+  static const String getUserFeed = '/api/v1/activity/user-feed';
   static const String activityLike = '/api/v1/activity/like';
   static const String userFind = '/api/v1/user/find';
   static const String postAllChallenges = '/api/v1/challenges/all';

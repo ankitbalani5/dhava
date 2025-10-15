@@ -34,7 +34,13 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
 
     if(myFeedModel != null){
       Constant.loadingDialog(event.context);
-      final response = await Api.getApi('${ApiEndPoint.getMyFeed}?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}&user_id=', headers, event.context);
+      var userId = "";
+      var endPointUrl = ApiEndPoint.getMyFeed;
+      if(event.userId.isNotEmpty){
+        userId = "&user_id=${event.userId}";
+        endPointUrl = ApiEndPoint.getUserFeed;
+      }
+      final response = await Api.getApi('$endPointUrl?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}$userId', headers, event.context);
       final result = MyFeedModel.fromJson(response);
       if(event.isPagination == true){
         Constant.closeLoadingDialog(event.context);
@@ -52,7 +58,13 @@ class MyFeedBloc extends Bloc<MyFeedEvent, MyFeedState> {
       emit(MyFeedLoading());
       try{
 
-        final response = await Api.getApi('${ApiEndPoint.getMyFeed}?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}&user_id=', headers, event.context);
+        var userId = "";
+        var endPointUrl = ApiEndPoint.getMyFeed;
+        if(event.userId.isNotEmpty){
+          userId = "&user_id=${event.userId}";
+          endPointUrl = ApiEndPoint.getUserFeed;
+        }
+        final response = await Api.getApi('$endPointUrl?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}$userId', headers, event.context);
         final result = MyFeedModel.fromJson(response);
 
         if(result.statusCode == 200){

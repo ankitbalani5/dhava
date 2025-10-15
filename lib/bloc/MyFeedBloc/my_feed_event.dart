@@ -8,9 +8,9 @@ class GetMyFeedEvent extends MyFeedEvent{
   final String perPage;
   final String page;
   final String categoryId;
-  final dynamic userId;
+  final String userId;
   final bool isPagination;
-  GetMyFeedEvent({required this.context, required this.perPage, required this.page, required this.categoryId, this.userId, this.isPagination = false});
+  GetMyFeedEvent({required this.context, required this.perPage, required this.page, required this.categoryId,required this.userId, this.isPagination = false});
 }
 
 class MyFeedLikeEvent extends MyFeedEvent{
