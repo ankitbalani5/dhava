@@ -1,13 +1,23 @@
 
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_bloc.dart';
+import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_event.dart';
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
+import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_state.dart';
+import 'package:coherent_endurance/models/suggestionsModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/completeProfile/step9Screen.dart';
+import 'package:coherent_endurance/ui/profileScreens/otherProfileScreen.dart';
+import 'package:coherent_endurance/ui/search/searchBloc/search_cubit.dart';
+import 'package:coherent_endurance/ui/search/searchScreen.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'createProfile.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 class FindYourFriends extends StatefulWidget {
   const FindYourFriends({super.key});
 
@@ -75,23 +85,26 @@ class _FindYourFriendsState extends State<FindYourFriends> {
                       style: CustomTextStyles.bold(fontSize: 16),
                     ),
                     const SizedBox(height: 10),
-                    TextField(
-                      controller: _controller,
-                      onChanged: _onChanged,
-                      decoration: InputDecoration(
-                        hintText: "Search on Coherent",
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SvgPicture.asset(
-                            AppImageSvg.searchRed,
-                            height: 33,
-                          ),
+                    GestureDetector(
+                      onTap: () => {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()))
+                      },
+                      child: Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: AppColor.bgTextField,
+                          borderRadius: BorderRadius.circular(25),
                         ),
-                        filled: true,
-                        fillColor: AppColor.bgTextField,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
+                        child: Padding(
+                          padding:  EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Search on Coherent', style: TextStyle(color: Colors.grey)),
+                              SvgPicture.asset(AppImageSvg.searchRed)
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -101,9 +114,9 @@ class _FindYourFriendsState extends State<FindYourFriends> {
                       style: CustomTextStyles.bold(fontSize: 18),
                     ),
                     const SizedBox(height: 10),
-
+                    _buildSuggestedList(context)
                     /// Suggested People List
-                    ListView.separated(
+              /*      ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: suggestedPeople.length,
@@ -162,7 +175,7 @@ class _FindYourFriendsState extends State<FindYourFriends> {
                           ],
                         );
                       },
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -184,6 +197,188 @@ class _FindYourFriendsState extends State<FindYourFriends> {
           },
         ),
       ),
+    );
+  }
+
+
+  Widget _buildSuggestedList(BuildContext context) {
+    return BlocConsumer<SuggestionBloc, SuggestionState>(
+      listener: (context, state) {
+        if (state is SuggestionError) {
+          Fluttertoast.showToast(msg: state.error);
+        } else if (state is UnfollowError) {
+          Fluttertoast.showToast(msg: state.error);
+        } else if (state is UnfollowSuccess) {
+          Fluttertoast.showToast(msg: "Unfollowed successfully");
+        }
+      },
+      builder: (context, state) {
+        if (state is SuggestionLoading) {
+          return Center(
+            child: LoadingAnimationWidget.inkDrop(
+              color: AppColor.bgRed,
+              size: 20,
+            ),
+          );
+        }
+
+
+        if (state is SuggestionSuccess) {
+          var suggestedList = state.suggestionModel.data?.data ?? [];
+
+
+          return  suggestedList.isEmpty ? Center(child: Text("No suggestions available")) :Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "People You May Know",
+                style: CustomTextStyles.regular(fontSize: 12),
+              ),
+              SizedBox(height: 10),
+              ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemCount: suggestedList.length,
+                separatorBuilder: (context, index) =>
+                    SizedBox(height: 15),
+                itemBuilder: (context, index) {
+                  final person = suggestedList[index];
+                  var userId = person.userId.toString();
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              OtherProfileScreen(userId: userId),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundImage: person.profilePhoto != null &&
+                              person.profilePhoto!.isNotEmpty
+                              ? NetworkImage(person.profilePhoto!)
+                              : AssetImage(AppImageOthers.defaultUserImg)
+                          as ImageProvider,
+                          onBackgroundImageError: (_, __) {
+                            debugPrint("Failed to load user image");
+                          },
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${person.firstName ?? ''} ${person.lastName ?? ''}",
+                                style:  TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              if (person.location != null &&
+                                  person.location!.isNotEmpty)
+                                Text(
+                                  person.location!,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              /// ---- FOLLOW ----
+                              if (person.isFollowed == false && person.isFollowRequested == false) {
+                                person.isFollowRequested = true;
+                                context.read<FollowRequestBloc>().add(
+                                  FollowRequestDataEvent(
+                                    context: context,
+                                    toUserId: person.userId.toString(),
+                                  ),
+                                );
+                              }
+
+                              /// ---- CANCEL REQUEST ----
+                              else if (person.isFollowRequested == true) {
+                                person.isFollowRequested = false;
+                                context.read<FollowRequestBloc>().add(
+                                  FollowRequestDataEvent(
+                                    context: context,
+                                    toUserId: person.userId.toString(),
+                                  ),
+                                );
+                                // TODO: cancel follow request API if available
+                              }
+
+
+                            });
+                          },
+                          child: Container(
+                            height: 35,
+                            width: 95,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: person.isFollowed == true
+                                    ? Colors.green
+                                    : person.isFollowRequested == true
+                                    ? Colors.grey
+                                    : AppColor.bgRed,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                person.isFollowRequested == true
+                                    ? "Requested"
+                                    : "Follow",
+                                style: TextStyle(
+                                  color: person.isFollowed == true
+                                      ? Colors.green
+                                      : person.isFollowRequested == true
+                                      ? Colors.grey
+                                      : AppColor.bgRed,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
+              /// Invite Friends Button
+              Padding(
+                padding:  EdgeInsets.all(5.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: 'Invite Friends',
+                    callback: () {
+                      // Invite Friends Logic
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+        return SizedBox();
+
+      },
     );
   }
 }
