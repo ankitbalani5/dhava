@@ -137,35 +137,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileScreen(),
-                      ),
-                    );
+                BlocBuilder<ProfileBloc, ProfileState>(
+                  builder: (context, state) {
+                    if(state is ProfileSuccess){
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: AppColor.bgRed)
+                          ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: CachedNetworkImage(
+                                imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
+                                // Replace with your back icon path
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.fill,
+                                placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                                  height: 30,),
+                                errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
+                                  height: 30,),
+                              )
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox();
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColor.bgRed)
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: CachedNetworkImage(
-                        imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
-                        // Replace with your back icon path
-                        width: 30,
-                        height: 30,
-                        fit: BoxFit.fill,
-                        placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
-                          height: 30,),
-                        errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
-                          height: 30,),
-                      )
-                    ),
-                  ),
                 ),
               ],
             ),
