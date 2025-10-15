@@ -894,7 +894,24 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase(categoryId: categoryId)));
+
+                                    var userId = profileData?.userId;
+                                    if(userId != null){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => TrophyCase(categoryId: categoryId, userId: userId),
+                                        ),
+                                      );
+                                    }
+                                    else{
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text("There is some issue while getting user")),
+                                      );
+                                    }
+                                    // if()
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase(categoryId: categoryId, userId: profileData.userId)));
 
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.trophy),
@@ -1012,7 +1029,25 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   children: [
                                     GestureDetector(
                                         onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => AllChallenge(userId: profileData!.userId.toString(),)));
+
+
+                                          var userId = profileData?.userId;
+                                          if(userId != null){
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => AllChallenge(userId: userId),
+                                              ),
+                                            );
+                                          }
+                                          else{
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text("There is some issue while getting user")),
+                                            );
+                                          }
+
+                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => AllChallenge(userId: profileData!.userId.toString(),)));
                                         },
                                         child: Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),))
                                   ],

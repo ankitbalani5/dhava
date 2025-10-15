@@ -12,7 +12,8 @@ import '../models/trophyModel.dart';
 
 class TrophyCase extends StatefulWidget {
   String categoryId;
-  TrophyCase({required this.categoryId, super.key});
+  String userId;
+  TrophyCase({required this.categoryId, required this.userId,  super.key});
 
   @override
   State<TrophyCase> createState() => _TrophyCaseState();
@@ -35,7 +36,7 @@ class _TrophyCaseState extends State<TrophyCase> {
 
   @override
   void initState() {
-    context.read<TrophyBloc>().add(MyTrophyEvent(context: context, page: '1', perPage: '10', categoryId: widget.categoryId));
+    context.read<TrophyBloc>().add(MyTrophyEvent(context: context, page: '1', perPage: '10', categoryId: widget.categoryId, userId: widget.userId));
     super.initState();
   }
 
@@ -64,8 +65,8 @@ class _TrophyCaseState extends State<TrophyCase> {
               return Center(child: Constant.loadingAnimation());
             }
             if(state is MyTrophySuccess){
-              var trophyData = state.trophyModel.data?.data;
-              return SingleChildScrollView(
+              var trophyData = state.trophyModel.data?.data ?? [];
+              return trophyData.isEmpty ? Center(child: Text('No Data Available')) : SingleChildScrollView(
                 child: Column(
                   children: [
                     Row(

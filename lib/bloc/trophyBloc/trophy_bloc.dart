@@ -23,7 +23,13 @@ class TrophyBloc extends Bloc<TrophyEvent, TrophyState> {
       final headers = {
         'Content-Type': 'application/json'
       };
-      final response = await Api.getApi('${ApiEndPoint.myTrophy}?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}', headers, event.context);
+      var userId = "";
+      var endPointUrl = ApiEndPoint.myTrophy;
+      if(event.userId.isNotEmpty){
+        userId = "&user_id=${event.userId}";
+        endPointUrl = ApiEndPoint.userTrophy;
+      }
+      final response = await Api.getApi('$endPointUrl?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}$userId', headers, event.context);
       final result = TrophyModel.fromJson(response);
 
       if(result.statusCode == 200){

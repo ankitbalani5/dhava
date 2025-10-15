@@ -7,9 +7,10 @@ class MyAllChallengeEvent extends ChallengeEvent {
   final String page;
   final String perPage;
   final String categoryId;
+  final String userId;
   final bool isPagination;
   MyAllChallengeEvent({required this.context, required this.page,
-    required this.perPage, required this.categoryId, this.isPagination = false});
+    required this.perPage, required this.categoryId, required this.userId, this.isPagination = false});
 }
 class UserAllChallengeEvent extends ChallengeEvent{
   final BuildContext context;

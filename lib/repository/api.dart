@@ -582,6 +582,7 @@ class ApiEndPoint {
   static const String unfollow = '/api/v1/unfollow';
 
   static const String myTrophy = '/api/v1/my/trophies/all';
+  static const String userTrophy = '/api/v1/user/trophies/all';
 
   static const String myAllChallenge = '/api/v1/my/joined-challenges/all';
   static const String userAllChallenge = '/api/v1/user/joined-challenges/all';

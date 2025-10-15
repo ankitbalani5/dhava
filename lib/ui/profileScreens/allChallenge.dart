@@ -29,7 +29,7 @@ class _AllChallengeState extends State<AllChallenge> {
 
   void _onRefresh() {
     page = 1;
-    context.read<MyAllChallengeBloc>().add(MyAllChallengeEvent(context: context, perPage: '10', page: page.toString(), categoryId: categoryId,));
+    context.read<MyAllChallengeBloc>().add(MyAllChallengeEvent(context: context, perPage: '10', page: page.toString(),userId: widget.userId, categoryId: categoryId,));
     _refreshController.refreshCompleted();
   }
 
@@ -40,6 +40,7 @@ class _AllChallengeState extends State<AllChallenge> {
         perPage: '10',
         page: page.toString(),
         categoryId: categoryId,
+        userId: widget.userId,
         isPagination: true
     ));
     _refreshController.loadComplete();
@@ -47,12 +48,8 @@ class _AllChallengeState extends State<AllChallenge> {
 
   @override
   void initState() {
-    if(widget.userId.isNotEmpty){
-      print('userId::::::::${widget.userId}');
-      context.read<MyAllChallengeBloc>().add(UserAllChallengeEvent(perPage: '10', page: page.toString(),userId: widget.userId, categoryId: '', context: context));
-    }else{
-      context.read<MyAllChallengeBloc>().add(MyAllChallengeEvent(perPage: '10', page: page.toString(), categoryId: '', context: context));
-    }
+      context.read<MyAllChallengeBloc>().add(MyAllChallengeEvent(perPage: '10', page: page.toString(),userId: widget.userId, categoryId: '', context: context));
+
 
 
     // categoryData = CategoryModel(
@@ -91,7 +88,7 @@ class _AllChallengeState extends State<AllChallenge> {
         },
         builder: (context, state) {
           if(state is MyAllChallengeLoading){
-            return Constant.loadingAnimation();
+            return Center(child: Constant.loadingAnimation());
           }
           if(state is MyAllChallengeSuccess){
             var challenges = state.myAllChallengeModel.data!.data;

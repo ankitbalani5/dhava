@@ -180,8 +180,8 @@ _loadPage();
                 );
               }
               if(state is MyFeedSuccess){
-                var feedData = state.feedModel.data!.data;
-                return Expanded(
+                var feedData = state.feedModel.data!.data ?? [];
+                return feedData.isEmpty ? Center(child: Text('No Data Available')) : Expanded(
                   child: SmartRefresher(
                     controller: _refreshController,
                     enablePullDown: true,

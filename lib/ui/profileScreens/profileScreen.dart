@@ -1528,7 +1528,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase(categoryId: categoryId)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TrophyCase(categoryId: categoryId, userId: '',)));
 
                                   },
                                   leading: SvgPicture.asset(AppImageSvg.trophy),
@@ -1646,7 +1646,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     GestureDetector(
                                         onTap: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => AllChallenge()));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => AllChallenge(userId: '',)));
                                         },
                                         child: Text('All Challenge', style: CustomTextStyles.regular(textColor: AppColor.bgRed),))
                                   ],

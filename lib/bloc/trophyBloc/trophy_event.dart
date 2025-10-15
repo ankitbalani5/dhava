@@ -8,5 +8,6 @@ class MyTrophyEvent extends TrophyEvent{
   final String page;
   final String perPage;
   final String categoryId;
-  MyTrophyEvent({required this.context, required this.page, required this.perPage, required this.categoryId});
+  final String userId;
+  MyTrophyEvent({required this.context, required this.page, required this.perPage, required this.categoryId, required this.userId});
 }
