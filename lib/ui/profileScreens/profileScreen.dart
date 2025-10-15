@@ -923,8 +923,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    // profileData = Constant.getProfile;
-    categoryId = Constant.getCategory!.data!.first.categoryId.toString();
+    //profileData = Constant.getProfile;
+    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+     categoryId = Constant.getCategory!.data!.first.categoryId.toString();
     print('categoryId::::$categoryId');
     var add = context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
     super.initState();

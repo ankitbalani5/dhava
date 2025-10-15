@@ -256,7 +256,7 @@ class Api {
       
     }
   }
-  static Future updateProfileApi(
+  static Future updateProfileApi2(
       String endPoint,
       Map<String, dynamic> body,
       Map<String, String> header,
@@ -264,14 +264,11 @@ class Api {
       ) async {
     try {
       final url = Uri.parse(BaseUrl + endPoint);
-      final requestHeaders = {
-        'Content-Type': 'application/json',
-        ...header,
-      };
+
 
       final response = await http.post(
         url,
-        headers: requestHeaders,
+        headers: header,
         body: jsonEncode(body),
       );
 
@@ -299,30 +296,25 @@ class Api {
     }
   }
 
-/*
   static Future updateProfileApi(String endPoint, Map<String, dynamic> body, Map<String, String> header, BuildContext context) async {
     try {
       var request = http.MultipartRequest("POST", Uri.parse(BaseUrl + endPoint));
 
-      // headers (authorization वगैरह)
       request.headers.addAll(header);
 
-      // अगर profile_pic file है तो MultipartFile में add करो
       if (body['profile_pic'] != null && body['profile_pic'].toString().isNotEmpty) {
         request.files.add(await http.MultipartFile.fromPath(
           'profile_pic',
-          body['profile_pic'], // यहां file path pass करो
+          body['profile_pic'],
         ));
       }
 
-      // बाकी normal fields add करना
       body.forEach((key, value) {
         if (key != 'profile_pic') {
           request.fields[key] = value?.toString() ?? '';
         }
       });
 
-      // request भेजना
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
@@ -348,7 +340,6 @@ class Api {
       return null;
     }
   }
-*/
 
   static Future postApiWithQuery(String endPoint, var queryParameters, var header, BuildContext context) async {
     final response = await http.post(
@@ -569,6 +560,7 @@ class ApiEndPoint {
   static const String getFeed = '/api/v1/activity/feed';
   static const String getFeedDetail = '/api/v1/activity/feed-details';
   static const String getMyFeed = '/api/v1/activity/my-feed';
+  static const String getUserFeed = '/api/v1/activity/user-feed';
   static const String activityLike = '/api/v1/activity/like';
   static const String userFind = '/api/v1/user/find';
   static const String postAllChallenges = '/api/v1/challenges/all';

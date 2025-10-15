@@ -16,7 +16,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ActivitiesScreen extends StatefulWidget {
-  const ActivitiesScreen({super.key});
+ final String userId;
+  const ActivitiesScreen({super.key,this.userId=''});
 
   @override
   State<ActivitiesScreen> createState() => _ActivitiesScreenState();
@@ -30,10 +31,13 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
   int page = 1;
   final RefreshController _refreshController = RefreshController();
 
+  _loadPage(){
+    context.read<MyFeedBloc>().add(GetMyFeedEvent(perPage: '10', page: page.toString(), categoryId: categoryId, context: context,userId: widget.userId));
+  }
 
   void _onRefresh() {
     page = 1;
-    context.read<MyFeedBloc>().add(GetMyFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: categoryId,));
+    _loadPage();
     _refreshController.refreshCompleted();
   }
 
@@ -44,6 +48,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         perPage: '10',
         page: page.toString(),
         categoryId: categoryId,
+        userId: widget.userId,
         isPagination: true
     ));
     _refreshController.loadComplete();
@@ -51,9 +56,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
 
   @override
   void initState() {
-    context.read<MyFeedBloc>().add(GetMyFeedEvent(perPage: '10', page: page.toString(), categoryId: '', context: context));
 
-
+_loadPage();
     categoryData = CategoryModel(
         data: [
           CategoryModelData(
@@ -108,7 +112,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                             page = 1;
                             selectedIndex = index;
                             categoryId = category.categoryId ?? '';
-                            context.read<MyFeedBloc>().add(GetMyFeedEvent(perPage: '10', page: '1', categoryId: categoryId, context: context));
+
+                            _loadPage();
                           });
                         },
                         child: Container(
@@ -446,3 +451,4 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
     );
   }
 }
+

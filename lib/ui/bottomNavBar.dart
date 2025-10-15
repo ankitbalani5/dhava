@@ -166,41 +166,13 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
         return true;
       },
       child: Scaffold(
-        body: BlocConsumer<ProfileBloc, ProfileState>(
-          listener: (context, state) {
-            if(state is ProfileLoading){
-              Constant.loadingDialog(context);
-            }
-            if(state is ProfileSuccess){
-           Constant.closeLoadingDialog(context);
-              var profileData = state.profileModel?.data;
-
-              if(profileData?.isProfileCompleted == false){
-                Future.microtask(() => showDialog(
-                  context: this.context,
-                  barrierDismissible: false,
-                  // Prevent dialog dismissal by tapping outside
-                  builder: (BuildContext context) {
-                    return Constant.showCompleteProfileDialog(context);
-                  },
-                ));
-              }
-            }
-            if(state is CategorySuccess){
-
-              Constant.getCategory = state.categoryModel;
-
-            }
-          },
-          builder: (context, state) {
-            return Stack(
-              children: [
-                _baseScreens[_currentIndex], // Base screens
-                ..._overlayStack, // Overlay screens
-              ],
-            );
-          },
+        body: Stack(
+          children: [
+            _baseScreens[_currentIndex], // Base screens
+            ..._overlayStack, // Overlay screens
+          ],
         ),
+
         bottomNavigationBar: Container(
           // elevation: 10,
           decoration: BoxDecoration(
