@@ -26,6 +26,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../profileScreens/otherProfileScreen.dart';
+import '../clubs/clubWidgets/active/challangesActive.dart';
 import 'feedDetails.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
@@ -178,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onLoading: _onLoading,
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
               BlocConsumer<ProfileBloc, ProfileState > (
@@ -351,6 +353,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   return SizedBox.shrink();
                 },
               ),
+             SizedBox(height: 20,),
+             Padding(
+               padding: const EdgeInsets.only(left: 20.0, bottom: 15, right: 15),
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   Text('Suggested Challenges', style: CustomTextStyles.semiBold(fontSize: 20),),
+                   SizedBox(height: 5,),
+                   Text('Make accountability a little easier. more fun'
+                       'and earn rewards!', style: CustomTextStyles.semiBold(fontSize: 14),),
+                 ],
+               ),
+             ),
+             SizedBox(height: 10,),
              // Suggested Challenges Section
               BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
                 // bloc: GetAllChallengesBloc(),
@@ -446,9 +462,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 return GestureDetector(
                                   onTap: () {
-
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChallangesActiveScreen(challengeId: challenge.challengeId.toString(),)));
+                                    // Navigator.push(context, MaterialPageRoute(
+                                    //     builder: (_) => ChallangesDetailScreen(challengeId: challenge.challengeId)));
                                   },
                                   child: Container(
                                     width: 160,
@@ -682,9 +698,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      OtherProfileScreen(userId: feed.userId.toString()),
+                                                  feed.userId == context.read<ProfileBloc>().profileModel!.data!.userId.toString()
+                                                      ? ProfileScreen()
+                                                      : OtherProfileScreen(userId: feed.userId.toString()),
                                                 ),
                                               );
+
+                                              // Navigator.push(
+                                              //   context,
+                                              //   MaterialPageRoute(
+                                              //     builder: (context) =>
+                                              //     feed.userId == context.read<ProfileBloc>().profileModel!.data!.userId.toString();
+                                              //         ? ProfileScreen()
+                                              //         : OtherProfileScreen(userId: feed.userId.toString()),
+                                              //   ),
+                                              // );
                                             },
                                             child: Row(
                                               crossAxisAlignment: CrossAxisAlignment.start,
