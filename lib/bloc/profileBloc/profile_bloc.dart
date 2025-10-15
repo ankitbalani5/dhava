@@ -64,7 +64,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     try{
       final headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+      'authorization': 'Bearer ${Constant.access_token}'
       };
       final response = await Api.getApi('${ApiEndPoint.profileSummary}?category_id=${event.categoryId}', headers, event.context);
       final result = SummaryModel.fromJson(response);

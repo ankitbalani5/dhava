@@ -60,6 +60,15 @@ class _SearchActiveWidgetState extends State<SearchActiveWidget> {
     }
   }
 
+  final FocusNode _focusNode = FocusNode(); // 👈 Added
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +88,7 @@ class _SearchActiveWidgetState extends State<SearchActiveWidget> {
                 TextField(
                   controller: _controller,
                   onChanged: _onChanged,
+                  focusNode: _focusNode,
                   decoration: InputDecoration(
                     hintText: "Search on Coherent",
                     suffixIcon: Padding(

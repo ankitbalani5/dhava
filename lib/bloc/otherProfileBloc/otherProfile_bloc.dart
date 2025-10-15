@@ -56,7 +56,7 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
       final headers = {
         'Content-Type': 'application/json'
       };
-      final response = await Api.getApi('${ApiEndPoint.profileSummary}?category_id=${event.categoryId}', headers, event.context);
+      final response = await Api.getApi('${ApiEndPoint.userProfileSummary}?category_id=${event.categoryId}&user_id=${event.userId}', headers, event.context);
       final result = SummaryModel.fromJson(response);
       if (kDebugMode) {
         print('_summaryResponse:::$result');

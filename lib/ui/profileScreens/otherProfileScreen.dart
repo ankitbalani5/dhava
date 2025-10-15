@@ -54,9 +54,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   @override
   void initState() {
     var userId = widget.userId;
-    context.read<OtherProfileBloc>().add(
-      OtherProfileDataEvent(context: context, userId: userId),
-    );
+    context.read<OtherProfileBloc>().add(OtherProfileDataEvent(context: context, userId: userId),);
+    categoryId = Constant.getCategory!.data!.first.categoryId.toString();
+    print('categoryId::::$categoryId');
+    print('userId::::$userId');
+    context.read<OtherProfileBloc>().add(GetOtherProfileSummary(context: context, categoryId: categoryId, userId: userId.toString()));
     super.initState();
   }
 
@@ -1030,8 +1032,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                     GestureDetector(
                                         onTap: () {
 
+                                          print('widget.user::::${widget.userId}');
 
                                           var userId = profileData?.userId;
+                                          print('user::::${userId}');
                                           if(userId != null){
                                             Navigator.push(
                                               context,

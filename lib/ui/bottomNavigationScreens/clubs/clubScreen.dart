@@ -109,6 +109,7 @@ class ClubScreenState extends State<ClubScreen> {
                         imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
                         width: 30,
                         height: 30,
+                        fit: BoxFit.fill,
                         placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,

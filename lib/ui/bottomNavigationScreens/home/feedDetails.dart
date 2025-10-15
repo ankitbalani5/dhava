@@ -76,6 +76,7 @@ class _FeedDetailsState extends State<FeedDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocConsumer<FeedDetailBloc, FeedDetailState>(
         listener: (context, state) {
           // TODO: implement listener
@@ -180,7 +181,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                       child: Column(
                         children: [
                           Container(
-                            height: 300,
+                            // height: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -343,6 +344,10 @@ class _FeedDetailsState extends State<FeedDetails> {
                               ],
                             ),
                           ),
+                          const SizedBox(height: 30),
+
+                          Divider(color: Colors.grey.shade300,),
+                          const SizedBox(height: 30),
                           // const SizedBox(height: 20),
                           // results
                           // results
@@ -423,7 +428,7 @@ class _FeedDetailsState extends State<FeedDetails> {
 
                           // splits
                           Container(
-                            height: 180,
+                            // height: 180,
                             // padding: const EdgeInsets.all(16),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,10 +521,13 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 ]
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 30),
+
+                          Divider(color: Colors.grey.shade300,),
+                          const SizedBox(height: 30),
 
                           Container(
-                            height: 580,
+                            // height: 580,
                             // padding: const EdgeInsets.all(16),
                             child: Column(
                               children: [
@@ -665,8 +673,10 @@ class _FeedDetailsState extends State<FeedDetails> {
                               ],
                             ),
                           ),
-                          // const SizedBox(height: 20),
+                          const SizedBox(height: 30),
 
+                          Divider(color: Colors.grey.shade300,),
+                          const SizedBox(height: 30),
                           // elevation
                           Container(
                             height: 410,

@@ -927,7 +927,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
      categoryId = Constant.getCategory!.data!.first.categoryId.toString();
     print('categoryId::::$categoryId');
-    var add = context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
+    context.read<ProfileBloc>().add(GetProfileSummary(context, categoryId));
     super.initState();
   }
 
@@ -1076,7 +1076,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(50),
                                       child: CachedNetworkImage(
-                                        imageUrl: profileData!.data!.profilePhoto.toString(),
+                                        imageUrl: context.read<ProfileBloc>().profileModel?.data?.profilePhoto ?? '',
                                         width: 90.0,
                                         height: 90.0,
                                         fit: BoxFit.fill,
@@ -1094,7 +1094,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             ),
                                         errorWidget: (context,
                                             url, error) =>
-                                            Image.asset(AppImageOthers.profilePic, height: 90,),
+                                            Image.asset(AppImageOthers.defaultImage,width: 90,
+                                              height: 90,),
                                       )
                                   ),
                                 ),

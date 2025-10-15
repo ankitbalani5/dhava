@@ -29,6 +29,8 @@ class MyAllChallengeBloc extends Bloc<ChallengeEvent, MyAllChallengeState> {
       if(event.userId.isNotEmpty){
         userId = "&user_id=${event.userId}";
         endPointUrl = ApiEndPoint.userAllChallenge;
+        print('userIdBloc:::$userId');
+        print('endPointBloc:::$endPointUrl');
       }
       final response = await Api.getApi('$endPointUrl?per_page=${event.perPage}&page=${event.page}&category_id=${event.categoryId}$userId',
           headers, event.context);

@@ -158,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Replace with your back icon path
                         width: 30,
                         height: 30,
+                        fit: BoxFit.fill,
                         placeholder: (context, url) => Image.asset(AppImageOthers.defaultImage,width: 30,
                           height: 30,),
                         errorWidget: (context, url, error) => Image.asset(AppImageOthers.defaultImage,width: 30,
