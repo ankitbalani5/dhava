@@ -28,6 +28,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../profileScreens/otherProfileScreen.dart';
 import 'feedDetails.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,12 +47,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: '1', categoryId: '',));
-    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
+    _loadPage();
     super.initState();
   }
 
-
+  _loadPage(){
+    context.read<ProfileBloc>().profileModel = null;
+    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
+    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
+  }
 
   int getCompletedSteps(int activityUploaded, int totalFollowing, String photo) {
     int steps = 0;
@@ -67,13 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onRefresh() {
     page = 1;
-    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
-    context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
-    context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
-    // context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
-    // context.read<ProfileBloc>().add(CategoryEvent(context));
-    // context.read<ActivityBloc>().add(
-    //     GetSuggestedChallengesEvent(context: context));
+    _loadPage();
     _refreshController.refreshCompleted();
   }
 
@@ -188,15 +187,51 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   }
                   if (state is ProfileSuccess) {
+                    var profileData = state.profileModel?.data;
+
+                    if(profileData?.isProfileCompleted == false){
+                      Future.microtask(() => showDialog(
+                        context: this.context,
+                        barrierDismissible: false,
+                        // Prevent dialog dismissal by tapping outside
+                        builder: (BuildContext context) {
+                          return Constant.showCompleteProfileDialog(context);
+                        },
+                      ));
+                    }
+                  }
+                  if(state is CategorySuccess){
+                    Constant.getCategory = state.categoryModel;
 
                   }
                 },
                 builder:(context, state) {
                   if (state is ProfileLoading) {
-                    return Center(
-                      child: LoadingAnimationWidget.inkDrop(
-                        color: AppColor.bgRed,
-                        size: 20,
+                    // 👉 shimmer for profile loading
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(
+                                3,
+                                    (index) => Container(
+                                  height: 70,
+                                  margin: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }
@@ -316,18 +351,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   return SizedBox.shrink();
                 },
               ),
-
-
-              // Suggested Challenges Section
+             // Suggested Challenges Section
               BlocConsumer<GetAllChallengesBloc, GetAllChallengesState>(
                 // bloc: GetAllChallengesBloc(),
                 listener: (context, state) {},
                 builder: (context, state) {
                   if (state is GetAllChallengesLoading) {
-                    return Center(
-                      child: LoadingAnimationWidget.inkDrop(
-                        color: AppColor.bgRed,
-                        size: 20,
+                    // 👉 shimmer for challenges list
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 4,
+                          itemBuilder: (_, __) => Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: 160,
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     );
                   }
@@ -511,8 +561,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ? LoadingAnimationWidget.inkDrop(
                                                   color: Colors.white,
                                                   size: 20,
-                                                )
-                                                    : Text(
+                                                ) : Text(
                                                   challenge.isJoined == true ? "Joined" : "Join Now",
                                                   style: CustomTextStyles.bold(
                                                     textColor: Colors.white,
@@ -568,11 +617,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
                 builder: (context, state) {
-                  if(state is FeedLoading){
-                    return Center(
-                      child: LoadingAnimationWidget.inkDrop(
-                        color: AppColor.bgRed,
-                        size: 20,
+                  if (state is FeedLoading) {
+                    // 👉 shimmer for feed list
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: List.generate(
+                          3,
+                              (index) => Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                height: 320,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     );
                   }
