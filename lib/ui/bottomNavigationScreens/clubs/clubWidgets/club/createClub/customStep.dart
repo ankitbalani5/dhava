@@ -83,7 +83,8 @@ class _CustomizeStepState extends State<CustomizeStep> {
                    ),
                 ),
                  SizedBox(height: 8),
-                TextField(
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   maxLength: 126,
                   decoration: InputDecoration(
                     hintText: "Give your club a name",
@@ -111,7 +112,8 @@ class _CustomizeStepState extends State<CustomizeStep> {
                  ),
                 ),
                  SizedBox(height: 8),
-                TextField(
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   maxLength: 126,
                   maxLines: 4,
                   decoration: InputDecoration(

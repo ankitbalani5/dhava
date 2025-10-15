@@ -40,6 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? primaryCategoryId;
   String? userID = '';
   String gender = '';
+  String dob = '';
   String planToUse = '';
   String fitnessLevel = '';
   List<String> genderList = ["Male", "Female", "Other"];
@@ -55,7 +56,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     var data = profileData?.data;
     firstnameController.text = data!.firstName ?? '';
     lastnameController.text = data.lastName?? '';
-    var dob =data.dob?? '';
+    dob =data.dob ?? '';
     cityController.text = data.city?? '';
     stateController.text = data.state?? '';
     bioController.text = data.bio?? '';
@@ -65,16 +66,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     planToUse = data.planToUse ??"";
     fitnessLevel = data.fitnessLevel??"";
     profilePic = data.profilePhoto??"";
-    final profileCategoryId = data.primaryCategoryId;
+    final profileCategoryId = data.primaryCategoryId ??'';
     userID  = data.userId.toString();
 
 
 
-    if(profileCategoryId != null){
+    if(profileCategoryId.isNotEmpty){
       final category = Constant.getCategory?.data?.firstWhereOrNull((e) => e.categoryId == profileCategoryId);
       selectedSport = category?.categoryName ?? '';
-    }else{
-      selectedSport = "profileCategoryId is null";
     }
 
     final genderValue = profileData?.data?.gender?.toLowerCase() ?? '';
@@ -136,25 +135,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               return    TextButton(
                 onPressed: () async {
 
-                  context.read<ProfileBloc>().profileModel = null;
-               String? imagePathToSend = _selectedImage?.path;
+                  if(selectedSport != null){
+                    context.read<ProfileBloc>().profileModel = null;
+                    String? imagePathToSend = _selectedImage?.path;
 
-                  context.read<UpdateProfileBloc>().add(UpdateProfileEvent(
-                    context: context,
-                    firstName: firstnameController.text,
-                    lastName: lastnameController.text,
-                    city: cityController.text,
-                    state: stateController.text,
-                    profilePic: imagePathToSend,
-                    primaryCategoryId: primaryCategoryId.toString(),
-                    bio: bioController.text,
-                    weight: weightController.text,
-                    dob: birthdayController.text,
-                    gender: gender,
-                    fitnessLevel: fitnessLevel,
-                    planToUse: planToUse,
+                    context.read<UpdateProfileBloc>().add(UpdateProfileEvent(
+                      context: context,
+                      firstName: firstnameController.text,
+                      lastName: lastnameController.text,
+                      city: cityController.text,
+                      state: stateController.text,
+                      profilePic: imagePathToSend,
+                      primaryCategoryId: primaryCategoryId.toString(),
+                      bio: bioController.text,
+                      weight: weightController.text,
+                      dob: dob,
+                      gender: gender,
+                      fitnessLevel: fitnessLevel,
+                      planToUse: planToUse,
 
-                  ));
+                    ));
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Please select sport")),
+                    );
+                  }
+
+
                 },
                 child:  Text(
                   "DONE",
@@ -375,7 +383,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       popupProps: const PopupProps.menu(
-        showSearchBox: true,
+        showSearchBox: false,
         fit: FlexFit.loose,
         menuProps: MenuProps(
           backgroundColor: Colors.white,
@@ -397,7 +405,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           .toList() ?? [],
       selectedItem: selectedSport,
       popupProps: const PopupProps.menu(
-        showSearchBox: true,
+        showSearchBox: false,
         fit: FlexFit.loose,
         menuProps: MenuProps(
           backgroundColor: Colors.white,
@@ -405,7 +413,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       decoratorProps: DropDownDecoratorProps(
           decoration: InputDecoration(
-            labelText: "Primary Sport",
+            //labelText: "Primary Sport",
+            labelText: "Select Sport",
             labelStyle: const TextStyle(color: Colors.grey),
             contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             border: OutlineInputBorder(
@@ -442,7 +451,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildBirthdayField() {
-    return TextField(
+    return TextFormField(
+      textCapitalization: TextCapitalization.sentences,
       controller: birthdayController,
       readOnly: true,
       decoration: InputDecoration(
@@ -466,19 +476,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       onTap: () async {
+
         final DateTime today = DateTime.now();
         final DateTime lastAllowedDate =
         DateTime(today.year - 18, today.month, today.day);
 
+        // 👇 Try parsing the current DOB if it exists
+        DateTime initialDate = lastAllowedDate;
+        if (dob.isNotEmpty) {
+          try {
+            initialDate = DateTime.parse(dob);
+          } catch (e) {
+            debugPrint("Invalid date format in controller: $e");
+          }
+        }
+
         DateTime? picked = await showDatePicker(
           context: context,
-          initialDate: lastAllowedDate,
+          initialDate: initialDate,
           firstDate: DateTime(1900),
           lastDate: lastAllowedDate,
         );
 
         if (picked != null) {
           setState(() {
+            dob =  "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
             birthdayController.text =
             "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
           });
@@ -488,7 +510,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller) {
-    return TextField(
+    return TextFormField(
+      textCapitalization: TextCapitalization.sentences,
       controller: controller,
       keyboardType: controller == weightController ? TextInputType.number : TextInputType.text,
       decoration: InputDecoration(
