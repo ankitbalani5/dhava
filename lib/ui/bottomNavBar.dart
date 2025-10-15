@@ -47,8 +47,6 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     _currentIndex = widget.i;
     _initializePreferences();
 
-    context.read<ProfileBloc>().profileModel = null;
-    context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
     context.read<ProfileBloc>().add(CategoryEvent(context));
   }
 
