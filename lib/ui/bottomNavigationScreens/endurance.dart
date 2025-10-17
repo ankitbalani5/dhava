@@ -67,10 +67,12 @@ class _EnduranceState extends State<Endurance> {
         appBar: AppBar(
           backgroundColor: Colors.white,
 
-          title: Text(
-            'Endurance',
-            style: CustomTextStyles.bold(fontSize: 18),
-          ),
+          title: Image.asset(AppImageOthers.dhavaLogo, height: 80, width: 140,),
+          centerTitle: true,
+          // title: Text(
+          //   'Endurance',
+          //   style: CustomTextStyles.bold(fontSize: 18),
+          // ),
         ),
         body: Stack(
 

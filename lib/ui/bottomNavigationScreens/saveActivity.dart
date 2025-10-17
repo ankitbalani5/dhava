@@ -147,7 +147,23 @@ class _SaveActivityState extends State<SaveActivity> {
     categoryName = matchedCategory.categoryName ?? "";
     selectedCategoryImage = matchedCategory.categoryIcon ?? '';
     categoryId = matchedCategory.categoryId ?? '';
+    titleController = TextEditingController(text: getRunTitle());
     super.initState();
+  }
+
+  String getRunTitle() {
+    final now = DateTime.now();
+    final hour = now.hour;
+
+    if (hour < 10) {
+      return "Morning $categoryName";
+    } else if (hour < 17) {
+      return "Afternoon $categoryName";
+    } else if (hour >= 20) {
+      return "Night $categoryName";
+    } else {
+      return "Evening $categoryName";
+    }
   }
 
   @override
@@ -227,6 +243,7 @@ class _SaveActivityState extends State<SaveActivity> {
 
                   style: TextStyle(color: Colors.black),
                   maxLines: 3,
+                  maxLength: 50,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: AppColor.bgTile,
@@ -256,13 +273,13 @@ class _SaveActivityState extends State<SaveActivity> {
                     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                   // controller: controller,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter description';
-                    }else {
-                      return null;
-                    }
-                  },
+                  // validator: (value) {
+                  //   if (value == null || value.isEmpty) {
+                  //     return 'Please enter description';
+                  //   }else {
+                  //     return null;
+                  //   }
+                  // },
                 ),
                 SizedBox(height: 15,),
 
@@ -325,14 +342,14 @@ class _SaveActivityState extends State<SaveActivity> {
                 const SizedBox(height: 20),
 
                 Container(
-                  height: 128,
+                  height: 200,
                   width: double.infinity,
                   child:  _selectedImage != null
                     ? ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.file(
                     _selectedImage!,
-                    height: 150,
+                    height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
@@ -346,7 +363,8 @@ class _SaveActivityState extends State<SaveActivity> {
                   },
                   child:    Image.asset(
                     AppImageOthers.addPhoto,
-                    height: 150,
+                    height: 100,
+                    width: MediaQuery.of(context).size.width,
                   ),
                 ),
 
@@ -456,48 +474,48 @@ class _SaveActivityState extends State<SaveActivity> {
                   ),
                 ),
                 SizedBox(height: 15,),
-                TextFormField(
-                  controller: privateNoteController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  // keyboardType: TextInputType.number,
-                  cursorColor: AppColor.textBackgroundGrey,
-                  style: TextStyle(color: Colors.black),
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColor.bgTile,
-                    hintText: "Jot down private notes here. Only you can see these.",
-                    hintStyle: TextStyle(color: Colors.grey),
-                    prefixStyle: TextStyle(
-                      color: Colors.black,
-                    ),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 2.0, bottom: 45.0),
-                      child: Icon(Icons.lock, color: Colors.black),
-                    ),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide:
-                        BorderSide(color: Colors.transparent)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide:
-                        BorderSide(color: Colors.transparent)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide:
-                        BorderSide(color: Colors.transparent)),
-                    errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Colors.red)),
-                    focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Colors.red)),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  ),
-
-                ),
-                SizedBox(height: 25,),
+                // TextFormField(
+                //   controller: privateNoteController,
+                //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                //   // keyboardType: TextInputType.number,
+                //   cursorColor: AppColor.textBackgroundGrey,
+                //   style: TextStyle(color: Colors.black),
+                //   maxLines: 3,
+                //   decoration: InputDecoration(
+                //     filled: true,
+                //     fillColor: AppColor.bgTile,
+                //     hintText: "Jot down private notes here. Only you can see these.",
+                //     hintStyle: TextStyle(color: Colors.grey),
+                //     prefixStyle: TextStyle(
+                //       color: Colors.black,
+                //     ),
+                //     prefixIcon: Padding(
+                //       padding: const EdgeInsets.only(left: 2.0, bottom: 45.0),
+                //       child: Icon(Icons.lock, color: Colors.black),
+                //     ),
+                //     border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide:
+                //         BorderSide(color: Colors.transparent)),
+                //     focusedBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide:
+                //         BorderSide(color: Colors.transparent)),
+                //     enabledBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide:
+                //         BorderSide(color: Colors.transparent)),
+                //     errorBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide: const BorderSide(color: Colors.red)),
+                //     focusedErrorBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(14),
+                //         borderSide: const BorderSide(color: Colors.red)),
+                //     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                //   ),
+                //
+                // ),
+                // SizedBox(height: 25,),
                 const Text("Visibility", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
                 SizedBox(height: 15,),
 

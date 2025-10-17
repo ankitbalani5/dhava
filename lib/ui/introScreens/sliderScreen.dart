@@ -79,11 +79,48 @@ class _SliderScreenState extends State<SliderScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Image.asset(
-              splashData[_position].image.toString(),
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width,
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragEnd: (DragEndDetails details) {
+                final velocity = details.primaryVelocity ?? 0;
+
+                // swipe left -> next
+                if (velocity < 0) {
+                  if (_position < splashData.length - 1) {
+                    _position++;
+                    pageController.animateToPage(
+                      _position,
+                      duration: const Duration(milliseconds: 350),
+                      curve: Curves.easeInOut,
+                    );
+                    setState(() {});
+                  }
+                }
+                // swipe right -> previous
+                else if (velocity > 0) {
+                  if (_position > 0) {
+                    _position--;
+                    pageController.animateToPage(
+                      _position,
+                      duration: const Duration(milliseconds: 350),
+                      curve: Curves.easeInOut,
+                    );
+                    setState(() {});
+                  }
+                }
+              },
+              child: Image.asset(
+                splashData[_position].image.toString(),
+                fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                height: double.infinity,
+              ),
             ),
+            // Image.asset(
+            //   splashData[_position].image.toString(),
+            //   fit: BoxFit.cover,
+            //   width: MediaQuery.of(context).size.width,
+            // ),
             Column(
               children: [
                 Expanded(
@@ -119,7 +156,7 @@ class _SliderScreenState extends State<SliderScreen> {
                   ),
                 ),
                 Expanded(
-                  flex: 4,
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

@@ -77,6 +77,22 @@ class Constant {
     return result.trim();
   }
 
+  static double calculateProgress(DateTime startDate, DateTime endDate) {
+    final now = DateTime.now();
+
+    if (now.isBefore(startDate)) return 0.0;
+
+    if (now.isAfter(endDate)) return 1.0;
+
+    final totalDuration = endDate.difference(startDate).inSeconds;
+    final elapsed = now.difference(startDate).inSeconds;
+    print('totalDuration:::$totalDuration');
+    print('elapsed:::$elapsed');
+
+    double progress = elapsed / totalDuration;
+
+    return progress.clamp(0.0, 1.0);
+  }
 
   static Map<String, dynamic> calculateChallengeDuration(String? startDateStr, String? endDateStr) {
     try {

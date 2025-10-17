@@ -87,6 +87,7 @@ class AppImageOthers {
 
   static const completeProfileDialogIcon = 'assets/image/others/completeProfileDialogIcon.png';
   static const userImg = 'assets/image/others/userImg.png';
+  static const dhavaLogo = 'assets/image/others/dhavaLogo.png';
   static const mapLock = 'assets/image/others/mapLock.png';
   static const pause = 'assets/image/others/pause.png';
   static const mapPause = 'assets/image/others/mapPause.png';

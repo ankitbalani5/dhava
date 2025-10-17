@@ -132,26 +132,50 @@ class _DateOfBirthScreenState extends State<DateOfBirthScreen> with WidgetsBindi
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      buildPicker(
-                        days,
-                        int.parse(selectedDay),
-                            (value) {
-                          setState(() => selectedDay = value.toString().padLeft(2, '0'));
-                        },
+                      Column(
+                        children: [
+                          buildPicker(
+                            days,
+                            int.parse(selectedDay),
+                                (value) {
+                              setState(() => selectedDay = value.toString().padLeft(2, '0'));
+                            },
+                          ),
+                          Text(
+                            "DD",
+                            style: CustomTextStyles.semiBold(fontSize: 20, textColor: AppColor.textBackgroundGrey),
+                          ),
+                        ],
                       ),
-                      buildPicker(
-                        months,
-                        int.parse(selectedMonth),
-                            (value) {
-                          setState(() => selectedMonth = value.toString().padLeft(2, '0'));
-                        },
+                      Column(
+                        children: [
+                          buildPicker(
+                            months,
+                            int.parse(selectedMonth),
+                                (value) {
+                              setState(() => selectedMonth = value.toString().padLeft(2, '0'));
+                            },
+                          ),
+                          Text(
+                            "MM",
+                            style: CustomTextStyles.semiBold(fontSize: 20, textColor: AppColor.textBackgroundGrey),
+                          ),
+                        ],
                       ),
-                      buildPicker(
-                        years.map((y) => y).toList(),
-                        int.parse(selectedYear),
-                            (value) {
-                          setState(() => selectedYear = value.toString());
-                        },
+                      Column(
+                        children: [
+                          buildPicker(
+                            years.map((y) => y).toList(),
+                            int.parse(selectedYear),
+                                (value) {
+                              setState(() => selectedYear = value.toString());
+                            },
+                          ),
+                          Text(
+                            "YYYY",
+                            style: CustomTextStyles.semiBold(fontSize: 20, textColor: AppColor.textBackgroundGrey),
+                          ),
+                        ],
                       ),
 
                     ],

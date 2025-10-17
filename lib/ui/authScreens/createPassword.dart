@@ -64,9 +64,28 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter password';
+                  } else if (value.length < 8) {
+                    return 'Password must be at least 8 characters';
+                  } else if (!RegExp(r'(?=.*[A-Z])').hasMatch(value)) {
+                    return 'Include at least one uppercase letter';
+                  } else if (!RegExp(r'(?=.*[a-z])').hasMatch(value)) {
+                    return 'Include at least one lowercase letter';
+                  } else if (!RegExp(r'(?=.*\d)').hasMatch(value)) {
+                    return 'Include at least one number';
+                  } else if (!RegExp(r'(?=.*[!@#\$&*~])').hasMatch(value)) {
+                    return 'Include at least one special character (!@#\$&*~)';
                   }
                   return null;
                 },
+
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return 'Please enter password';
+                //   }else if(value.length < 8){
+                //     return 'Please enter minimum 8 digit';
+                //   }
+                //   return null;
+                // },
                 obscureText: _isObscure, // yeh bool control karega
                 decoration: InputDecoration(
                   hintText: "**********",
@@ -108,8 +127,10 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'please enter confirm password';
+                  }else if(value.length < 8){
+                    return 'Please enter minimum 8 digit';
                   }
-                  if (value != passwordController.text) {
+                  else if (value != passwordController.text) {
                     return 'please match confirm password';
                   }
                   return null;

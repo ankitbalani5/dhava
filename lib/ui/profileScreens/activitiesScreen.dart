@@ -289,9 +289,9 @@ _loadPage();
                                               Text('Distance', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
                                               // Text('${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km', style: CustomTextStyles.regular(fontSize: 16)),
                                               Text(
-                                                (double.tryParse(feed.distance.toString()) ?? 0) >= 1000
-                                                    ? '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km'
-                                                    : '${feed.distance} m',
+                                                /*(double.tryParse(feed.distance.toString()) ?? 0) >= 1000
+                                                    ? */'${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km',
+                                                    // : '${feed.distance} m',
                                                 style: CustomTextStyles.regular(fontSize: 16),
                                               )                                          ],
                                           ),
