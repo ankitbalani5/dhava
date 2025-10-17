@@ -1,4 +1,3 @@
-
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
@@ -48,13 +47,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _loadPage();
     super.initState();
+    _loadPage();
   }
 
   _loadPage(){
     context.read<ProfileBloc>().profileModel = null;
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
+    var categoryId =
+
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
     context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
   }
@@ -137,8 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                BlocBuilder<ProfileBloc, ProfileState>(
+                BlocConsumer<ProfileBloc, ProfileState>(
+                  listener: (context,state){},
                   builder: (context, state) {
+                    if(state is ProfileLoading){
+
+                    }
                     if(state is ProfileSuccess){
                       return GestureDetector(
                         onTap: () {
@@ -194,7 +199,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 listener: (context, state) {
                   if (state is ProfileLoading) {
-
+                     Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(
+                                3,
+                                    (index) => Container(
+                                  height: 70,
+                                  margin: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                   if (state is ProfileSuccess) {
                     var profileData = state.profileModel?.data;
@@ -245,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   }
+
                   if (state is ProfileSuccess) {
                     var totalFollowing = state.profileModel?.data?.totalFollowing ?? 0;
                     var photo = state.profileModel?.data?.profilePhoto ?? "";
@@ -330,7 +361,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(height: 10),
-
                           // STEP 3
                           GestureDetector(
                             onTap: () {
