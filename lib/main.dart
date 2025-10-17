@@ -1,4 +1,5 @@
 
+import 'package:coherent_endurance/bloc/activeChallengeBloc/active_challenge_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/bloc/challengeDetailBloc/challenge_detail_bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/challengesDetails_Bloc.dart';
@@ -97,6 +98,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<MyjoinedChallengesBloc>(create: (context) => MyjoinedChallengesBloc()),
         BlocProvider<UserjoinedChallengesBloc>(create: (context) => UserjoinedChallengesBloc()),
         BlocProvider<UpdateProfileBloc>(create: (context) => UpdateProfileBloc()),
+        BlocProvider<ActiveChallengeBloc>(create: (context) => ActiveChallengeBloc()),
 
           BlocProvider<TrophyBloc>(create: (_) => TrophyBloc()),
           BlocProvider<MyAllChallengeBloc>(create: (_) => MyAllChallengeBloc()),

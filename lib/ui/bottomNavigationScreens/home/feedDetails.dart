@@ -441,30 +441,30 @@ class _FeedDetailsState extends State<FeedDetails> {
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('Km', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('Km', style: CustomTextStyles.regular(fontSize: 14)),
                                           SizedBox(height: 10,),
-                                          Text('1 Mile', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1 Mile', style: CustomTextStyles.regular(fontSize: 14)),
 
                                           SizedBox(height: 10,),
-                                          Text('1K', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1K', style: CustomTextStyles.regular(fontSize: 14)),
 
                                           SizedBox(height: 10,),
-                                          Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 14)),
 
                                         ],
                                       ),
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('Pace', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('Pace', style: CustomTextStyles.regular(fontSize: 14)),
                                           SizedBox(height: 10,),
-                                          Text('1 Mile', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1 Mile', style: CustomTextStyles.regular(fontSize: 14)),
 
                                           SizedBox(height: 10,),
-                                          Text('1K', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1K', style: CustomTextStyles.regular(fontSize: 14)),
 
                                           SizedBox(height: 10,),
-                                          Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 14)),
 
                                         ],
                                       ),
@@ -504,15 +504,15 @@ class _FeedDetailsState extends State<FeedDetails> {
                                       Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Text('Elev', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('Elev', style: CustomTextStyles.regular(fontSize: 14)),
                                           SizedBox(height: 10,),
-                                          Text('-0', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('-0', style: CustomTextStyles.regular(fontSize: 14)),
 
                                           SizedBox(height: 10,),
-                                          Text('0', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('0', style: CustomTextStyles.regular(fontSize: 14)),
 
                                           SizedBox(height: 10,),
-                                          Text('1', style: CustomTextStyles.regular(fontSize: 10)),
+                                          Text('1', style: CustomTextStyles.regular(fontSize: 14)),
 
                                         ],
                                       ),
@@ -634,7 +634,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text('${Constant.formatPace(double.parse(feedData.pace.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
@@ -642,7 +642,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Moving Time', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Moving Time', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text(Constant.formatDuration(int.parse(feedData.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
@@ -650,7 +650,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text('${Constant.formatPace(double.parse(feedData.avgElapsedPace.toString()))}/Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
@@ -658,7 +658,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Elapsed Time', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Elapsed Time', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text('${feedData.elapsedTime}', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
@@ -666,7 +666,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text('${Constant.formatPace(double.parse(feedData.fastestSplit.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
@@ -782,7 +782,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Elevation Gain', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Elevation Gain', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text('${feedData.elavationGain}m', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),
@@ -790,7 +790,7 @@ class _FeedDetailsState extends State<FeedDetails> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Max Elevation', style: CustomTextStyles.regular(fontSize: 12)),
+                                    Text('Max Elevation', style: CustomTextStyles.regular(fontSize: 14)),
                                     Text('${feedData.maxElavation}m', style: CustomTextStyles.regular(fontSize: 16)),
                                   ],
                                 ),

@@ -58,7 +58,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(AppImageSvg.bell),
+                    SvgPicture.asset(AppImageSvg.bell),
                     SizedBox(height: 20,),
                     Text('No Any Notification Yet')
                   ]

@@ -60,7 +60,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     cityController.text = data.city?? '';
     stateController.text = data.state?? '';
     bioController.text = data.bio?? '';
-    weightController.text = (data.weight ?? 50.00).toString();
+    weightController.text = (data.weight ?? 00.00).toString();
     // primaryCategoryId = profileData!.data!.primaryCategoryId.toString();
     birthdayController.text = Constant.formatDob(dob);
     planToUse = data.planToUse ??"";

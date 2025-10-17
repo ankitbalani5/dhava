@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../bloc/challengeDetailBloc/challenge_detail_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 
@@ -52,6 +53,14 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
           if(state is ChallengeDetailSuccess){
             var challengeDetail = state.challengeDetailModel.data;
             var isJoined = challengeDetail?.isJoined;
+            final duration = Constant.calculateChallengeDuration(
+              challengeDetail!.startDate,
+              challengeDetail.endDate,
+            );
+            var startDate = DateTime.parse(challengeDetail.startDate ?? '');
+            var endDate = DateTime.parse(challengeDetail.endDate ?? '');
+            double _progress = Constant.calculateProgress(startDate, endDate);
+            print(challengeDetail);
             return Column(
               children: [
                 Stack(
@@ -201,7 +210,32 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
 
                           child: Row(
                             children: [
-                              SvgPicture.asset(AppImageSvg.activeUser, height: 51,),
+
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: CachedNetworkImage(
+                                    imageUrl: challengeDetail.challengeIcon ?? '',
+                                    width: 51.0,
+                                    height: 51.0,
+                                    fit: BoxFit.fill,
+                                    placeholder:
+                                        (context, url) =>
+                                        Padding(
+                                          padding:
+                                          EdgeInsets.all(
+                                              40.0),
+                                          child:
+                                          CircularProgressIndicator(
+                                            color: AppColor.bgRed,
+                                            strokeWidth: 1,
+                                          ),
+                                        ),
+                                    errorWidget: (context,
+                                        url, error) =>
+                                        SvgPicture.asset(AppImageSvg.activeUser, height: 51,),
+                                  )
+                              ),
+                              // SvgPicture.asset(AppImageSvg.activeUser, height: 51,),
                               SizedBox(width: 10,),
                               Expanded(
                                 child: Column(
@@ -209,18 +243,39 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                                   children: [
                                     SizedBox(
                                         width: 210,
-                                        child: Text('Timeout Streaks Challenge July 2025', style: CustomTextStyles.semiBold(fontSize: 16),)),
+                                        child: Text(challengeDetail.title ?? ''/*'Timeout Streaks Challenge July 2025'*/, style: CustomTextStyles.semiBold(fontSize: 16),)),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
-                                            SvgPicture.asset(AppImageSvg.run, color: Colors.grey,),
-                                            Text('--/4 weeks', style: CustomTextStyles.regular(
+                                            CachedNetworkImage(
+                                              imageUrl: challengeDetail.categoryIcon ?? '',
+                                              width: 15.0,
+                                              height: 15.0, color: Colors.grey,
+                                              fit: BoxFit.fill,
+                                              placeholder:
+                                                  (context, url) =>
+                                                  Padding(
+                                                    padding:
+                                                    EdgeInsets.all(
+                                                        40.0),
+                                                    child:
+                                                    CircularProgressIndicator(
+                                                      color: AppColor.bgRed,
+                                                      strokeWidth: 1,
+                                                    ),
+                                                  ),
+                                              errorWidget: (context,
+                                                  url, error) =>
+                                                  SvgPicture.asset(AppImageSvg.run, color: Colors.grey,),
+                                            ),
+                                            // SvgPicture.asset(AppImageSvg.run, color: Colors.grey,),
+                                            Text('--/${duration['weeks']} weeks', style: CustomTextStyles.regular(
                                                 fontSize: 11, textColor: Colors.grey),),
                                           ],
                                         ),
-                                        Text('10 days left', style: CustomTextStyles.regular(
+                                        Text('${duration['daysLeft']} days left', style: CustomTextStyles.regular(
                                             fontSize: 11, textColor: Colors.grey),),
 
                                       ],
@@ -312,29 +367,29 @@ class _ChallangesActiveScreenState extends State<ChallangesActiveScreen> {
                   ),
                 ),
                 Spacer(),
-                if(isJoined==true)
-                  Center(
-                    child: SizedBox(
-                      width: 250,
-                      height: 45,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.bgRed,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: () {
-                          // join club action
-                        },
-                        child: Text(
-                          "Invites Friends",
-                          style: CustomTextStyles.semiBold(
-                              fontSize: 14, textColor: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
+                // if(isJoined==true)
+                //   Center(
+                //     child: SizedBox(
+                //       width: 250,
+                //       height: 45,
+                //       child: ElevatedButton(
+                //         style: ElevatedButton.styleFrom(
+                //           backgroundColor: AppColor.bgRed,
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(8),
+                //           ),
+                //         ),
+                //         onPressed: () {
+                //           // join club action
+                //         },
+                //         child: Text(
+                //           "Invites Friends",
+                //           style: CustomTextStyles.semiBold(
+                //               fontSize: 14, textColor: Colors.white),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
                 SizedBox(height: 50,)
               ],
             );

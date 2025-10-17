@@ -401,9 +401,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
                                           Text("${elapsed.inMinutes.remainder(60)}m ",
-                                              style: CustomTextStyles.regular(fontSize: 20)),
+                                              style: CustomTextStyles.regular(fontSize: 26)),
                                           Text("${elapsed.inSeconds.remainder(60)}s",
-                                              style: CustomTextStyles.regular(fontSize: 14, textColor: Colors.black)),
+                                              style: CustomTextStyles.regular(fontSize: 20, textColor: Colors.black)),
                                         ],
                                       ),
                                       Text('Time', style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
@@ -412,7 +412,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                   Column(
                                     children: [
                                       Text(formatPace(avgPace),
-                                          style: CustomTextStyles.bold(fontSize: 20)),
+                                          style: CustomTextStyles.bold(fontSize: 26)),
                                       Text('Split avg. pace (/km)',
                                           style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
                                     ],
@@ -420,7 +420,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                                   Column(
                                     children: [
                                       Text((totalDistance / 1000).toStringAsFixed(2),
-                                          style: CustomTextStyles.bold(fontSize: 20)),
+                                          style: CustomTextStyles.bold(fontSize: 26)),
                                       Text('Distance (km)',
                                           style: CustomTextStyles.medium(fontSize: 11, textColor: Colors.black)),
                                     ],
