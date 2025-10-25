@@ -164,22 +164,22 @@ class ClubScreenState extends State<ClubScreen> {
                   ),
                 ),
                 SizedBox(width: 10,),
-                GestureDetector(
-                  onTap: () {
-                    tabStatus = clubsKey;
-                    setState(() {
-
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: tabStatus == clubsKey ? AppColor.bgRed : AppColor.bgTile
-                    ),
-                    child: Center(child: Text(clubsKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == clubsKey ? Colors.white : Colors.black),)),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: () {
+                //     tabStatus = clubsKey;
+                //     setState(() {
+                //
+                //     });
+                //   },
+                //   child: Container(
+                //     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(8),
+                //       color: tabStatus == clubsKey ? AppColor.bgRed : AppColor.bgTile
+                //     ),
+                //     child: Center(child: Text(clubsKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == clubsKey ? Colors.white : Colors.black),)),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -187,16 +187,16 @@ class ClubScreenState extends State<ClubScreen> {
           Expanded(child: ActiveWidget()) : SizedBox(),
           tabStatus == challengesKey ?
           Expanded(child: challengesWidget()) : SizedBox(),
-          tabStatus == clubsKey
-              ? Expanded(
-            child: clubsWidget(
-              context: context,
-              isJoinClub: Constant.isJoinClub,
-              onJoinClub: (value) {
-                saveJoinClub(value);
-              },
-            ),
-          ) : const SizedBox(),
+          // tabStatus == clubsKey
+          //     ? Expanded(
+          //   child: clubsWidget(
+          //     context: context,
+          //     isJoinClub: Constant.isJoinClub,
+          //     onJoinClub: (value) {
+          //       saveJoinClub(value);
+          //     },
+          //   ),
+          // ) : const SizedBox(),
 
         ],
       ),

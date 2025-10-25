@@ -127,21 +127,21 @@ class _ChallangesActiveDetailState extends State<ChallangesDetailScreen>  with S
                         ),
 
                         /// Right icons
-                        Positioned(
-                          top: 40,
-                          right: 15,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                  height: 30,
-                                  child: Image.asset(AppImageOthers.notificationIcon)),
-                              const SizedBox(width: 8),
-                              SizedBox(
-                                  height: 30,
-                                  child: Image.asset(AppImageOthers.shareIcon)),
-                            ],
-                          ),
-                        ),
+                        // Positioned(
+                        //   top: 40,
+                        //   right: 15,
+                        //   child: Row(
+                        //     children: [
+                        //       SizedBox(
+                        //           height: 30,
+                        //           child: Image.asset(AppImageOthers.notificationIcon)),
+                        //       const SizedBox(width: 8),
+                        //       SizedBox(
+                        //           height: 30,
+                        //           child: Image.asset(AppImageOthers.shareIcon)),
+                        //     ],
+                        //   ),
+                        // ),
 
                         /// Logo bottom
                         Positioned(

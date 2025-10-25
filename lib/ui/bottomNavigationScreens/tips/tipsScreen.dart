@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
@@ -5,6 +6,7 @@ import 'package:coherent_endurance/ui/bottomNavigationScreens/tips/tab/cycle/cyc
 import 'package:coherent_endurance/ui/bottomNavigationScreens/tips/tab/diet/dietScreen.dart';
 import 'package:coherent_endurance/ui/bottomNavigationScreens/tips/tab/run/runScreen.dart';
 import 'package:coherent_endurance/ui/notification/notificationScreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -75,6 +77,7 @@ class _TipscreenState extends State<TipScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userName = '${context.read<ProfileBloc>().profileModel!.data!.firstName} ${context.read<ProfileBloc>().profileModel!.data!.lastName}';
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -84,7 +87,7 @@ class _TipscreenState extends State<TipScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Good morning', style: CustomTextStyles.regular()),
-            Text('Raajeev Yadav', style: CustomTextStyles.bold()),
+            Text(userName, style: CustomTextStyles.bold()),
           ],
         ),
         actions: [

@@ -194,30 +194,40 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  bottomNavItem(
-                    label: 'Home',
-                    index: 0,
-                    icon: AppImageSvg.home,
+                  Expanded(
+                    child: bottomNavItem(
+                      label: 'Home',
+                      index: 0,
+                      icon: AppImageSvg.home,
+                    ),
                   ),
-                  bottomNavItem(
-                    label: 'News',
-                    index: 1,
-                    icon: AppImageSvg.news,
+                  Expanded(
+                    child: bottomNavItem(
+                      label: 'News',
+                      index: 1,
+                      icon: AppImageSvg.news,
+                    ),
                   ),
-                  bottomNavItem(
-                    label: 'Record',
-                    index: 2,
-                    icon: AppImageSvg.record,
+                  Expanded(
+                    child: bottomNavItem(
+                      label: 'Record',
+                      index: 2,
+                      icon: AppImageSvg.record,
+                    ),
                   ),
-                  bottomNavItem(
-                    label: 'Tips',
-                    index: 3,
-                    icon: AppImageSvg.tips,
+                  Expanded(
+                    child: bottomNavItem(
+                      label: 'Tips',
+                      index: 3,
+                      icon: AppImageSvg.tips,
+                    ),
                   ),
-                  bottomNavItem(
-                    label: 'Club',
-                    index: 4,
-                    icon: AppImageSvg.club,
+                  Expanded(
+                    child: bottomNavItem(
+                      label: 'Challenge',
+                      index: 4,
+                      icon: AppImageSvg.club,
+                    ),
                   ),
 
                   // bottomNavItem(

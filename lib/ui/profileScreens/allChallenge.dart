@@ -92,7 +92,10 @@ class _AllChallengeState extends State<AllChallenge> {
           }
           if(state is MyAllChallengeSuccess){
             var challenges = state.myAllChallengeModel.data!.data;
-            return ListView.builder(
+            return challenges!.isEmpty
+                ? Center(child: Text('No Data Available'))
+                :
+              ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 15),
               shrinkWrap: true,
               itemCount: challenges?.length,
