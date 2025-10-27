@@ -45,7 +45,10 @@ class _Step9ScreenState extends State<Step9Screen> {
                       if(state is UpdateProfileSuccess){
                         Constant.closeLoadingDialog(context);
                         Fluttertoast.showToast(msg: state.profileModel.message.toString());
+
+                        // context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)), (route) => false,);
+                      //  context.read<ProfileBloc>().profileModel = null;
                       }
                       if(state is UpdateProfileError){
                         Fluttertoast.showToast(msg: state.error.toString());
@@ -54,11 +57,13 @@ class _Step9ScreenState extends State<Step9Screen> {
                     },
                     builder: (context, state) {
                       return CustomButton(text: "Let's go", callback: () {
+
                         context.read<UpdateProfileBloc>().add(UpdateProfileEvent(context: context,
                           firstName: CreateProfileData.firstName, lastName: CreateProfileData.lastName,
                           dob: CreateProfileData.dob, gender: CreateProfileData.gender, fitnessLevel: CreateProfileData.fitnessLevel,
                           planToUse: CreateProfileData.planToUse, categoryIds: CreateProfileData.categoryIds, 
                         ));
+                        context.read<ProfileBloc>().profileModel = null;
 
                         // (context.findAncestorStateOfType<CreateProfileState>())?.addOverlay(LevelScreen());
 

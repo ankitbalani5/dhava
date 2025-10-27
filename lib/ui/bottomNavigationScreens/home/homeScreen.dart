@@ -1,4 +1,3 @@
-
 import 'package:coherent_endurance/bloc/activityBloc/activity_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_bloc.dart';
 import 'package:coherent_endurance/bloc/activityBloc/challenges_event.dart';
@@ -27,7 +26,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../profileScreens/otherProfileScreen.dart';
-import '../clubs/clubWidgets/active/challangesActive.dart';
 import 'feedDetails.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
@@ -40,17 +38,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int page = 1;
   final RefreshController _refreshController = RefreshController();
-
   int maxProgress = 3;
 
 
   @override
   void initState() {
-    _loadPage();
     super.initState();
+    _loadPage();
   }
 
   _loadPage(){
@@ -64,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int steps = 0;
 
     if (activityUploaded >
-         0) steps++; // Activity upload ho gaya
+         0) steps++;
     if (totalFollowing > 0) steps++; // Following > 0 hai
     if (photo.isNotEmpty) steps++;   // Photo upload hai
 
@@ -138,8 +134,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(width: 10),
-                BlocBuilder<ProfileBloc, ProfileState>(
+                BlocConsumer<ProfileBloc, ProfileState>(
+                  listener: (context,state){},
                   builder: (context, state) {
+                    if(state is ProfileLoading){
+
+                    }
                     if(state is ProfileSuccess){
                       return GestureDetector(
                         onTap: () {
@@ -195,7 +195,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 listener: (context, state) {
                   if (state is ProfileLoading) {
-
+                     Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(
+                                3,
+                                    (index) => Container(
+                                  height: 70,
+                                  margin: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                   if (state is ProfileSuccess) {
                     var profileData = state.profileModel?.data;
@@ -209,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Constant.showCompleteProfileDialog(context);
                         },
                       ));
+                      context.read<ProfileBloc>().profileModel = null;
                     }
                   }
                   if(state is CategorySuccess){
@@ -246,6 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   }
+
                   if (state is ProfileSuccess) {
                     var totalFollowing = state.profileModel?.data?.totalFollowing ?? 0;
                     var photo = state.profileModel?.data?.profilePhoto ?? "";
@@ -331,7 +358,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           SizedBox(height: 10),
-
                           // STEP 3
                           GestureDetector(
                             onTap: () {
