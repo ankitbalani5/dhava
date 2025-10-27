@@ -150,56 +150,56 @@ class _TrackingScreenState extends State<TrackingScreen> {
     });
   }
 
-  List<Map<String, dynamic>> calculateSplits() {
-    List<Map<String, dynamic>> splits = [];
-    double distanceCovered = 0.0;
-    Duration splitDuration = Duration.zero;
-    const double splitDistance = 1000.0; // 1km split
-
-    LatLng? lastPoint;
-    DateTime? lastTime;
-
-    for (int i = 0; i < pathPoints.length; i++) {
-
-      if (i >= pointTimestamps.length) break;
-
-      if (lastPoint != null && lastTime != null) {
-        double distance = _calculateDistance(lastPoint, pathPoints[i]);
-        distanceCovered += distance;
-
-        splitDuration += pointTimestamps[i].difference(lastTime);
-
-        if (distanceCovered >= splitDistance) {
-          double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
-          splits.add({
-            "split": splits.length + 1,
-            "distance": (distanceCovered / 1000).toStringAsFixed(2),
-            "pace": formatPace(paceSec),
-            "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
-          });
-
-
-          distanceCovered = 0.0;
-          splitDuration = Duration.zero;
-        }
-      }
-      lastPoint = pathPoints[i];
-      lastTime = pointTimestamps[i];
-    }
-
-
-    if (distanceCovered > 0 && lastTime != null) {
-      double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
-      splits.add({
-        "split": splits.length + 1,
-        "distance": (distanceCovered / 1000).toStringAsFixed(2),
-        "pace": formatPace(paceSec),
-        "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
-      });
-    }
-
-    return splits;
-  }
+  // List<Map<String, dynamic>> calculateSplits() {
+  //   List<Map<String, dynamic>> splits = [];
+  //   double distanceCovered = 0.0;
+  //   Duration splitDuration = Duration.zero;
+  //   const double splitDistance = 1000.0; // 1km split
+  //
+  //   LatLng? lastPoint;
+  //   DateTime? lastTime;
+  //
+  //   for (int i = 0; i < pathPoints.length; i++) {
+  //
+  //     if (i >= pointTimestamps.length) break;
+  //
+  //     if (lastPoint != null && lastTime != null) {
+  //       double distance = _calculateDistance(lastPoint, pathPoints[i]);
+  //       distanceCovered += distance;
+  //
+  //       splitDuration += pointTimestamps[i].difference(lastTime);
+  //
+  //       if (distanceCovered >= splitDistance) {
+  //         double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
+  //         splits.add({
+  //           "split": splits.length + 1,
+  //           "distance": (distanceCovered / 1000).toStringAsFixed(2),
+  //           "pace": formatPace(paceSec),
+  //           "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
+  //         });
+  //
+  //
+  //         distanceCovered = 0.0;
+  //         splitDuration = Duration.zero;
+  //       }
+  //     }
+  //     lastPoint = pathPoints[i];
+  //     lastTime = pointTimestamps[i];
+  //   }
+  //
+  //
+  //   if (distanceCovered > 0 && lastTime != null) {
+  //     double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
+  //     splits.add({
+  //       "split": splits.length + 1,
+  //       "distance": (distanceCovered / 1000).toStringAsFixed(2),
+  //       "pace": formatPace(paceSec),
+  //       "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
+  //     });
+  //   }
+  //
+  //   return splits;
+  // }
 
   Map<String, dynamic> calculateResults() {
     List<Map<String, dynamic>> splits = calculateSplits();
@@ -228,6 +228,128 @@ class _TrackingScreenState extends State<TrackingScreen> {
       'avgPace': avgPace
     };
   }
+
+  // List<Map<String, dynamic>> calculateSplits() {
+  //   List<Map<String, dynamic>> splits = [];
+  //
+  //   if (pathPoints.length < 2 || pointTimestamps.length < 2) {
+  //     // Not enough data to calculate splits
+  //     return splits;
+  //   }
+  //
+  //   // Step 1: Calculate total distance
+  //   double totalDistanceMeters = 0.0;
+  //   for (int i = 1; i < pathPoints.length; i++) {
+  //     totalDistanceMeters += _calculateDistance(pathPoints[i - 1], pathPoints[i]);
+  //   }
+  //
+  //   // Step 2: Determine adaptive split interval
+  //   double splitInterval; // in meters
+  //   if (totalDistanceMeters < 1000) {
+  //     splitInterval = 100; // every 100 meters for short runs
+  //   } else if (totalDistanceMeters < 2000) {
+  //     splitInterval = 200;
+  //   } else if (totalDistanceMeters < 5000) {
+  //     splitInterval = 500;
+  //   } else {
+  //     splitInterval = 1000;
+  //   }
+  //
+  //   // Step 3: Loop through points to calculate splits
+  //   double accumulatedDistance = 0.0;
+  //   int splitStartIndex = 0;
+  //   int splitCount = 1;
+  //
+  //   for (int i = 1; i < pathPoints.length; i++) {
+  //     // Safety check: timestamp should exist
+  //     if (i >= pointTimestamps.length) break;
+  //
+  //     double segmentDistance = _calculateDistance(pathPoints[i - 1], pathPoints[i]);
+  //     accumulatedDistance += segmentDistance;
+  //
+  //     // Check if we reached the split distance or last point
+  //     if (accumulatedDistance >= splitInterval || i == pathPoints.length - 1) {
+  //       Duration splitDuration = pointTimestamps[i].difference(pointTimestamps[splitStartIndex]);
+  //       double pace = splitDuration.inSeconds / (accumulatedDistance / 1000); // seconds per km
+  //
+  //       splits.add({
+  //         "split": splitCount,
+  //         "distance": (accumulatedDistance / 1000).toStringAsFixed(2),
+  //         "pace": Constant.formatPace(pace),
+  //         "time": Constant.formatTime(splitDuration),
+  //       });
+  //
+  //       // Reset for next split
+  //       splitCount++;
+  //       splitStartIndex = i;
+  //       accumulatedDistance = 0.0;
+  //     }
+  //   }
+  //
+  //   return splits;
+  // }
+
+  List<Map<String, dynamic>> calculateSplits() {
+    List<Map<String, dynamic>> splits = [];
+
+    if (pathPoints.length < 2 || pointTimestamps.length < 2) {
+      return splits; // Not enough data
+    }
+
+    // 🔹 Step 1: Calculate total distance (in meters)
+    double totalDistanceMeters = 0.0;
+    for (int i = 1; i < pathPoints.length; i++) {
+      totalDistanceMeters += _calculateDistance(pathPoints[i - 1], pathPoints[i]);
+    }
+
+    // 🔹 Step 2: Adaptive Split Interval Logic
+    double splitInterval;
+    if (totalDistanceMeters < 1000) {
+      splitInterval = 100; // every 100m for <1km
+    } else if (totalDistanceMeters < 2000) {
+      splitInterval = 200; // every 200m for <2km
+    } else if (totalDistanceMeters < 5000) {
+      splitInterval = 500; // every 500m for <5km
+    } else {
+      splitInterval = 1000; // every 1km for 5km+
+    }
+
+    // 🔹 Step 3: Split Calculation Loop
+    double accumulatedDistance = 0.0;
+    int splitStartIndex = 0;
+    int splitCount = 1;
+
+    for (int i = 1; i < pathPoints.length; i++) {
+      if (i >= pointTimestamps.length) break;
+
+      // segment distance between two GPS points
+      double segmentDistance = _calculateDistance(pathPoints[i - 1], pathPoints[i]);
+      accumulatedDistance += segmentDistance;
+
+      // when we reach the split distance or last point
+      if (accumulatedDistance >= splitInterval || i == pathPoints.length - 1) {
+        Duration splitDuration = pointTimestamps[i].difference(pointTimestamps[splitStartIndex]);
+        double paceSecPerKm = splitDuration.inSeconds / (accumulatedDistance / 1000);
+
+        splits.add({
+          "split": splitCount,
+          "distance": (accumulatedDistance / 1000).toStringAsFixed(2),
+          "pace": formatPace(paceSecPerKm),
+          "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
+        });
+
+        // reset for next split
+        splitCount++;
+        splitStartIndex = i;
+        accumulatedDistance = 0.0;
+      }
+    }
+
+    return splits;
+  }
+
+
+
 
   String formatPace(double paceInSec) {
     if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
@@ -775,33 +897,37 @@ class _TrackingScreenState extends State<TrackingScreen> {
         final croppedBytes = img.encodePng(cropped);
         final base64Image = base64Encode(croppedBytes);
 
+        final trackingData = {
+          "runType": runType,
+          "distance": results["totalDistance"],
+          "time": results["elapsedTime"],
+          "avgPace": results["avgPace"],
+          "fastestSplit": results["fastestSplit"],
+          "segments": results["segments"],
+          "splits": results["splits"],
+          "elevationGain": elevationGain,
+          "maxElevation": maxElevation,
+          "steps": steps,
+          "path": pathPoints
+              .map((p) => {"latitude": p.latitude.toString(), "longitude": p.longitude.toString()})
+              .toList(),
+          "photo": base64Image,
+          "city": city,
+          "state": state,
+          "country": country,
+          "address": address,
+        };
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SaveActivity(
-              trackingData: {
-                "runType": runType,
-                "distance": results["totalDistance"],
-                "time": results["elapsedTime"],
-                "avgPace": results["avgPace"],
-                "fastestSplit": results["fastestSplit"],
-                "segments": results["segments"],
-                "splits": results["splits"],
-                "elevationGain": elevationGain,
-                "maxElevation": maxElevation,
-                "steps": steps,
-                "path": pathPoints
-                    .map((p) => {"latitude": p.latitude.toString(), "longitude": p.longitude.toString()})
-                    .toList(),
-                "photo": base64Image,
-                "city": city,
-                "state": state,
-                "country": country,
-                "address": address,
-              },
+              trackingData: trackingData
             ),
           ),
         );
+        // OR for pretty (readable) formatting:
+        const JsonEncoder encoder = JsonEncoder.withIndent('  ');
+        print(encoder.convert(trackingData));
       }
     }
   }

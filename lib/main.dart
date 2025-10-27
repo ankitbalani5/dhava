@@ -8,6 +8,7 @@ import 'package:coherent_endurance/bloc/challengesBloc/suggested_Bloc.dart';
 import 'package:coherent_endurance/bloc/feedDetailsBloc/feed_detail_bloc.dart';
 import 'package:coherent_endurance/bloc/myJoinedChallengesBloc/myJoinedChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/myAllChallengeBloc/my_all_challenge_bloc.dart';
+import 'package:coherent_endurance/bloc/newsBloc/news_bloc.dart';
 import 'package:coherent_endurance/bloc/notificationBloc/notification_bloc.dart';
 import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_bloc.dart';
 import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_bloc.dart';
@@ -28,6 +29,7 @@ import 'bloc/loginBloc/login_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'bloc/newsDetailBloc/news_detail_bloc.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -99,6 +101,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<UserjoinedChallengesBloc>(create: (context) => UserjoinedChallengesBloc()),
         BlocProvider<UpdateProfileBloc>(create: (context) => UpdateProfileBloc()),
         BlocProvider<ActiveChallengeBloc>(create: (context) => ActiveChallengeBloc()),
+        BlocProvider<NewsBloc>(create: (context) => NewsBloc()),
+        BlocProvider<NewsDetailBloc>(create: (context) => NewsDetailBloc()),
 
           BlocProvider<TrophyBloc>(create: (_) => TrophyBloc()),
           BlocProvider<MyAllChallengeBloc>(create: (_) => MyAllChallengeBloc()),

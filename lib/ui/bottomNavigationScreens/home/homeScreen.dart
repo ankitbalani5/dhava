@@ -6,6 +6,7 @@ import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart'
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Event.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_State.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/ui/shareActivity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/models/feedModel.dart';
@@ -952,13 +953,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         onTap: () {
                                                           final activityId = feed.activityId;
                                                           final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
+                                                          //
+                                                          // Share.share(
+                                                          //   "Check out my run on Dhava 🏃‍♂️:\n$link",
+                                                          //   subject: "My Activity",
+                                                          // );
 
-                                                          Share.share(
-                                                            "Check out my run on Dhava 🏃‍♂️:\n$link",
-                                                            subject: "My Activity",
+                                                          showShareActivitySheet(context: context, distance: '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km',
+                                                              elevation: feed.elavationGain.toString(), imageProvider: NetworkImage(feed.photo.toString()), time: feed.movingTime.toString(),
+                                                              title: feed.title.toString(), link: link
                                                           );
-                                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => Badges()));
-                                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => MilestoneScreen()));
+                                                          // showShareActivitySheet(context: context, distance: '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km',
+                                                          //   elevation: feed.elavationGain.toString(), imageProvider: NetworkImage(feed.photo.toString()), time: feed.movingTime.toString(),
+                                                          //   title: feed.title.toString()
+                                                          // );
+                                                          // Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                          //     ShareActivityScreen(distance: '${(double.parse(feed.distance.toString()) / 1000).toStringAsFixed(2)} km',
+                                                          //         time: feed.movingTime.toString(), imagePath: feed.photo.toString(), elevation: feed.elavationGain.toString(), title: feed.title.toString(),)));
                                                         },
                                                         child: SizedBox(
                                                             height: 30,

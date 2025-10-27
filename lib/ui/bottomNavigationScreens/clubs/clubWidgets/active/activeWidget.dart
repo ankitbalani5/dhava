@@ -86,14 +86,23 @@ class _ActiveWidgetState extends State<ActiveWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical:0),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical:0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: categories.map((cat) => buildFilterButton(cat)).toList(),
-              ),
-            ),
+          BlocBuilder<ActiveChallengeBloc, ActiveChallengeState>(
+            builder: (context, state) {
+              if(state is ActiveChallengeSuccess){
+                return state.activeChallengeModel.data!.data!.isEmpty
+                    ? SizedBox()
+                    : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical:0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: categories.map((cat) => buildFilterButton(cat)).toList(),
+                    ),
+                  ),
+                );
+              }
+              return SizedBox();
+            },
           ),
 
 
@@ -112,7 +121,10 @@ class _ActiveWidgetState extends State<ActiveWidget> {
                     return Center(child: Constant.loadingAnimation());
                   }
                   if(state is ActiveChallengeSuccess){
-                    return SingleChildScrollView(
+                    return state.activeChallengeModel.data!.data!.isEmpty
+                        ?  Center(child: Text('No Data Available'))
+                        :
+                      SingleChildScrollView(
                       child: Column(
                         children: [
                           SizedBox(height: 20,),

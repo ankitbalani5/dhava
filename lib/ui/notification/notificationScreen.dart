@@ -167,11 +167,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
       crossAxisAlignment: CrossAxisAlignment.start, // 👈 important
       children: [
         // 👈 Image aligned to top-left
-        CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
-          height: 40,
-          width: 40,
-          placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
-          errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
+            fit: BoxFit.fill,
+            height: 40,
+            width: 40,
+            placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
+            errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+          ),
         ),
 
         const SizedBox(width: 12),
@@ -356,11 +360,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start, // 👈 important
         children: [
           // 👈 Image aligned to top-left
-          CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
-            height: 40,
-            width: 40,
-            placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
-            errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: CachedNetworkImage(imageUrl: notificationData.userProfile?.profilePhoto ?? '',
+              fit: BoxFit.fill,
+              height: 40,
+              width: 40,
+              placeholder: (context, url) => Image.asset(AppImageOthers.userImg),
+              errorWidget: (context, url, error) => Image.asset(AppImageOthers.userImg),
+            ),
           ),
 
           const SizedBox(width: 12),

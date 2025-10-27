@@ -64,6 +64,14 @@ class Constant {
     return "$min:${sec.toString().padLeft(2, '0')}";
   }
 
+
+  static String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
+
   static String formatDuration(int seconds) {
     final int hours = seconds ~/ 3600;
     final int minutes = (seconds % 3600) ~/ 60;

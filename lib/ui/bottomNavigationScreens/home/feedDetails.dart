@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:coherent_endurance/bloc/feedDetailsBloc/feed_detail_bloc.dart';
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/models/feedDetailModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/profileScreens/otherProfileScreen.dart';
+import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -14,8 +17,10 @@ import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../constant/constant.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 import '../../../models/feedModel.dart';
+import '../../shareActivity.dart';
 
 class FeedDetails extends StatefulWidget {
   String activityId;
@@ -39,7 +44,44 @@ class _FeedDetailsState extends State<FeedDetails> {
     context.read<FeedDetailBloc>().add(FetchFeedDetailEvent(context, widget.activityId));
     print('activityId::::${widget.activityId}');
     // initTracking();
+    _loadMarkerIcons();
   }
+  late BitmapDescriptor startIcon;
+  late BitmapDescriptor endIcon;
+  bool iconsLoaded = false;
+
+
+  Future<void> _loadMarkerIcons() async {
+    Future<BitmapDescriptor> getBytesFromAsset(String path, int width) async {
+      ByteData data = await rootBundle.load(path);
+      ui.Codec codec = await ui.instantiateImageCodec(
+        data.buffer.asUint8List(),
+        targetWidth: width,
+      );
+      ui.FrameInfo fi = await codec.getNextFrame();
+      final bytes = (await fi.image.toByteData(format: ui.ImageByteFormat.png))!;
+      return BitmapDescriptor.fromBytes(bytes.buffer.asUint8List());
+    }
+
+    startIcon = await getBytesFromAsset(AppImageOthers.startRun, 40);
+    endIcon = await getBytesFromAsset(AppImageOthers.finishRun, 40);
+
+    iconsLoaded = true;
+    if (mounted) setState(() {});
+  }
+
+  // Future<void> _loadMarkerIcons() async {
+  //   startIcon = await BitmapDescriptor.fromAssetImage(
+  //       ImageConfiguration(devicePixelRatio: 0.5), AppImageOthers.startRun);
+  //   endIcon = await BitmapDescriptor.fromAssetImage(
+  //       ImageConfiguration(devicePixelRatio: 0.5), AppImageOthers.finishRun);
+  //
+  //   // icon load complete
+  //   iconsLoaded = true;
+  //
+  //   // Build UI after icons loaded
+  //   if (mounted) setState(() {});
+  // }
 
   @override
   void dispose() {
@@ -73,6 +115,13 @@ class _FeedDetailsState extends State<FeedDetails> {
     );
   }
 
+  Set<Marker> markers = {};
+
+  Future<BitmapDescriptor> _getMarkerIcon(String path, int width) async {
+    final ImageConfiguration config = ImageConfiguration(size: Size(width.toDouble(), width.toDouble()));
+    return await BitmapDescriptor.fromAssetImage(config, path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,8 +143,8 @@ class _FeedDetailsState extends State<FeedDetails> {
             var feedData = state.feedDetailModel.data;
             pathPoints.clear();
 
-            if (feedData?.path != null && feedData!.path!.isNotEmpty) {
-              for (var p in feedData.path!) {
+            if (iconsLoaded || feedData?.path != null && feedData!.path!.isNotEmpty) {
+              for (var p in feedData!.path!) {
                 final lat = double.tryParse(p.latitude.toString());
                 final lng = double.tryParse(p.longitude.toString());
                 if (lat != null && lng != null) {
@@ -112,717 +161,1535 @@ class _FeedDetailsState extends State<FeedDetails> {
                 ),
               };
 
+              // if (!iconsLoaded || pathPoints.isEmpty) return;
+
+                  if(iconsLoaded && pathPoints.length >= 2){
+                    print('pathPoint:::${pathPoints.length}');
+                markers.add(Marker(
+                  markerId: MarkerId('start'),
+                  position: pathPoints.first,
+                  icon: startIcon,
+                  infoWindow: InfoWindow(title: 'Start'),
+                ));
+
+                markers.add(Marker(
+                  markerId: MarkerId('end'),
+                  position: pathPoints.last,
+                  icon: endIcon,
+                  infoWindow: InfoWindow(title: 'End'),
+                ));
+              }
+
+              // setState(() {}); // map update
+              // _getMarkerIcon(AppImageOthers.startRun, 80).then((icon) {
+              //   markers.add(
+              //     Marker(
+              //       markerId: MarkerId('start'),
+              //       position: pathPoints.first,
+              //       icon: icon,
+              //       infoWindow: InfoWindow(title: 'Start'),
+              //     ),
+              //   );
+              //   setState(() {}); // update map
+              // });
+              //
+              // _getMarkerIcon(AppImageOthers.finishRun, 80).then((icon) {
+              //   markers.add(
+              //     Marker(
+              //       markerId: MarkerId('end'),
+              //       position: pathPoints.last,
+              //       icon: icon,
+              //       infoWindow: InfoWindow(title: 'End'),
+              //     ),
+              //   );
+              //   setState(() {});
+              // });
+              // markers.add(
+              //   Marker(
+              //     markerId: MarkerId('start'),
+              //     position: pathPoints.first,
+              //     infoWindow: InfoWindow(title: 'Start'),
+              //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+              //   ),
+              // );
+              //
+              // markers.add(
+              //   Marker(
+              //     markerId: MarkerId('end'),
+              //     position: pathPoints.last,
+              //     infoWindow: InfoWindow(title: 'End'),
+              //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+              //   ),
+              // );
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _fitToRoute();
               });
             }
 
-            return SafeArea(
-              child: CustomScrollView(
-                slivers: [
-                  // Sliver AppBar with Map
-                  SliverAppBar(
-                    expandedHeight: 300,
-                    floating: false,
-                    pinned: true,
-                    backgroundColor: Colors.white,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: GoogleMap(
-                              initialCameraPosition: CameraPosition(
-                                target: pathPoints.isNotEmpty
-                                    ? pathPoints.first
-                                    : const LatLng(26.9124, 75.7873), // default Jaipur point
-                                // zoom: 50,
-                              ),
-                              onMapCreated: (controller) {
-                                mapController = controller;
-                                if (pathPoints.isNotEmpty) {
-                                  _fitToRoute();
-                                }
-                              },
-                              polylines: polylines,
-                              myLocationEnabled: false,
-                              zoomControlsEnabled: false,
-                              compassEnabled: false,
-                            )
+            return Stack(
+              children: [
+                /// 🔹 Map Widget (background)
+                Positioned.fill(
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: pathPoints.isNotEmpty
+                            ? pathPoints.first
+                            : const LatLng(26.9124, 75.7873), // default Jaipur point
+                        // zoom: 50,
+                      ),
+                      onMapCreated: (controller) {
+                        mapController = controller;
+                        if (pathPoints.isNotEmpty) {
+                          _fitToRoute();
+                        }
+                      },
+                      polylines: polylines,
+                      markers: markers,
+                      myLocationEnabled: false,
+                      zoomControlsEnabled: false,
+                      compassEnabled: false,
+                    )
+                ),
 
-                            /*GoogleMap(
-                              initialCameraPosition: CameraPosition(
-                                target: pathPoints.first,
-                                zoom: 17,
-
-                              ),
-                              polylines: getPolyline(),
-                              myLocationEnabled: true,
-                              onMapCreated: (controller) {
-                                mapController = controller;
-                              },
-                            ),*/
-                          ),
+                /// 🔹 Draggable Bottom Sheet
+                DraggableScrollableSheet(
+                  initialChildSize: 0.40, // Start height (35%)
+                  minChildSize: 0.20,     // Min height = ~50px
+                  maxChildSize: 1.0,      // Full screen max
+                  snapSizes: [0.20, 0.40, 1.0], // multiple snap points
+                  snap: true,
+                  builder: (context, scrollController) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        boxShadow: const [
+                          BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, -3)),
                         ],
                       ),
-                    ),
-                  ),
-
-                  // Sliver content (Run details)
-                  SliverToBoxAdapter(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          Container(
-                            // height: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            // padding: const EdgeInsets.all(16),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20),
-                                          border: Border.all(color: AppColor.bgRed)
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: CachedNetworkImage(
-                                          imageUrl: feedData!.profilePic.toString(),
-                                          width: 36.0,
-                                          height: 36.0,
-                                          fit: BoxFit.fill,
-                                          placeholder:
-                                              (context, url) =>
-                                              Padding(
-                                                padding: EdgeInsets.all(40.0),
-                                                child: CircularProgressIndicator(
-                                                  color: AppColor.bgRed,
-                                                  strokeWidth: 1,
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(AppImageOthers.profilePic, height: 36,),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8,),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '${feedData.firstName} ${feedData.lastName}',
-                                            style: TextStyle(color: Colors.black),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              CachedNetworkImage(
-                                                imageUrl: feedData!.categoryIcon.toString(),
-                                                width: 17.0,
-                                                height: 17.0,
-                                                fit: BoxFit.fill,
-                                                color: AppColor.bgRed,
-                                                placeholder:
-                                                    (context, url) =>
-                                                    Padding(
-                                                      padding: EdgeInsets.all(40.0),
-                                                      child: CircularProgressIndicator(
-                                                        color: AppColor.bgRed,
-                                                        strokeWidth: 1,
-                                                      ),
-                                                    ),
-                                                errorWidget: (context,
-                                                    url, error) =>
-                                                    Image.asset(AppImageOthers.profilePic, height: 17,),
-                                              ),
-                                              SizedBox(width: 4,),
-                                              Flexible(
-                                                child: Text(
-                                                  '${formatDate(feedData.createdDate.toString())} · ${feedData.location}',
-                                                  // 'August 15, 2025 at 8:20 AM · Iskandar Puteri, Malaysia',
-                                                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Text(feedData.title.toString(),
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Distance", value: "${(double.parse(feedData.distance.toString())/1000).toStringAsFixed(2)} km")),
-                                    SizedBox(width: 15,),
-                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.center, title: "Pace", value: "${Constant.formatPace(double.parse(feedData.pace.toString()))} /km")),
-                                    SizedBox(width: 15,),
-                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Time", value: Constant.formatDuration(int.parse(feedData.movingTime.toString())))),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Elevation Gain", value: "${feedData.elavationGain.toString()} m")),
-                                    SizedBox(width: 15,),
-                                    Expanded(
-                                      child: _InfoColumn(cross: CrossAxisAlignment.center,
-                                          title: "Max Elevation", value: "${feedData.maxElavation} m"),
-                                    ),
-                                    SizedBox(width: 15,),
-                                    Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Steps", value: "${feedData.steps}")),
-                                    // SizedBox(width: 15,),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-
-                                    Row(
-                                      children: [
-                                        likeImageWidget(state.feedDetailModel),
-                                        SizedBox(width: 10,),
-                                        Text('${feedData.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            context.read<FeedDetailBloc>().add(ActivityLikeEvent(context: context, activityId: feedData.activityId.toString()));
-                                          },
-                                          child: Icon(Icons.thumb_up,
-                                              color: feedData.isLiked! ? AppColor.bgRed : Colors.black),
-                                        ),
-                                        SizedBox(width: 8,),
-                                        GestureDetector(
-                                          onTap: () {
-
-                                            final activityId = widget.activityId;
-                                            final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
-
-                                            Share.share(
-                                              "Check out my run on Dhava 🏃‍♂️:\n$link",
-                                              subject: "My Activity",
-                                            );
-                                          },
-                                          child: Icon(Icons.share,
-                                              color: Colors.black),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-
-                          Divider(color: Colors.grey.shade300,),
-                          const SizedBox(height: 30),
-                          // const SizedBox(height: 20),
-                          // results
-                          // results
-                          // Container(
-                          //   height: 324,
-                          //   // padding: const EdgeInsets.all(16),
-                          //   child: Column(
-                          //     crossAxisAlignment: CrossAxisAlignment.start,
-                          //     children: [
-                          //       Text('Best Efforts', style: CustomTextStyles.semiBold(fontSize: 20)),
-                          //       SizedBox(height: 15,),
-                          //       Row(
-                          //         children: [
-                          //           Column(
-                          //             crossAxisAlignment: CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text('Best Efforts', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
-                          //               Text('4', style: CustomTextStyles.regular(fontSize: 16)),
-                          //             ],
-                          //           ),
-                          //           SizedBox(width: 20,),
-                          //           Column(
-                          //             crossAxisAlignment: CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text('Segments', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                          //               Text('5', style: CustomTextStyles.regular(fontSize: 16)),
-                          //             ],
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       SizedBox(height: 15,),
-                          //       Row(
-                          //         children: [
-                          //           Column(
-                          //             crossAxisAlignment: CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                          //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
-                          //             ],
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       SizedBox(height: 15,),
-                          //       Row(
-                          //         children: [
-                          //           Column(
-                          //             crossAxisAlignment: CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                          //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
-                          //             ],
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       SizedBox(height: 15,),
-                          //       Row(
-                          //         children: [
-                          //           Column(
-                          //             crossAxisAlignment: CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
-                          //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
-                          //             ],
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       SizedBox(height: 15,),
-                          //       Row(
-                          //         mainAxisAlignment: MainAxisAlignment.end,
-                          //         children: [
-                          //           Text('View All Results', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
-                          //         ],
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
-                          // const SizedBox(height: 20),
-
-                          // splits
-                          Container(
-                            // height: 180,
-                            // padding: const EdgeInsets.all(16),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Splits', style: CustomTextStyles.semiBold(fontSize: 20)),
-                                  SizedBox(height: 15,),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Km', style: CustomTextStyles.regular(fontSize: 14)),
-                                          SizedBox(height: 10,),
-                                          Text('1 Mile', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                          SizedBox(height: 10,),
-                                          Text('1K', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                          SizedBox(height: 10,),
-                                          Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Pace', style: CustomTextStyles.regular(fontSize: 14)),
-                                          SizedBox(height: 10,),
-                                          Text('1 Mile', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                          SizedBox(height: 10,),
-                                          Text('1K', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                          SizedBox(height: 10,),
-                                          Text('1/2 Mile', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(''),
-                                          SizedBox(height: 5,),
-                                          Container(
-                                            height: 13,
-                                            width: 80,
-                                            decoration: BoxDecoration(
-                                                color: AppColor.bgRed,
-                                                borderRadius: BorderRadius.circular(12)
-                                            ),
-                                          ),
-                                          SizedBox(height: 10,),
-                                          Container(
-                                            height: 13,
-                                            width: 120,
-                                            decoration: BoxDecoration(
-                                                color: AppColor.bgRed,
-                                                borderRadius: BorderRadius.circular(12)
-                                            ),
-                                          ),
-                                          SizedBox(height: 10,),
-                                          Container(
-                                            height: 13,
-                                            width: 60,
-                                            decoration: BoxDecoration(
-                                                color: AppColor.bgRed,
-                                                borderRadius: BorderRadius.circular(12)
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Text('Elev', style: CustomTextStyles.regular(fontSize: 14)),
-                                          SizedBox(height: 10,),
-                                          Text('-0', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                          SizedBox(height: 10,),
-                                          Text('0', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                          SizedBox(height: 10,),
-                                          Text('1', style: CustomTextStyles.regular(fontSize: 14)),
-
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                                ]
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-
-                          Divider(color: Colors.grey.shade300,),
-                          const SizedBox(height: 30),
-
-                          Container(
-                            // height: 580,
-                            // padding: const EdgeInsets.all(16),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             child: Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Pace', style: CustomTextStyles.semiBold(fontSize: 20)),
-                                    Icon(Icons.info_outline, color: Colors.black,)
-                                  ],
-                                ),
-                                SizedBox(height: 40,),
-
                                 Container(
-                                  padding: const EdgeInsets.all(12),
+                                  // height: 300,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: SizedBox(
-                                    height: 220, // <-- FIXED HEIGHT ADDED
-                                    width: double.infinity, // <-- FIXED WIDTH ADDED
-                                    child: LineChart(
-                                      LineChartData(
-                                        minX: 0,
-                                        maxX: 2.0,
-                                        minY: 415,
-                                        maxY: 430,
-                                        gridData: FlGridData(
-                                          show: true,
-                                          drawVerticalLine: true,
-                                          drawHorizontalLine: true,
-                                          getDrawingHorizontalLine: (value) => FlLine(
-                                            color: Colors.grey.shade200,
-                                            strokeWidth: 1,
-                                          ),
-                                          getDrawingVerticalLine: (value) => FlLine(
-                                            color: Colors.grey.shade200,
-                                            strokeWidth: 1,
+                                  // padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          margin: EdgeInsets.all(20),
+                                          height: 5,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            color: Colors.grey
                                           ),
                                         ),
-                                        titlesData: FlTitlesData(
-                                          leftTitles: AxisTitles(
-                                            sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 32,
-                                              getTitlesWidget: (value, meta) {
-                                                return Text(
-                                                  value.toInt().toString(),
-                                                  style: const TextStyle(color: Colors.black, fontSize: 12),
-                                                );
-                                              },
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                              feedData.userId == context.read<ProfileBloc>().profileModel!.data!.userId.toString()
+                                                  ? ProfileScreen()
+                                                  : OtherProfileScreen(userId: feedData.userId.toString()),
                                             ),
-                                          ),
-                                          bottomTitles: AxisTitles(
-                                            sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 28,
-                                              getTitlesWidget: (value, meta) {
-                                                if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
-                                                  return Text(
-                                                    '${value.toStringAsFixed(1)} Km',
-                                                    style: const TextStyle(color: Colors.black, fontSize: 12),
-                                                  );
-                                                }
-                                                return const SizedBox();
-                                              },
-                                            ),
-                                          ),
-                                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                        ),
-                                        borderData: FlBorderData(show: false),
-                                        lineBarsData: [
-                                          LineChartBarData(
-                                            spots: const [
-                                              FlSpot(0, 420),
-                                              FlSpot(0.5, 421),
-                                              FlSpot(1.0, 420.5),
-                                              FlSpot(1.5, 423),
-                                              FlSpot(2.0, 421),
-                                            ],
-                                            isCurved: true,
-                                            color: AppColor.bgRed,
-                                            barWidth: 2,
-                                            belowBarData: BarAreaData(
-                                              show: true,
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  AppColor.bgRed,
-                                                  // Colors.white.withOpacity(0.6),
-                                                  Colors.white,
-                                                ],
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
+                                          );
+                                        },
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  border: Border.all(color: AppColor.bgRed)
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(20),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: feedData!.profilePic.toString(),
+                                                  width: 36.0,
+                                                  height: 36.0,
+                                                  fit: BoxFit.fill,
+                                                  placeholder:
+                                                      (context, url) =>
+                                                      Padding(
+                                                        padding: EdgeInsets.all(40.0),
+                                                        child: CircularProgressIndicator(
+                                                          color: AppColor.bgRed,
+                                                          strokeWidth: 1,
+                                                        ),
+                                                      ),
+                                                  errorWidget: (context, url, error) =>
+                                                      Image.asset(AppImageOthers.profilePic, height: 36,),
+                                                ),
                                               ),
                                             ),
-                                            dotData: FlDotData(show: false),
+                                            SizedBox(width: 8,),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${feedData.firstName} ${feedData.lastName}',
+                                                    style: TextStyle(color: Colors.black),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      CachedNetworkImage(
+                                                        imageUrl: feedData!.categoryIcon.toString(),
+                                                        width: 17.0,
+                                                        height: 17.0,
+                                                        fit: BoxFit.fill,
+                                                        color: AppColor.bgRed,
+                                                        placeholder:
+                                                            (context, url) =>
+                                                            Padding(
+                                                              padding: EdgeInsets.all(40.0),
+                                                              child: CircularProgressIndicator(
+                                                                color: AppColor.bgRed,
+                                                                strokeWidth: 1,
+                                                              ),
+                                                            ),
+                                                        errorWidget: (context,
+                                                            url, error) =>
+                                                            Image.asset(AppImageOthers.profilePic, height: 17,),
+                                                      ),
+                                                      SizedBox(width: 4,),
+                                                      Flexible(
+                                                        child: Text(
+                                                          '${formatDate(feedData.createdDate.toString())} · ${feedData.location}',
+                                                          // 'August 15, 2025 at 8:20 AM · Iskandar Puteri, Malaysia',
+                                                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(feedData.title.toString(),
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Distance", value: "${(double.parse(feedData.distance.toString())/1000).toStringAsFixed(2)} km")),
+                                          SizedBox(width: 15,),
+                                          Expanded(child: _InfoColumn(cross: CrossAxisAlignment.center, title: "Pace", value: "${Constant.formatPace(double.parse(feedData.pace.toString()))} /km")),
+                                          SizedBox(width: 15,),
+                                          Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Time", value: Constant.formatDuration(int.parse(feedData.movingTime.toString())))),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Elevation Gain", value: "${feedData.elavationGain.toString()} m")),
+                                          SizedBox(width: 15,),
+                                          Expanded(
+                                            child: _InfoColumn(cross: CrossAxisAlignment.center,
+                                                title: "Max Elevation", value: "${feedData.maxElavation} m"),
+                                          ),
+                                          SizedBox(width: 15,),
+                                          Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Steps", value: "${feedData.steps}")),
+                                          // SizedBox(width: 15,),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+
+                                          Row(
+                                            children: [
+                                              likeImageWidget(state.feedDetailModel),
+                                              SizedBox(width: 10,),
+                                              Text('${feedData.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  context.read<FeedDetailBloc>().add(ActivityLikeEvent(context: context, activityId: feedData.activityId.toString()));
+                                                },
+                                                child: Icon(Icons.thumb_up,
+                                                    color: feedData.isLiked! ? AppColor.bgRed : Colors.black),
+                                              ),
+                                              SizedBox(width: 8,),
+                                              GestureDetector(
+                                                onTap: () {
+
+                                                  final activityId = widget.activityId;
+                                                  final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
+                                                  //
+                                                  // Share.share(
+                                                  //   "Check out my run on Dhava 🏃‍♂️:\n$link",
+                                                  //   subject: "My Activity",
+                                                  // );
+
+                                                  showShareActivitySheet(context: context, distance: '${(double.parse(feedData.distance.toString()) / 1000).toStringAsFixed(2)} km',
+                                                      elevation: feedData.elavationGain.toString(), imageProvider: NetworkImage(feedData.photo.toString()), time: feedData.movingTime.toString(),
+                                                      title: feedData.title.toString(), link: link
+                                                  );
+                                                },
+                                                child: Icon(Icons.share,
+                                                    color: Colors.black),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: 20,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text('${Constant.formatPace(double.parse(feedData.pace.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
-                                SizedBox(height: 15,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Moving Time', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text(Constant.formatDuration(int.parse(feedData.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
-                                SizedBox(height: 15,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text('${Constant.formatPace(double.parse(feedData.avgElapsedPace.toString()))}/Km', style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
-                                SizedBox(height: 15,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Elapsed Time', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text('${feedData.elapsedTime}', style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
-                                SizedBox(height: 15,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text('${Constant.formatPace(double.parse(feedData.fastestSplit.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 30),
+                                const SizedBox(height: 20),
 
-                          Divider(color: Colors.grey.shade300,),
-                          const SizedBox(height: 30),
-                          // elevation
-                          Container(
-                            height: 410,
-                            // padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Elevation', style: CustomTextStyles.semiBold(fontSize: 20)),
-                                    Icon(Icons.info_outline, color: Colors.black,),
-                                  ],
+                                Divider(color: Colors.grey.shade300,),
+                                const SizedBox(height: 20),
+                                // const SizedBox(height: 20),
+                                // results
+                                // results
+                                // Container(
+                                //   height: 324,
+                                //   // padding: const EdgeInsets.all(16),
+                                //   child: Column(
+                                //     crossAxisAlignment: CrossAxisAlignment.start,
+                                //     children: [
+                                //       Text('Best Efforts', style: CustomTextStyles.semiBold(fontSize: 20)),
+                                //       SizedBox(height: 15,),
+                                //       Row(
+                                //         children: [
+                                //           Column(
+                                //             crossAxisAlignment: CrossAxisAlignment.start,
+                                //             children: [
+                                //               Text('Best Efforts', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+                                //               Text('4', style: CustomTextStyles.regular(fontSize: 16)),
+                                //             ],
+                                //           ),
+                                //           SizedBox(width: 20,),
+                                //           Column(
+                                //             crossAxisAlignment: CrossAxisAlignment.start,
+                                //             children: [
+                                //               Text('Segments', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                //               Text('5', style: CustomTextStyles.regular(fontSize: 16)),
+                                //             ],
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       SizedBox(height: 15,),
+                                //       Row(
+                                //         children: [
+                                //           Column(
+                                //             crossAxisAlignment: CrossAxisAlignment.start,
+                                //             children: [
+                                //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                //             ],
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       SizedBox(height: 15,),
+                                //       Row(
+                                //         children: [
+                                //           Column(
+                                //             crossAxisAlignment: CrossAxisAlignment.start,
+                                //             children: [
+                                //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                //             ],
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       SizedBox(height: 15,),
+                                //       Row(
+                                //         children: [
+                                //           Column(
+                                //             crossAxisAlignment: CrossAxisAlignment.start,
+                                //             children: [
+                                //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+                                //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                //             ],
+                                //           ),
+                                //         ],
+                                //       ),
+                                //       SizedBox(height: 15,),
+                                //       Row(
+                                //         mainAxisAlignment: MainAxisAlignment.end,
+                                //         children: [
+                                //           Text('View All Results', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
+                                //         ],
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
+                                // const SizedBox(height: 20),
+
+                                // splits
+                                Container(
+                                  // height: 180,
+                                  // padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Splits', style: CustomTextStyles.semiBold(fontSize: 20)),
+                                        SizedBox(height: 15,),
+                                        Row(
+                                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('Km', style: CustomTextStyles.regular(fontSize: 14)),
+                                                    SizedBox(height: 10,),
+                                                    Text('1', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                    SizedBox(height: 10,),
+                                                    Text('2', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                    SizedBox(height: 10,),
+                                                    Text('3', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                  ],
+                                                ),
+                                                SizedBox(width: 20,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('Pace', style: CustomTextStyles.regular(fontSize: 14)),
+                                                    SizedBox(height: 10,),
+                                                    Text('16:00', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                    SizedBox(height: 10,),
+                                                    Text('16:00', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                    SizedBox(height: 10,),
+                                                    Text('16:00', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(width: 20,),
+                                            Expanded(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(''),
+                                                      SizedBox(height: 5,),
+                                                      Container(
+                                                        height: 13,
+                                                        width: 80,
+                                                        decoration: BoxDecoration(
+                                                            color: AppColor.bgRed,
+                                                            borderRadius: BorderRadius.circular(12)
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10,),
+                                                      Container(
+                                                        height: 13,
+                                                        width: 120,
+                                                        decoration: BoxDecoration(
+                                                            color: AppColor.bgRed,
+                                                            borderRadius: BorderRadius.circular(12)
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10,),
+                                                      Container(
+                                                        height: 13,
+                                                        width: 60,
+                                                        decoration: BoxDecoration(
+                                                            color: AppColor.bgRed,
+                                                            borderRadius: BorderRadius.circular(12)
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: [
+                                                      Text('Elev', style: CustomTextStyles.regular(fontSize: 14)),
+                                                      SizedBox(height: 10,),
+                                                      Text('-0', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                      SizedBox(height: 10,),
+                                                      Text('0', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                      SizedBox(height: 10,),
+                                                      Text('1', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ]
+                                  ),
                                 ),
-                                SizedBox(height: 15,),
+                                const SizedBox(height: 20),
+
+                                Divider(color: Colors.grey.shade300,),
+                                const SizedBox(height: 20),
 
                                 Container(
-                                  padding: const EdgeInsets.all(12),
-                                  child: SizedBox(
-                                    height: 220, // <-- FIXED HEIGHT ADDED
-                                    width: double.infinity, // <-- FIXED WIDTH ADDED
-                                    child: LineChart(
-                                      LineChartData(
-                                        minX: 0,
-                                        maxX: 2.0,
-                                        minY: 415,
-                                        maxY: 430,
-                                        gridData: FlGridData(
-                                          show: true,
-                                          drawVerticalLine: true,
-                                          drawHorizontalLine: true,
-                                          getDrawingHorizontalLine: (value) => FlLine(
-                                            color: Colors.grey.shade200,
-                                            strokeWidth: 1,
-                                          ),
-                                          getDrawingVerticalLine: (value) => FlLine(
-                                            color: Colors.grey.shade200,
-                                            strokeWidth: 1,
-                                          ),
-                                        ),
-                                        titlesData: FlTitlesData(
-                                          leftTitles: AxisTitles(
-                                            sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 32,
-                                              getTitlesWidget: (value, meta) {
-                                                return Text(
-                                                  value.toInt().toString(),
-                                                  style: const TextStyle(color: Colors.black, fontSize: 12),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          bottomTitles: AxisTitles(
-                                            sideTitles: SideTitles(
-                                              showTitles: true,
-                                              reservedSize: 28,
-                                              getTitlesWidget: (value, meta) {
-                                                if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
-                                                  return Text(
-                                                    '${value.toStringAsFixed(1)} Km',
-                                                    style: const TextStyle(color: Colors.black, fontSize: 12),
-                                                  );
-                                                }
-                                                return const SizedBox();
-                                              },
-                                            ),
-                                          ),
-                                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                        ),
-                                        borderData: FlBorderData(show: false),
-                                        lineBarsData: [
-                                          LineChartBarData(
-                                            spots: const [
-                                              FlSpot(0, 420),
-                                              FlSpot(0.5, 421),
-                                              FlSpot(1.0, 420.5),
-                                              FlSpot(1.5, 423),
-                                              FlSpot(2.0, 421),
-                                            ],
-                                            isCurved: true,
-                                            color: Colors.white,
-                                            barWidth: 2,
-                                            belowBarData: BarAreaData(
-                                              show: true,
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  AppColor.bgRed,
-                                                  Colors.white,
-                                                ],
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                              ),
-                                            ),
-                                            dotData: FlDotData(show: false),
-                                          ),
+                                  // height: 580,
+                                  // padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Pace', style: CustomTextStyles.semiBold(fontSize: 20)),
+                                          Icon(Icons.info_outline, color: Colors.black,)
                                         ],
                                       ),
-                                    ),
+                                      SizedBox(height: 40,),
+
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: SizedBox(
+                                          height: 220, // <-- FIXED HEIGHT ADDED
+                                          width: double.infinity, // <-- FIXED WIDTH ADDED
+                                          child: LineChart(
+                                            LineChartData(
+                                              minX: 0,
+                                              maxX: 2.0,
+                                              minY: 415,
+                                              maxY: 430,
+                                              gridData: FlGridData(
+                                                show: true,
+                                                drawVerticalLine: true,
+                                                drawHorizontalLine: true,
+                                                getDrawingHorizontalLine: (value) => FlLine(
+                                                  color: Colors.grey.shade200,
+                                                  strokeWidth: 1,
+                                                ),
+                                                getDrawingVerticalLine: (value) => FlLine(
+                                                  color: Colors.grey.shade200,
+                                                  strokeWidth: 1,
+                                                ),
+                                              ),
+                                              titlesData: FlTitlesData(
+                                                leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                    showTitles: true,
+                                                    reservedSize: 32,
+                                                    getTitlesWidget: (value, meta) {
+                                                      return Text(
+                                                        value.toInt().toString(),
+                                                        style: const TextStyle(color: Colors.black, fontSize: 12),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                bottomTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                    showTitles: true,
+                                                    reservedSize: 28,
+                                                    getTitlesWidget: (value, meta) {
+                                                      if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
+                                                        return Text(
+                                                          '${value.toStringAsFixed(1)} Km',
+                                                          style: const TextStyle(color: Colors.black, fontSize: 12),
+                                                        );
+                                                      }
+                                                      return const SizedBox();
+                                                    },
+                                                  ),
+                                                ),
+                                                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              ),
+                                              borderData: FlBorderData(show: false),
+                                              lineBarsData: [
+                                                LineChartBarData(
+                                                  spots: const [
+                                                    FlSpot(0, 420),
+                                                    FlSpot(0.5, 421),
+                                                    FlSpot(1.0, 420.5),
+                                                    FlSpot(1.5, 423),
+                                                    FlSpot(2.0, 421),
+                                                  ],
+                                                  isCurved: true,
+                                                  color: AppColor.bgRed,
+                                                  barWidth: 2,
+                                                  belowBarData: BarAreaData(
+                                                    show: true,
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        AppColor.bgRed,
+                                                        // Colors.white.withOpacity(0.6),
+                                                        Colors.white,
+                                                      ],
+                                                      begin: Alignment.topCenter,
+                                                      end: Alignment.bottomCenter,
+                                                    ),
+                                                  ),
+                                                  dotData: FlDotData(show: false),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 20,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text('${Constant.formatPace(double.parse(feedData.pace.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Moving Time', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text(Constant.formatDuration(int.parse(feedData.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text('${Constant.formatPace(double.parse(feedData.avgElapsedPace.toString()))}/Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Elapsed Time', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text('${feedData.elapsedTime}', style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text('${Constant.formatPace(double.parse(feedData.fastestSplit.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: 15,),
+                                const SizedBox(height: 20),
+
+                                Divider(color: Colors.grey.shade300,),
+                                const SizedBox(height: 20),
+                                // elevation
+                                Container(
+                                  height: 410,
+                                  // padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Elevation', style: CustomTextStyles.semiBold(fontSize: 20)),
+                                          Icon(Icons.info_outline, color: Colors.black,),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        child: SizedBox(
+                                          height: 220, // <-- FIXED HEIGHT ADDED
+                                          width: double.infinity, // <-- FIXED WIDTH ADDED
+                                          child: LineChart(
+                                            LineChartData(
+                                              minX: 0,
+                                              maxX: 2.0,
+                                              minY: 415,
+                                              maxY: 430,
+                                              gridData: FlGridData(
+                                                show: true,
+                                                drawVerticalLine: true,
+                                                drawHorizontalLine: true,
+                                                getDrawingHorizontalLine: (value) => FlLine(
+                                                  color: Colors.grey.shade200,
+                                                  strokeWidth: 1,
+                                                ),
+                                                getDrawingVerticalLine: (value) => FlLine(
+                                                  color: Colors.grey.shade200,
+                                                  strokeWidth: 1,
+                                                ),
+                                              ),
+                                              titlesData: FlTitlesData(
+                                                leftTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                    showTitles: true,
+                                                    reservedSize: 32,
+                                                    getTitlesWidget: (value, meta) {
+                                                      return Text(
+                                                        value.toInt().toString(),
+                                                        style: const TextStyle(color: Colors.black, fontSize: 12),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                bottomTitles: AxisTitles(
+                                                  sideTitles: SideTitles(
+                                                    showTitles: true,
+                                                    reservedSize: 28,
+                                                    getTitlesWidget: (value, meta) {
+                                                      if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
+                                                        return Text(
+                                                          '${value.toStringAsFixed(1)} Km',
+                                                          style: const TextStyle(color: Colors.black, fontSize: 12),
+                                                        );
+                                                      }
+                                                      return const SizedBox();
+                                                    },
+                                                  ),
+                                                ),
+                                                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                              ),
+                                              borderData: FlBorderData(show: false),
+                                              lineBarsData: [
+                                                LineChartBarData(
+                                                  spots: const [
+                                                    FlSpot(0, 420),
+                                                    FlSpot(0.5, 421),
+                                                    FlSpot(1.0, 420.5),
+                                                    FlSpot(1.5, 423),
+                                                    FlSpot(2.0, 421),
+                                                  ],
+                                                  isCurved: true,
+                                                  color: Colors.white,
+                                                  barWidth: 2,
+                                                  belowBarData: BarAreaData(
+                                                    show: true,
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        AppColor.bgRed,
+                                                        Colors.white,
+                                                      ],
+                                                      begin: Alignment.topCenter,
+                                                      end: Alignment.bottomCenter,
+                                                    ),
+                                                  ),
+                                                  dotData: FlDotData(show: false),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Elevation Gain', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text('${feedData.elavationGain}m', style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                      SizedBox(height: 15,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Max Elevation', style: CustomTextStyles.regular(fontSize: 14)),
+                                          Text('${feedData.maxElavation}m', style: CustomTextStyles.regular(fontSize: 16)),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Elevation Gain', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text('${feedData.elavationGain}m', style: CustomTextStyles.regular(fontSize: 16)),
+                                    Text('Problem with your location data?', style: CustomTextStyles.regular(fontSize: 14)),
+
+                                    Container(
+                                      height: 25,
+                                      width: 80,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(12),
+                                          // color: AppColor.bgRed
+                                          border: Border.all(color: AppColor.bgRed)
+                                      ),
+                                      child: Center(
+                                        child: Text('Report', style: TextStyle(color: AppColor.bgRed),),
+                                      ),
+                                    ),
                                   ],
-                                ),
-                                SizedBox(height: 15,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Max Elevation', style: CustomTextStyles.regular(fontSize: 14)),
-                                    Text('${feedData.maxElavation}m', style: CustomTextStyles.regular(fontSize: 16)),
-                                  ],
-                                ),
+                                )
                               ],
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Problem with your location data?', style: CustomTextStyles.regular(fontSize: 14)),
-
-                              Container(
-                                height: 25,
-                                width: 80,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    // color: AppColor.bgRed
-                                    border: Border.all(color: AppColor.bgRed)
-                                ),
-                                child: Center(
-                                  child: Text('Report', style: TextStyle(color: AppColor.bgRed),),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        ),
+                      )
+                    );
+                  },
+                ),
+              ],
             );
+
+            // return SafeArea(
+            //   child: CustomScrollView(
+            //     slivers: [
+            //       // Sliver AppBar with Map
+            //       SliverAppBar(
+            //         expandedHeight: 300,
+            //         floating: false,
+            //         pinned: true,
+            //         backgroundColor: Colors.white,
+            //         flexibleSpace: FlexibleSpaceBar(
+            //           background: Stack(
+            //             children: [
+            //               Positioned.fill(
+            //                 child: GoogleMap(
+            //                   initialCameraPosition: CameraPosition(
+            //                     target: pathPoints.isNotEmpty
+            //                         ? pathPoints.first
+            //                         : const LatLng(26.9124, 75.7873), // default Jaipur point
+            //                     // zoom: 50,
+            //                   ),
+            //                   onMapCreated: (controller) {
+            //                     mapController = controller;
+            //                     if (pathPoints.isNotEmpty) {
+            //                       _fitToRoute();
+            //                     }
+            //                   },
+            //                   polylines: polylines,
+            //                   myLocationEnabled: false,
+            //                   zoomControlsEnabled: false,
+            //                   compassEnabled: false,
+            //                 )
+            //
+            //                 /*GoogleMap(
+            //                   initialCameraPosition: CameraPosition(
+            //                     target: pathPoints.first,
+            //                     zoom: 17,
+            //
+            //                   ),
+            //                   polylines: getPolyline(),
+            //                   myLocationEnabled: true,
+            //                   onMapCreated: (controller) {
+            //                     mapController = controller;
+            //                   },
+            //                 ),*/
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //
+            //       // Sliver content (Run details)
+            //       SliverToBoxAdapter(
+            //         child: Container(
+            //           decoration: const BoxDecoration(
+            //             color: Colors.white,
+            //             borderRadius: BorderRadius.only(
+            //               topLeft: Radius.circular(20),
+            //               topRight: Radius.circular(20),
+            //             ),
+            //           ),
+            //           padding: const EdgeInsets.all(20),
+            //           child: Column(
+            //             children: [
+            //               Container(
+            //                 // height: 300,
+            //                 decoration: BoxDecoration(
+            //                   borderRadius: BorderRadius.circular(12),
+            //                 ),
+            //                 // padding: const EdgeInsets.all(16),
+            //                 child: Column(
+            //                   mainAxisAlignment: MainAxisAlignment.start,
+            //                   crossAxisAlignment: CrossAxisAlignment.start,
+            //                   children: [
+            //                     Row(
+            //                       crossAxisAlignment: CrossAxisAlignment.start,
+            //                       children: [
+            //                         Container(
+            //                           decoration: BoxDecoration(
+            //                               borderRadius: BorderRadius.circular(20),
+            //                               border: Border.all(color: AppColor.bgRed)
+            //                           ),
+            //                           child: ClipRRect(
+            //                             borderRadius: BorderRadius.circular(20),
+            //                             child: CachedNetworkImage(
+            //                               imageUrl: feedData!.profilePic.toString(),
+            //                               width: 36.0,
+            //                               height: 36.0,
+            //                               fit: BoxFit.fill,
+            //                               placeholder:
+            //                                   (context, url) =>
+            //                                   Padding(
+            //                                     padding: EdgeInsets.all(40.0),
+            //                                     child: CircularProgressIndicator(
+            //                                       color: AppColor.bgRed,
+            //                                       strokeWidth: 1,
+            //                                     ),
+            //                                   ),
+            //                               errorWidget: (context, url, error) =>
+            //                                   Image.asset(AppImageOthers.profilePic, height: 36,),
+            //                             ),
+            //                           ),
+            //                         ),
+            //                         SizedBox(width: 8,),
+            //                         Expanded(
+            //                           child: Column(
+            //                             crossAxisAlignment: CrossAxisAlignment.start,
+            //                             children: [
+            //                               Text(
+            //                                 '${feedData.firstName} ${feedData.lastName}',
+            //                                 style: TextStyle(color: Colors.black),
+            //                               ),
+            //                               Row(
+            //                                 mainAxisAlignment: MainAxisAlignment.start,
+            //                                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                                 children: [
+            //                                   CachedNetworkImage(
+            //                                     imageUrl: feedData!.categoryIcon.toString(),
+            //                                     width: 17.0,
+            //                                     height: 17.0,
+            //                                     fit: BoxFit.fill,
+            //                                     color: AppColor.bgRed,
+            //                                     placeholder:
+            //                                         (context, url) =>
+            //                                         Padding(
+            //                                           padding: EdgeInsets.all(40.0),
+            //                                           child: CircularProgressIndicator(
+            //                                             color: AppColor.bgRed,
+            //                                             strokeWidth: 1,
+            //                                           ),
+            //                                         ),
+            //                                     errorWidget: (context,
+            //                                         url, error) =>
+            //                                         Image.asset(AppImageOthers.profilePic, height: 17,),
+            //                                   ),
+            //                                   SizedBox(width: 4,),
+            //                                   Flexible(
+            //                                     child: Text(
+            //                                       '${formatDate(feedData.createdDate.toString())} · ${feedData.location}',
+            //                                       // 'August 15, 2025 at 8:20 AM · Iskandar Puteri, Malaysia',
+            //                                       style: TextStyle(color: Colors.grey, fontSize: 12),
+            //                                     ),
+            //                                   ),
+            //                                 ],
+            //                               ),
+            //                             ],
+            //                           ),
+            //                         )
+            //                       ],
+            //                     ),
+            //                     const SizedBox(height: 10),
+            //                     Text(feedData.title.toString(),
+            //                         style: TextStyle(
+            //                             color: Colors.black,
+            //                             fontSize: 20,
+            //                             fontWeight: FontWeight.bold)),
+            //                     const SizedBox(height: 10),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       crossAxisAlignment: CrossAxisAlignment.start,
+            //                       children: [
+            //                         Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Distance", value: "${(double.parse(feedData.distance.toString())/1000).toStringAsFixed(2)} km")),
+            //                         SizedBox(width: 15,),
+            //                         Expanded(child: _InfoColumn(cross: CrossAxisAlignment.center, title: "Pace", value: "${Constant.formatPace(double.parse(feedData.pace.toString()))} /km")),
+            //                         SizedBox(width: 15,),
+            //                         Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Time", value: Constant.formatDuration(int.parse(feedData.movingTime.toString())))),
+            //                       ],
+            //                     ),
+            //                     const SizedBox(height: 10),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       crossAxisAlignment: CrossAxisAlignment.start,
+            //                       children: [
+            //                         Expanded(child: _InfoColumn(cross: CrossAxisAlignment.start, title: "Elevation Gain", value: "${feedData.elavationGain.toString()} m")),
+            //                         SizedBox(width: 15,),
+            //                         Expanded(
+            //                           child: _InfoColumn(cross: CrossAxisAlignment.center,
+            //                               title: "Max Elevation", value: "${feedData.maxElavation} m"),
+            //                         ),
+            //                         SizedBox(width: 15,),
+            //                         Expanded(child: _InfoColumn(cross: CrossAxisAlignment.end, title: "Steps", value: "${feedData.steps}")),
+            //                         // SizedBox(width: 15,),
+            //                       ],
+            //                     ),
+            //                     const SizedBox(height: 10),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //
+            //                         Row(
+            //                           children: [
+            //                             likeImageWidget(state.feedDetailModel),
+            //                             SizedBox(width: 10,),
+            //                             Text('${feedData.totalLike} gave kudos', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+            //
+            //                           ],
+            //                         ),
+            //                         Row(
+            //                           children: [
+            //                             GestureDetector(
+            //                               onTap: () {
+            //                                 context.read<FeedDetailBloc>().add(ActivityLikeEvent(context: context, activityId: feedData.activityId.toString()));
+            //                               },
+            //                               child: Icon(Icons.thumb_up,
+            //                                   color: feedData.isLiked! ? AppColor.bgRed : Colors.black),
+            //                             ),
+            //                             SizedBox(width: 8,),
+            //                             GestureDetector(
+            //                               onTap: () {
+            //
+            //                                 final activityId = widget.activityId;
+            //                                 final link = "https://tracking.coherentlab.com/api/v1/activity/user-feed/$activityId";
+            //                                 //
+            //                                 // Share.share(
+            //                                 //   "Check out my run on Dhava 🏃‍♂️:\n$link",
+            //                                 //   subject: "My Activity",
+            //                                 // );
+            //
+            //                                 showShareActivitySheet(context: context, distance: '${(double.parse(feedData.distance.toString()) / 1000).toStringAsFixed(2)} km',
+            //                                     elevation: feedData.elavationGain.toString(), imageProvider: NetworkImage(feedData.photo.toString()), time: feedData.movingTime.toString(),
+            //                                     title: feedData.title.toString(), link: link
+            //                                 );
+            //                               },
+            //                               child: Icon(Icons.share,
+            //                                   color: Colors.black),
+            //                             ),
+            //                           ],
+            //                         ),
+            //                       ],
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //               const SizedBox(height: 20),
+            //
+            //               Divider(color: Colors.grey.shade300,),
+            //               const SizedBox(height: 20),
+            //               // const SizedBox(height: 20),
+            //               // results
+            //               // results
+            //               // Container(
+            //               //   height: 324,
+            //               //   // padding: const EdgeInsets.all(16),
+            //               //   child: Column(
+            //               //     crossAxisAlignment: CrossAxisAlignment.start,
+            //               //     children: [
+            //               //       Text('Best Efforts', style: CustomTextStyles.semiBold(fontSize: 20)),
+            //               //       SizedBox(height: 15,),
+            //               //       Row(
+            //               //         children: [
+            //               //           Column(
+            //               //             crossAxisAlignment: CrossAxisAlignment.start,
+            //               //             children: [
+            //               //               Text('Best Efforts', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey),),
+            //               //               Text('4', style: CustomTextStyles.regular(fontSize: 16)),
+            //               //             ],
+            //               //           ),
+            //               //           SizedBox(width: 20,),
+            //               //           Column(
+            //               //             crossAxisAlignment: CrossAxisAlignment.start,
+            //               //             children: [
+            //               //               Text('Segments', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+            //               //               Text('5', style: CustomTextStyles.regular(fontSize: 16)),
+            //               //             ],
+            //               //           ),
+            //               //         ],
+            //               //       ),
+            //               //       SizedBox(height: 15,),
+            //               //       Row(
+            //               //         children: [
+            //               //           Column(
+            //               //             crossAxisAlignment: CrossAxisAlignment.start,
+            //               //             children: [
+            //               //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+            //               //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+            //               //             ],
+            //               //           ),
+            //               //         ],
+            //               //       ),
+            //               //       SizedBox(height: 15,),
+            //               //       Row(
+            //               //         children: [
+            //               //           Column(
+            //               //             crossAxisAlignment: CrossAxisAlignment.start,
+            //               //             children: [
+            //               //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+            //               //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+            //               //             ],
+            //               //           ),
+            //               //         ],
+            //               //       ),
+            //               //       SizedBox(height: 15,),
+            //               //       Row(
+            //               //         children: [
+            //               //           Column(
+            //               //             crossAxisAlignment: CrossAxisAlignment.start,
+            //               //             children: [
+            //               //               Text('1 Mile', style: CustomTextStyles.regular(fontSize: 12, textColor: Colors.grey)),
+            //               //               Text('17:11   10:41 /Km', style: CustomTextStyles.regular(fontSize: 16)),
+            //               //             ],
+            //               //           ),
+            //               //         ],
+            //               //       ),
+            //               //       SizedBox(height: 15,),
+            //               //       Row(
+            //               //         mainAxisAlignment: MainAxisAlignment.end,
+            //               //         children: [
+            //               //           Text('View All Results', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),)
+            //               //         ],
+            //               //       )
+            //               //     ],
+            //               //   ),
+            //               // ),
+            //               // const SizedBox(height: 20),
+            //
+            //               // splits
+            //               Container(
+            //                 // height: 180,
+            //                 // padding: const EdgeInsets.all(16),
+            //                 child: Column(
+            //                     crossAxisAlignment: CrossAxisAlignment.start,
+            //                     children: [
+            //                       Text('Splits', style: CustomTextStyles.semiBold(fontSize: 20)),
+            //                       SizedBox(height: 15,),
+            //                       Row(
+            //                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                         children: [
+            //                           Row(
+            //                             children: [
+            //                               Column(
+            //                                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                                 children: [
+            //                                   Text('Km', style: CustomTextStyles.regular(fontSize: 14)),
+            //                                   SizedBox(height: 10,),
+            //                                   Text('1', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                   SizedBox(height: 10,),
+            //                                   Text('2', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                   SizedBox(height: 10,),
+            //                                   Text('3', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                 ],
+            //                               ),
+            //                               SizedBox(width: 20,),
+            //                               Column(
+            //                                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                                 children: [
+            //                                   Text('Pace', style: CustomTextStyles.regular(fontSize: 14)),
+            //                                   SizedBox(height: 10,),
+            //                                   Text('16:00', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                   SizedBox(height: 10,),
+            //                                   Text('16:00', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                   SizedBox(height: 10,),
+            //                                   Text('16:00', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                 ],
+            //                               ),
+            //                             ],
+            //                           ),
+            //                           SizedBox(width: 20,),
+            //                           Expanded(
+            //                             child: Row(
+            //                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                               children: [
+            //                                 Column(
+            //                                   crossAxisAlignment: CrossAxisAlignment.start,
+            //                                   children: [
+            //                                     Text(''),
+            //                                     SizedBox(height: 5,),
+            //                                     Container(
+            //                                       height: 13,
+            //                                       width: 80,
+            //                                       decoration: BoxDecoration(
+            //                                           color: AppColor.bgRed,
+            //                                           borderRadius: BorderRadius.circular(12)
+            //                                       ),
+            //                                     ),
+            //                                     SizedBox(height: 10,),
+            //                                     Container(
+            //                                       height: 13,
+            //                                       width: 120,
+            //                                       decoration: BoxDecoration(
+            //                                           color: AppColor.bgRed,
+            //                                           borderRadius: BorderRadius.circular(12)
+            //                                       ),
+            //                                     ),
+            //                                     SizedBox(height: 10,),
+            //                                     Container(
+            //                                       height: 13,
+            //                                       width: 60,
+            //                                       decoration: BoxDecoration(
+            //                                           color: AppColor.bgRed,
+            //                                           borderRadius: BorderRadius.circular(12)
+            //                                       ),
+            //                                     ),
+            //                                   ],
+            //                                 ),
+            //                                 Column(
+            //                                   mainAxisAlignment: MainAxisAlignment.start,
+            //                                   children: [
+            //                                     Text('Elev', style: CustomTextStyles.regular(fontSize: 14)),
+            //                                     SizedBox(height: 10,),
+            //                                     Text('-0', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                     SizedBox(height: 10,),
+            //                                     Text('0', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                     SizedBox(height: 10,),
+            //                                     Text('1', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                                   ],
+            //                                 ),
+            //                               ],
+            //                             ),
+            //                           ),
+            //                         ],
+            //                       )
+            //                     ]
+            //                 ),
+            //               ),
+            //               const SizedBox(height: 20),
+            //
+            //               Divider(color: Colors.grey.shade300,),
+            //               const SizedBox(height: 20),
+            //
+            //               Container(
+            //                 // height: 580,
+            //                 // padding: const EdgeInsets.all(16),
+            //                 child: Column(
+            //                   children: [
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Pace', style: CustomTextStyles.semiBold(fontSize: 20)),
+            //                         Icon(Icons.info_outline, color: Colors.black,)
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 40,),
+            //
+            //                     Container(
+            //                       padding: const EdgeInsets.all(12),
+            //                       decoration: BoxDecoration(
+            //                         borderRadius: BorderRadius.circular(12),
+            //                       ),
+            //                       child: SizedBox(
+            //                         height: 220, // <-- FIXED HEIGHT ADDED
+            //                         width: double.infinity, // <-- FIXED WIDTH ADDED
+            //                         child: LineChart(
+            //                           LineChartData(
+            //                             minX: 0,
+            //                             maxX: 2.0,
+            //                             minY: 415,
+            //                             maxY: 430,
+            //                             gridData: FlGridData(
+            //                               show: true,
+            //                               drawVerticalLine: true,
+            //                               drawHorizontalLine: true,
+            //                               getDrawingHorizontalLine: (value) => FlLine(
+            //                                 color: Colors.grey.shade200,
+            //                                 strokeWidth: 1,
+            //                               ),
+            //                               getDrawingVerticalLine: (value) => FlLine(
+            //                                 color: Colors.grey.shade200,
+            //                                 strokeWidth: 1,
+            //                               ),
+            //                             ),
+            //                             titlesData: FlTitlesData(
+            //                               leftTitles: AxisTitles(
+            //                                 sideTitles: SideTitles(
+            //                                   showTitles: true,
+            //                                   reservedSize: 32,
+            //                                   getTitlesWidget: (value, meta) {
+            //                                     return Text(
+            //                                       value.toInt().toString(),
+            //                                       style: const TextStyle(color: Colors.black, fontSize: 12),
+            //                                     );
+            //                                   },
+            //                                 ),
+            //                               ),
+            //                               bottomTitles: AxisTitles(
+            //                                 sideTitles: SideTitles(
+            //                                   showTitles: true,
+            //                                   reservedSize: 28,
+            //                                   getTitlesWidget: (value, meta) {
+            //                                     if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
+            //                                       return Text(
+            //                                         '${value.toStringAsFixed(1)} Km',
+            //                                         style: const TextStyle(color: Colors.black, fontSize: 12),
+            //                                       );
+            //                                     }
+            //                                     return const SizedBox();
+            //                                   },
+            //                                 ),
+            //                               ),
+            //                               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            //                               rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            //                             ),
+            //                             borderData: FlBorderData(show: false),
+            //                             lineBarsData: [
+            //                               LineChartBarData(
+            //                                 spots: const [
+            //                                   FlSpot(0, 420),
+            //                                   FlSpot(0.5, 421),
+            //                                   FlSpot(1.0, 420.5),
+            //                                   FlSpot(1.5, 423),
+            //                                   FlSpot(2.0, 421),
+            //                                 ],
+            //                                 isCurved: true,
+            //                                 color: AppColor.bgRed,
+            //                                 barWidth: 2,
+            //                                 belowBarData: BarAreaData(
+            //                                   show: true,
+            //                                   gradient: LinearGradient(
+            //                                     colors: [
+            //                                       AppColor.bgRed,
+            //                                       // Colors.white.withOpacity(0.6),
+            //                                       Colors.white,
+            //                                     ],
+            //                                     begin: Alignment.topCenter,
+            //                                     end: Alignment.bottomCenter,
+            //                                   ),
+            //                                 ),
+            //                                 dotData: FlDotData(show: false),
+            //                               ),
+            //                             ],
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                     SizedBox(height: 20,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Avg Pace', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text('${Constant.formatPace(double.parse(feedData.pace.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Moving Time', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text(Constant.formatDuration(int.parse(feedData.movingTime.toString())), style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Avg Elapsed Pace', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text('${Constant.formatPace(double.parse(feedData.avgElapsedPace.toString()))}/Km', style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Elapsed Time', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text('${feedData.elapsedTime}', style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Fastest Split', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text('${Constant.formatPace(double.parse(feedData.fastestSplit.toString()))} /Km', style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //               const SizedBox(height: 20),
+            //
+            //               Divider(color: Colors.grey.shade300,),
+            //               const SizedBox(height: 20),
+            //               // elevation
+            //               Container(
+            //                 height: 410,
+            //                 // padding: const EdgeInsets.all(16),
+            //                 child: Column(
+            //                   children: [
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Elevation', style: CustomTextStyles.semiBold(fontSize: 20)),
+            //                         Icon(Icons.info_outline, color: Colors.black,),
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //
+            //                     Container(
+            //                       padding: const EdgeInsets.all(12),
+            //                       child: SizedBox(
+            //                         height: 220, // <-- FIXED HEIGHT ADDED
+            //                         width: double.infinity, // <-- FIXED WIDTH ADDED
+            //                         child: LineChart(
+            //                           LineChartData(
+            //                             minX: 0,
+            //                             maxX: 2.0,
+            //                             minY: 415,
+            //                             maxY: 430,
+            //                             gridData: FlGridData(
+            //                               show: true,
+            //                               drawVerticalLine: true,
+            //                               drawHorizontalLine: true,
+            //                               getDrawingHorizontalLine: (value) => FlLine(
+            //                                 color: Colors.grey.shade200,
+            //                                 strokeWidth: 1,
+            //                               ),
+            //                               getDrawingVerticalLine: (value) => FlLine(
+            //                                 color: Colors.grey.shade200,
+            //                                 strokeWidth: 1,
+            //                               ),
+            //                             ),
+            //                             titlesData: FlTitlesData(
+            //                               leftTitles: AxisTitles(
+            //                                 sideTitles: SideTitles(
+            //                                   showTitles: true,
+            //                                   reservedSize: 32,
+            //                                   getTitlesWidget: (value, meta) {
+            //                                     return Text(
+            //                                       value.toInt().toString(),
+            //                                       style: const TextStyle(color: Colors.black, fontSize: 12),
+            //                                     );
+            //                                   },
+            //                                 ),
+            //                               ),
+            //                               bottomTitles: AxisTitles(
+            //                                 sideTitles: SideTitles(
+            //                                   showTitles: true,
+            //                                   reservedSize: 28,
+            //                                   getTitlesWidget: (value, meta) {
+            //                                     if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
+            //                                       return Text(
+            //                                         '${value.toStringAsFixed(1)} Km',
+            //                                         style: const TextStyle(color: Colors.black, fontSize: 12),
+            //                                       );
+            //                                     }
+            //                                     return const SizedBox();
+            //                                   },
+            //                                 ),
+            //                               ),
+            //                               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            //                               rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            //                             ),
+            //                             borderData: FlBorderData(show: false),
+            //                             lineBarsData: [
+            //                               LineChartBarData(
+            //                                 spots: const [
+            //                                   FlSpot(0, 420),
+            //                                   FlSpot(0.5, 421),
+            //                                   FlSpot(1.0, 420.5),
+            //                                   FlSpot(1.5, 423),
+            //                                   FlSpot(2.0, 421),
+            //                                 ],
+            //                                 isCurved: true,
+            //                                 color: Colors.white,
+            //                                 barWidth: 2,
+            //                                 belowBarData: BarAreaData(
+            //                                   show: true,
+            //                                   gradient: LinearGradient(
+            //                                     colors: [
+            //                                       AppColor.bgRed,
+            //                                       Colors.white,
+            //                                     ],
+            //                                     begin: Alignment.topCenter,
+            //                                     end: Alignment.bottomCenter,
+            //                                   ),
+            //                                 ),
+            //                                 dotData: FlDotData(show: false),
+            //                               ),
+            //                             ],
+            //                           ),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Elevation Gain', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text('${feedData.elavationGain}m', style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                     SizedBox(height: 15,),
+            //                     Row(
+            //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                       children: [
+            //                         Text('Max Elevation', style: CustomTextStyles.regular(fontSize: 14)),
+            //                         Text('${feedData.maxElavation}m', style: CustomTextStyles.regular(fontSize: 16)),
+            //                       ],
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //               Row(
+            //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //                 children: [
+            //                   Text('Problem with your location data?', style: CustomTextStyles.regular(fontSize: 14)),
+            //
+            //                   Container(
+            //                     height: 25,
+            //                     width: 80,
+            //                     decoration: BoxDecoration(
+            //                         borderRadius: BorderRadius.circular(12),
+            //                         // color: AppColor.bgRed
+            //                         border: Border.all(color: AppColor.bgRed)
+            //                     ),
+            //                     child: Center(
+            //                       child: Text('Report', style: TextStyle(color: AppColor.bgRed),),
+            //                     ),
+            //                   ),
+            //                 ],
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // );
           }
           if(state is FeedDetailError){
             return Center(
@@ -927,51 +1794,4 @@ class _InfoColumn extends StatelessWidget {
       ],
     );
   }
-
-
-
 }
-
-// class MatchedRunsGraphPainter extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final Paint gridPaint = Paint()
-//       ..color = Colors.white.withOpacity(0.3)
-//       ..strokeWidth = 1;
-//
-//     final double verticalSpacing = size.width / 4;
-//
-//     // Draw vertical grid lines
-//     for (int i = 0; i <= 3; i++) {
-//       final double x = verticalSpacing * i;
-//       canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
-//     }
-//
-//     // Draw blue line
-//     final Paint linePaint = Paint()
-//       ..color = Colors.blue
-//       ..strokeWidth = 2
-//       ..style = PaintingStyle.stroke;
-//
-//     final Path path = Path();
-//     path.moveTo(0, size.height * 0.3);
-//     path.lineTo(size.width, size.height * 0.7);
-//     canvas.drawPath(path, linePaint);
-//
-//     // Draw white dots
-//     final Paint whiteDot = Paint()..color = Colors.white;
-//     canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.6), 4, whiteDot);
-//     canvas.drawCircle(Offset(size.width * 0.4, size.height * 0.3), 4, whiteDot);
-//     canvas.drawCircle(Offset(size.width * 0.6, size.height * 0.7), 4, whiteDot);
-//     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.5), 4, whiteDot);
-//
-//     // Draw red highlighted dot (last point)
-//     final Paint redDot = Paint()..color = Colors.red;
-//     canvas.drawCircle(Offset(size.width, size.height * 0.7), 5, redDot);
-//   }
-//
-//   @override
-//   bool shouldRepaint(CustomPainter oldDelegate) => false;
-//
-//
-// }

@@ -49,16 +49,16 @@ class DietDetailScreen extends StatelessWidget {
                     },
                     child: Image.asset(AppImageOthers.backArrow,width: 30,height: 30,))
               ),
-              Positioned.fill(
-                child: Center(
-                  child: CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Colors.black54,
-                    child: const Icon(Icons.play_arrow,
-                        color: Colors.white, size: 36),
-                  ),
-                ),
-              ),
+              // Positioned.fill(
+              //   child: Center(
+              //     child: CircleAvatar(
+              //       radius: 28,
+              //       backgroundColor: Colors.black54,
+              //       child: const Icon(Icons.play_arrow,
+              //           color: Colors.white, size: 36),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
 

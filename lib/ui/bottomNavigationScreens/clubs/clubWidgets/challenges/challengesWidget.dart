@@ -78,14 +78,23 @@ class _challengesWidgetState extends State<challengesWidget> {
     return Column(
       children: [
 
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical:0),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: categories.map((cat) => buildFilterButton(cat)).toList(),
-            ),
-          ),
+        BlocBuilder<SuggestedBloc, SuggestedState>(
+          builder: (context, state) {
+            if(state is PostSuggestedSuccess){
+              return state.suggestedModel.data!.data!.isEmpty
+                  ? SizedBox()
+                  : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical:0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: categories.map((cat) => buildFilterButton(cat)).toList(),
+                  ),
+                ),
+              );
+            }
+            return SizedBox();
+          },
         ),
         Expanded(
           child: SmartRefresher(
@@ -109,7 +118,10 @@ class _challengesWidgetState extends State<challengesWidget> {
 
                 if (state is PostSuggestedSuccess) {
                   var suggestedData = state.suggestedModel.data?.data ?? [];
-                  return Padding(
+                  return suggestedData.isEmpty 
+                      ? Center(child: Text('No Data Available'))
+                      :
+                    Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: SingleChildScrollView(
                       child: Column(

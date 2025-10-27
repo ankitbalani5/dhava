@@ -172,6 +172,8 @@ class AppImageOthers {
   static const processBackground = 'assets/image/others/processBackground.png';
   static const recruitment = 'assets/image/others/recruitment.png';
 
+  static const finishRun = 'assets/image/others/finishRun.png';
+  static const startRun = 'assets/image/others/startRun.png';
   static const pcrImg = 'assets/image/others/pcrImg.png';
   static const activitiesIcon = 'assets/image/others/activitiesIcon.png';
   static const backArrow = 'assets/image/others/backArrow.png';
@@ -181,6 +183,10 @@ class AppImageOthers {
   static const notificationIcon = 'assets/image/others/notificationIcon.png';
   static const overviewIcon = 'assets/image/others/overviewIcon.png';
   static const shareIcon = 'assets/image/others/shareIcon.png';
+  static const whatsapp = 'assets/image/others/whatsapp.png';
+  static const share = 'assets/image/others/share.png';
+  static const copyLink = 'assets/image/others/copyLink.png';
+  static const message = 'assets/image/others/message.png';
   static const clubDetailBanner = 'assets/image/others/clubDetailBanner.png';
   static const memberIcon = 'assets/image/others/memberIcon.png';
   static const earthIcon = 'assets/image/others/earthIcon.png';
@@ -197,6 +203,10 @@ class AppImageOthers {
   static const dropLocation = 'assets/image/others/dropLocation.png';
   static const clubDialogImg = 'assets/image/others/clubDialogImg.png';
   static const dietBanner = 'assets/image/others/dietBanner.png';
+  static const dietBanner1 = 'assets/image/others/High-Protein Lean Diet.png';
+  static const dietBanner2 = 'assets/image/others/Low-Carb Smart Diet.png';
+  static const dietBanner3 = 'assets/image/others/Plant Power Diet.png';
+  static const dietBanner4 = 'assets/image/others/Mediterranean Balance Plan.png';
   static const runBanner = 'assets/image/others/runBanner.png';
   static const cycleBanner = 'assets/image/others/cycleBanner.png';
 }
