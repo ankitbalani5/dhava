@@ -209,4 +209,5 @@ class AppImageOthers {
   static const dietBanner4 = 'assets/image/others/Mediterranean Balance Plan.png';
   static const runBanner = 'assets/image/others/runBanner.png';
   static const cycleBanner = 'assets/image/others/cycleBanner.png';
+  static const deleteAccount = 'assets/image/others/deleteAccount.png';
 }

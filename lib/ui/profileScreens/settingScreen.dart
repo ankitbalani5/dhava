@@ -1,6 +1,7 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
+import 'package:coherent_endurance/ui/profileScreens/deleteAccountScreen.dart';
 import 'package:coherent_endurance/ui/settingScreens/aboutScreen.dart';
 import 'package:coherent_endurance/ui/settingScreens/changeEmailScreen.dart';
 import 'package:coherent_endurance/ui/settingScreens/contactAccess.dart';
@@ -106,6 +107,9 @@ class _SettingScreenState extends State<SettingScreen> {
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),
             ListTile(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DeleteAccountScreen()));
+              },
               title: Text('Delete Your Account', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),

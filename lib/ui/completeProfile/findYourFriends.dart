@@ -84,7 +84,7 @@ class _FindYourFriendsState extends State<FindYourFriends> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Find Your Friends On Coherent',
+                      'Find your friends on Dhava',
                       style: CustomTextStyles.bold(fontSize: 16),
                     ),
                     const SizedBox(height: 10),

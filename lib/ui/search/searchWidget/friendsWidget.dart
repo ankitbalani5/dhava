@@ -43,7 +43,7 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
             children: [
                SizedBox(height: 10),
               Text(
-                'Find Your Friends On Coherent',
+                'Find your friends on Dhava',
                 style: CustomTextStyles.bold(fontSize: 16),
               ),
                SizedBox(height: 10),

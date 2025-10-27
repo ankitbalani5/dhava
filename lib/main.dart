@@ -5,6 +5,7 @@ import 'package:coherent_endurance/bloc/challengeDetailBloc/challenge_detail_blo
 import 'package:coherent_endurance/bloc/challengesBloc/challengesDetails_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/joinChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/challengesBloc/suggested_Bloc.dart';
+import 'package:coherent_endurance/bloc/deleteAccountBloc/deleteAccount_bloc.dart';
 import 'package:coherent_endurance/bloc/feedDetailsBloc/feed_detail_bloc.dart';
 import 'package:coherent_endurance/bloc/myJoinedChallengesBloc/myJoinedChallenges_Bloc.dart';
 import 'package:coherent_endurance/bloc/myAllChallengeBloc/my_all_challenge_bloc.dart';
@@ -113,6 +114,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<ChallengesDetailsBloc>(create: (context) => ChallengesDetailsBloc()),
           BlocProvider<MyjoinedChallengesBloc>(create: (context) => MyjoinedChallengesBloc()),
           BlocProvider<UserjoinedChallengesBloc>(create: (context) => UserjoinedChallengesBloc()),
+          BlocProvider<DeleteAccountBloc>(create: (context) => DeleteAccountBloc()),
     ],
 
         child: MaterialApp(
