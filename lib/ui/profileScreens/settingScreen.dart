@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -51,7 +53,7 @@ class _SettingScreenState extends State<SettingScreen> {
               title: Text('Change Email', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),
-            ListTile(
+           /* ListTile(
               onTap: () {
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
               },
@@ -60,14 +62,14 @@ class _SettingScreenState extends State<SettingScreen> {
               trailing: Switch(value: pushNotification, onChanged: (value) {
 
               },),
-            ),
-            ListTile(
+            ),*/
+          /*  ListTile(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => EmailNotification()));
               },
               title: Text('Email Notification', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
-            ),
+            ),*/
             ListTile(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ContactAccess()));
@@ -75,20 +77,20 @@ class _SettingScreenState extends State<SettingScreen> {
               title: Text('Contacts', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
             ),
-            ListTile(
+          /*  ListTile(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => DataPermission()));
               },
               title: Text('Data Permissions', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
-            ),
-            ListTile(
+            ),*/
+         /*   ListTile(
               onTap: () {
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmail()));
               },
               title: Text('Support', style: CustomTextStyles.regular(fontSize: 14)),
               trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.black,),
-            ),
+            ),*/
             ListTile(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => LegalScreen()));
@@ -119,6 +121,7 @@ class _SettingScreenState extends State<SettingScreen> {
       ),
     );
   }
+
 
 
   void showLogoutDialog(BuildContext context) {

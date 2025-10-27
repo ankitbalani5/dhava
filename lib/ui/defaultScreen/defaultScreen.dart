@@ -1,8 +1,8 @@
-
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 
 class DefaultScreen extends StatefulWidget {
  final bool isToolBar;

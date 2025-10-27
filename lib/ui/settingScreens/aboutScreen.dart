@@ -1,6 +1,7 @@
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -10,10 +11,26 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
+  String appVersion = '';
+  String buildNumber = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      appVersion = info.version; // e.g. 1.12
+      buildNumber = info.buildNumber; // e.g. 12393974
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         titleSpacing: 0,
@@ -25,36 +42,69 @@ class _AboutScreenState extends State<AboutScreen> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Icon(Icons.arrow_back_ios, color: Colors.black),
+          child: const Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
         backgroundColor: Colors.white,
-
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("About",style: CustomTextStyles.semiBold(textColor: AppColor.lightGreyImageBackground),),
-            SizedBox(height: 20,),
-            Text("Version",style: CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),),
-            Text("Strava Version 427.12 (12393974)",style: CustomTextStyles.regular(textColor: AppColor.backgroundGrey),),
-            SizedBox(height: 20,),
-            Text("Rate this app",style: CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),),
+            Text(
+              "About",
+              style: CustomTextStyles.semiBold(
+                  textColor: AppColor.lightGreyImageBackground),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Version",
+              style:
+              CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),
+            ),
 
-            SizedBox(height: 20,),
-            Text("Maps on Endurance",style: CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),),
+            // 👇 Dynamically show app version here
+            Text(
+              appVersion.isNotEmpty
+                  ? "Dhava Version $appVersion ($buildNumber)"
+                  : "Loading version...",
+              style:
+              CustomTextStyles.regular(textColor: AppColor.backgroundGrey),
+            ),
 
-            SizedBox(height: 20,),
-            Divider(height: 20,thickness: 2,color: AppColor.bgTextField,),
-            SizedBox(height: 20,),
-            Text("About the Company",style: CustomTextStyles.semiBold(textColor: AppColor.lightGreyImageBackground),),
-            SizedBox(height: 20,),
-            Text("About Endurance",style: CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),),
+            const SizedBox(height: 20),
+            Text(
+              "Rate this app",
+              style:
+              CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Maps on Dhava",
+              style:
+              CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),
+            ),
+            const SizedBox(height: 20),
+            Divider(
+              height: 20,
+              thickness: 2,
+              color: AppColor.bgTextField,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "About the Company",
+              style: CustomTextStyles.semiBold(
+                  textColor: AppColor.lightGreyImageBackground),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "About Dhava",
+              style:
+              CustomTextStyles.semiBold(textColor: AppColor.backgroundGrey),
+            ),
           ],
         ),
       ),
-
     );
   }
 }

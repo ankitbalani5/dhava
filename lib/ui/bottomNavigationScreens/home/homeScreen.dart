@@ -26,7 +26,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../profileScreens/otherProfileScreen.dart';
-import '../clubs/clubWidgets/active/challangesActive.dart';
 import 'feedDetails.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
@@ -39,10 +38,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int page = 1;
   final RefreshController _refreshController = RefreshController();
-
   int maxProgress = 3;
 
 
@@ -55,8 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
   _loadPage(){
     context.read<ProfileBloc>().profileModel = null;
     context.read<ProfileBloc>().add(GetProfileEvent(context, ''));
-    var categoryId =
-
     context.read<ActivityBloc>().add(GetFeedEvent(context: context, perPage: '10', page: page.toString(), categoryId: '',));
     context.read<GetAllChallengesBloc>().add(GetAllChallengesEvent(context: context, ));
   }
@@ -65,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int steps = 0;
 
     if (activityUploaded >
-         0) steps++; // Activity upload ho gaya
+         0) steps++;
     if (totalFollowing > 0) steps++; // Following > 0 hai
     if (photo.isNotEmpty) steps++;   // Photo upload hai
 
@@ -239,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Constant.showCompleteProfileDialog(context);
                         },
                       ));
+                      context.read<ProfileBloc>().profileModel = null;
                     }
                   }
                   if(state is CategorySuccess){

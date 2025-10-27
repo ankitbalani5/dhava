@@ -3,6 +3,7 @@ import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_bloc.dar
 import 'package:coherent_endurance/bloc/followRequestBloc/followRequest_event.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_state.dart';
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/models/suggestionsModel.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
@@ -17,7 +18,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class FriendsTabWidget extends StatefulWidget {
   final TabController innerTabController;
 
@@ -298,15 +299,45 @@ class _ContactsTabState extends State<ContactsTab> {
   List<Contact> _contacts = [];
   bool _loading = false;
   bool _connected = false;
-  Future<void> _fetchContacts() async {
+  bool _initializing = true; // 👈 Add this flag to handle flicker issue
 
+  @override
+  void initState() {
+    super.initState();
+    _checkIfAlreadyConnected();
+  }
+
+  /// Check if contacts were already synced before
+  Future<void> _checkIfAlreadyConnected() async {
+    final prefs = await SharedPreferences.getInstance();
+    final alreadyConnected = prefs.getBool('contactsSynced') ?? false;
+
+    if (alreadyConnected) {
+      // 👇 Immediately mark as connected (no flicker)
+      setState(() {
+        _connected = true;
+        _initializing = false;
+      });
+
+      // 👇 Fetch contacts silently
+      _fetchContacts(autoFetch: true);
+    } else {
+      setState(() {
+        _initializing = false;
+      });
+    }
+  }
+
+  /// Fetch contacts and update UI
+  Future<void> _fetchContacts({bool autoFetch = false}) async {
     var status = await Permission.contacts.status;
-    if (!status.isGranted) {
+
+    if (!status.isGranted && !autoFetch) {
       status = await Permission.contacts.request();
     }
 
     if (!status.isGranted) {
-      if (mounted) {
+      if (mounted && !autoFetch) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Permission denied to read contacts")),
         );
@@ -314,11 +345,9 @@ class _ContactsTabState extends State<ContactsTab> {
       return;
     }
 
-
     setState(() => _loading = true);
 
     try {
-
       final List<Contact> contacts =
       await FlutterContacts.getContacts(withProperties: true);
 
@@ -328,6 +357,9 @@ class _ContactsTabState extends State<ContactsTab> {
         _contacts = contacts;
         _connected = true;
       });
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('contactsSynced', true);
     } catch (e, st) {
       debugPrint("Error fetching contacts: $e");
       debugPrintStack(stackTrace: st);
@@ -346,20 +378,20 @@ class _ContactsTabState extends State<ContactsTab> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-         Icon(Icons.contacts, size: 60, color: Colors.red),
-         SizedBox(height: 10),
-         Text(
+        const Icon(Icons.contacts, size: 60, color: Colors.red),
+        const SizedBox(height: 10),
+        const Text(
           "Connect Contacts",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
-         SizedBox(height: 5),
-         Text(
+        const SizedBox(height: 5),
+        const Text(
           "Your friends are on Strava. See what they're\nup to by connecting your phone contacts.",
           textAlign: TextAlign.center,
         ),
-         SizedBox(height: 20),
+        const SizedBox(height: 20),
         GestureDetector(
-          onTap: _fetchContacts,
+          onTap: () => _fetchContacts(),
           child: Container(
             height: 40,
             width: 180,
@@ -367,7 +399,7 @@ class _ContactsTabState extends State<ContactsTab> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.red),
             ),
-            child:  Center(
+            child: const Center(
               child: Text("Connect Securely", style: TextStyle(color: Colors.red)),
             ),
           ),
@@ -378,11 +410,11 @@ class _ContactsTabState extends State<ContactsTab> {
 
   Widget _buildContactList() {
     if (_loading) {
-      return  Center(child: CircularProgressIndicator());
+      return  Center(child:Constant.loadingAnimation());
     }
 
     if (_contacts.isEmpty) {
-      return  Center(child: Text("No contacts found."));
+      return const Center(child: Text("No contacts found."));
     }
 
     return ListView.builder(
@@ -395,27 +427,29 @@ class _ContactsTabState extends State<ContactsTab> {
             : 'No number';
 
         return ListTile(
-          leading: CircleAvatar(child:Image.asset(AppImageOthers.defaultUserImg)),
-          title: Text(name,style: CustomTextStyles.semiBold(fontSize: 12),maxLines: 1,),
+          leading: CircleAvatar(
+            backgroundImage: const AssetImage(AppImageOthers.defaultUserImg),
+          ),
+          title: Text(
+            name,
+            style: CustomTextStyles.semiBold(fontSize: 12),
+            maxLines: 1,
+          ),
           subtitle: Text(number),
           trailing: GestureDetector(
-            onTap: (){
-
-                debugPrint('Invite $name');
-
+            onTap: () {
+              debugPrint('Invite $name');
             },
-
             child: Container(
               height: 35,
               width: 85,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColor.bgRed,
-                ),
+                border: Border.all(color: AppColor.bgRed),
               ),
               child: Center(
-                child: Text("Invite",
+                child: Text(
+                  "Invite",
                   style: CustomTextStyles.semiBold(
                     textColor: AppColor.textBackgroundGrey,
                     fontSize: 14,
@@ -431,8 +465,16 @@ class _ContactsTabState extends State<ContactsTab> {
 
   @override
   Widget build(BuildContext context) {
+    // 👇 Handle initialization/loading before showing UI
+    if (_initializing) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Center(
       child: _connected ? _buildContactList() : _buildConnectView(),
     );
   }
 }
+
+
+
