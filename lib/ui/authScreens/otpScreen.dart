@@ -13,8 +13,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OtpScreen extends StatefulWidget {
+  final String path;
   final String email;
-  OtpScreen({required this.email, super.key});
+  OtpScreen({required this.email, this.path = '', super.key});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -176,13 +177,21 @@ class _OtpScreenState extends State<OtpScreen> {
             BlocConsumer<LoginBloc, LoginState>(
               listener: (context, state) async {
                 if(state is VerifyOtpSuccess){
+                  if(widget.path == 'updateEmail'){
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Fluttertoast.showToast(msg: 'your email is update now');
 
-                  SharedPreferences pref = await SharedPreferences.getInstance();
-                  pref.setBool(PrefKey.isLogin, true);
-                  pref.setString(PrefKey.accessToken, state.loginResponse.data!.accessToken.toString());
-                  pref.setString(PrefKey.refreshToken, state.loginResponse.data!.refreshToken.toString());
-                  print('isLogin::::::::::${pref.getBool(PrefKey.isLogin)}');
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen(email: widget.email,)));
+                  }else{
+                    SharedPreferences pref = await SharedPreferences.getInstance();
+                    pref.setBool(PrefKey.isLogin, true);
+                    pref.setString(PrefKey.accessToken, state.loginResponse.data!.accessToken.toString());
+                    pref.setString(PrefKey.refreshToken, state.loginResponse.data!.refreshToken.toString());
+                    print('isLogin::::::::::${pref.getBool(PrefKey.isLogin)}');
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateNewPasswordScreen(email: widget.email,)));
+
+                  }
+
 
                 }
                 if(state is VerifyOtpError){

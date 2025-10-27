@@ -169,13 +169,13 @@ class _NewsScreenState extends State<NewsScreen> {
                                   child: Text(newsData.title.toString(),
                                     overflow: TextOverflow.ellipsis,
                                     style: CustomTextStyles.bold(fontSize: 14),)),
-                              Row(
-                                children: [
-                                  Text('Helpful', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),),
-                                  SizedBox(width: 5,),
-                                  Icon(Icons.thumb_up, color: Colors.black , size: 15,)
-                                ],
-                              )
+                              // Row(
+                              //   children: [
+                              //     Text('Helpful', style: CustomTextStyles.medium(fontSize: 12, textColor: AppColor.bgRed),),
+                              //     SizedBox(width: 5,),
+                              //     Icon(Icons.thumb_up, color: Colors.black , size: 15,)
+                              //   ],
+                              // )
                             ],
                           ),
                           SizedBox(height: 10,),

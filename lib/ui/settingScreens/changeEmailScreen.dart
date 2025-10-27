@@ -1,10 +1,15 @@
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
+import 'package:coherent_endurance/bloc/updateProfileBloc/update_profile_bloc.dart';
+import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/authScreens/otpScreen.dart';
+import 'package:coherent_endurance/ui/authScreens/otpVerificationScreen.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../bloc/updateEmailBloc/update_email_bloc.dart';
 
@@ -115,13 +120,38 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
               ),
             ),
             Spacer(),
-            CustomButton(
-              text: "Next",
-              callback: (){
-                context.read<UpdateEmailBloc>().add(UpdateEmailEvent(context, emailController.text));
+            BlocConsumer<UpdateEmailBloc, UpdateEmailState>(
+              listener: (context, state) {
+                if(state is UpdateEmailLoading){
+
+                }
+                if(state is UpdateEmailSuccess){
+                  Fluttertoast.showToast(msg: state.updateEmailModel.data!.otp.toString());
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen(email: emailController.text, path: 'updateEmail',)));
+                }
+                if(state is UpdateEmailError){
+                  Fluttertoast.showToast(msg: state.error);
+                }
               },
-              color: AppColor.bgTextField,
-              textColor: AppColor.textBackgroundGrey,)
+              builder: (context, state) {
+                return CustomButton(
+                  text: state is UpdateEmailLoading ? '' :"Next",
+                  callback: state is UpdateEmailLoading
+                      ? (){}
+                      : (){
+                    context.read<UpdateEmailBloc>().add(UpdateEmailEvent(context, emailController.text));
+                  },
+                  color: AppColor.bgTextField,
+                  textColor: AppColor.textBackgroundGrey,
+
+                  child: state is UpdateEmailLoading
+                      ? Center(
+                    child: Constant.loadingAnimation()
+                  )
+                      : null,
+                );
+              },
+            )
           ],
         ),
       ),

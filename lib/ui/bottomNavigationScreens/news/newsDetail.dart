@@ -135,7 +135,7 @@ class _NewsDetailState extends State<NewsDetail> {
                     /// Description
                     Text(newsData.description.toString(),
                         style: CustomTextStyles.regular(
-                            fontSize: 11, textColor: Colors.black)),
+                            fontSize: 14, textColor: Colors.black)),
                   ],
                 ),
               ),
