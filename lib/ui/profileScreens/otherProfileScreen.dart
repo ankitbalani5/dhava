@@ -882,17 +882,17 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                                   subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
                                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsScreen()));
-
-                                  },
-                                  leading: SvgPicture.asset(AppImageSvg.statistics),
-                                  title: Text('Statistics', style: CustomTextStyles.semiBold(fontSize: 14 )),
-                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
-                                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
-                                ),
+                                // ListTile(
+                                //   contentPadding: EdgeInsets.zero,
+                                //   onTap: () {
+                                //     Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsScreen()));
+                                //
+                                //   },
+                                //   leading: SvgPicture.asset(AppImageSvg.statistics),
+                                //   title: Text('Statistics', style: CustomTextStyles.semiBold(fontSize: 14 )),
+                                //   subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
+                                //   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
+                                // ),
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {

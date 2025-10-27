@@ -15,6 +15,7 @@ import 'package:coherent_endurance/bloc/otherProfileBloc/otherProfile_bloc.dart'
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/bloc/saveActivityBloc/save_activity_bloc.dart';
 import 'package:coherent_endurance/bloc/trophyBloc/trophy_bloc.dart';
+import 'package:coherent_endurance/bloc/updateEmailBloc/update_email_bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
 import 'package:coherent_endurance/bloc/suggestionBloc/suggestion_bloc.dart';
 import 'package:coherent_endurance/bloc/updateProfileBloc/update_profile_bloc.dart';
@@ -103,6 +104,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<ActiveChallengeBloc>(create: (context) => ActiveChallengeBloc()),
         BlocProvider<NewsBloc>(create: (context) => NewsBloc()),
         BlocProvider<NewsDetailBloc>(create: (context) => NewsDetailBloc()),
+        BlocProvider<UpdateEmailBloc>(create: (context) => UpdateEmailBloc()),
 
           BlocProvider<TrophyBloc>(create: (_) => TrophyBloc()),
           BlocProvider<MyAllChallengeBloc>(create: (_) => MyAllChallengeBloc()),

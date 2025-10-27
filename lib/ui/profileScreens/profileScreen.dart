@@ -900,6 +900,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../models/summaryModel.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String path;
@@ -1011,6 +1012,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       GestureDetector(
                                           onTap: () {
                                             // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
+
+                                            final link = "https://tracking.coherentlab.com/api/v1/get-profile";
+
+                                            Share.share(
+                                              "Check out my profile on Dhava 🏃‍♂️:\n$link",
+                                              subject: "My Profile",
+                                            );
+
                                           },
                                           child: Icon(Icons.share, color: Colors.white,)),
 
@@ -1515,17 +1524,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
                                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
                                 ),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsScreen()));
-
-                                  },
-                                  leading: SvgPicture.asset(AppImageSvg.statistics),
-                                  title: Text('Statistics', style: CustomTextStyles.semiBold(fontSize: 14 )),
-                                  subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
-                                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
-                                ),
+                                // ListTile(
+                                //   contentPadding: EdgeInsets.zero,
+                                //   onTap: () {
+                                //     Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsScreen()));
+                                //
+                                //   },
+                                //   leading: SvgPicture.asset(AppImageSvg.statistics),
+                                //   title: Text('Statistics', style: CustomTextStyles.semiBold(fontSize: 14 )),
+                                //   subtitle: Text(getCurrentFormattedDate(), style: CustomTextStyles.regular(fontSize: 10 , textColor: Colors.grey)),
+                                //   trailing: Icon(Icons.arrow_forward_ios, color: Colors.black,),
+                                // ),
                                 ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   onTap: () {

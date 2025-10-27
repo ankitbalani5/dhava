@@ -549,6 +549,7 @@ class ApiEndPoint {
   static const String refreshToken = '/api/v1/auth/referesh-token';
   static const String sendOtp = '/api/v1/auth/send-otp';
   static const String verifyOtp = '/api/v1/auth/verify-otp';
+  static const String updateEmail = '/api/v1/auth/update-email';
   static const String forgotPassword = '/api/v1/auth/forgot-password';
   static const String createPassword = '/api/v1/auth/create-password';
 
