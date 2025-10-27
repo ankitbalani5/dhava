@@ -1013,7 +1013,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           onTap: () {
                                             // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
 
-                                            final link = "https://play.google.com/store/apps/details?id=${}";
+                                            final link = "https://play.google.com/store/apps/details?id=com.app.coherent_endurance";
 
                                             Share.share(
                                               "Check out my profile on Dhava 🏃‍♂️:\n$link",
