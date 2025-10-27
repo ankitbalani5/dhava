@@ -14,10 +14,13 @@ import 'package:coherent_endurance/ui/search/searchScreen.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../constant/constant.dart';
 import 'createProfile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:share_plus/share_plus.dart';
+
 class FindYourFriends extends StatefulWidget {
   const FindYourFriends({super.key});
 
@@ -367,8 +370,14 @@ class _FindYourFriendsState extends State<FindYourFriends> {
                   width: double.infinity,
                   child: CustomButton(
                     text: 'Invite Friends',
-                    callback: () {
-                      // Invite Friends Logic
+
+                    callback: () async {
+                      final packageName = await Constant.loadPackageName();
+                      final link = "https://play.google.com/store/apps/details?id=$packageName";
+                      Share.share(
+                        "Check out my profile on Dhava 🏃‍♂️:\n$link",
+                        subject: "My Profile",
+                      );
                     },
                   ),
                 ),

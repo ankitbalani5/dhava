@@ -19,6 +19,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
 class FriendsTabWidget extends StatefulWidget {
   final TabController innerTabController;
 
@@ -271,8 +272,14 @@ class _FriendsTabWidgetState extends State<FriendsTabWidget> {
                   width: double.infinity,
                   child: CustomButton(
                     text: 'Invite Friends',
-                    callback: () {
-                      // Invite Friends Logic
+
+                    callback: () async {
+                      final packageName = await Constant.loadPackageName();
+                      final link = "https://play.google.com/store/apps/details?id=$packageName";
+                      Share.share(
+                        "Check out my profile on Dhava 🏃‍♂️:\n$link",
+                        subject: "My Profile",
+                      );
                     },
                   ),
                 ),
@@ -437,8 +444,16 @@ class _ContactsTabState extends State<ContactsTab> {
           ),
           subtitle: Text(number),
           trailing: GestureDetector(
-            onTap: () {
-              debugPrint('Invite $name');
+            onTap: () async {
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
+              final packageName = await Constant.loadPackageName();
+              final link = "https://play.google.com/store/apps/details?id=$packageName";
+
+              Share.share(
+                "Check out my profile on Dhava 🏃‍♂️:\n$link",
+                subject: "My Profile",
+              );
+
             },
             child: Container(
               height: 35,

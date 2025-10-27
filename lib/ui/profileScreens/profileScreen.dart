@@ -1010,10 +1010,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ) : SizedBox(),
                                       SizedBox(width: 10,),
                                       GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
-
-                                            final link = "https://play.google.com/store/apps/details?id=com.app.coherent_endurance";
+                                            final packageName = await Constant.loadPackageName();
+                                            final link = "https://play.google.com/store/apps/details?id=$packageName";
 
                                             Share.share(
                                               "Check out my profile on Dhava 🏃‍♂️:\n$link",
