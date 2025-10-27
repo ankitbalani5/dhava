@@ -1,8 +1,12 @@
+import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../bloc/updateEmailBloc/update_email_bloc.dart';
 
 class ChangeEmailScreen extends StatefulWidget {
   const ChangeEmailScreen({super.key});
@@ -41,8 +45,8 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
                 // Email TextField (Read-only)
                 TextFormField(
                   textCapitalization: TextCapitalization.sentences,
-                  controller: TextEditingController(text: email),
-                  readOnly: true, // User edit nahi kar paayega
+                  controller: TextEditingController(text: context.read<ProfileBloc>().profileModel!.data!.email.toString()),
+                  readOnly: true,
                   decoration: InputDecoration(
                     labelText: "Current Email",
                     labelStyle: TextStyle(
@@ -75,7 +79,7 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
                       ),
                     ),
                   ),
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 )
 
               ],
@@ -111,7 +115,13 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
               ),
             ),
             Spacer(),
-            CustomButton(text: "Next", callback: (){},color: AppColor.bgTextField,textColor: AppColor.textBackgroundGrey,)
+            CustomButton(
+              text: "Next",
+              callback: (){
+                context.read<UpdateEmailBloc>().add(UpdateEmailEvent(context, emailController.text));
+              },
+              color: AppColor.bgTextField,
+              textColor: AppColor.textBackgroundGrey,)
           ],
         ),
       ),

@@ -161,10 +161,29 @@ class _SearchActiveWidgetState extends State<SearchActiveWidget> {
                       itemBuilder: (context, index) {
                         final user = _users[index];
                         return ListTile(
-                          leading: Image.asset(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: CachedNetworkImage(
+                              fit: BoxFit.fill,
+                                height: 38,
+                                width: 38,
+                                imageUrl: user.profilePhoto.toString(),
+                              placeholder: (context, url) => Image.asset(
+                                AppImageOthers.userDp,
+                                height: 38,
+                                width: 38,
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                AppImageOthers.userDp,
+                                height: 38,
+                                width: 38,
+                              ),
+                            ),
+                          ),
+                          /*Image.asset(
                             AppImageOthers.userDp,
                             height: 38,
-                          ),
+                          ),*/
                           title: Text(
                             '${user.firstName ?? 'Unknown'} ${user.lastName ?? ''}',
                             style: CustomTextStyles.semiBold(fontSize: 14),

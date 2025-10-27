@@ -121,6 +121,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               );
 
             }
+            if(state is ForgotPasswordError){
+              Fluttertoast.showToast(msg: state.error.toString());
+            }
           },
           builder: (context, state) {
             return CustomButton(
