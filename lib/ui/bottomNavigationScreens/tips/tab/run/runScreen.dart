@@ -19,7 +19,7 @@ class _RunScreenState extends State<RunScreen> {
 
     tipsList = [
       {
-        "image": AppImageOthers.runBanner,
+        "image": AppImageOthers.runBanner1,
         "name": "Jeff Galloway",
         "subtitle": "United States Coach",
         "type": "Run",
@@ -39,7 +39,7 @@ class _RunScreenState extends State<RunScreen> {
         ]
       },
       {
-        "image": AppImageOthers.runBanner,
+        "image": AppImageOthers.runBanner2,
         "name": "Maria Gonzalez",
         "subtitle": "Spain Coach",
         "type": "Run",
@@ -59,7 +59,7 @@ class _RunScreenState extends State<RunScreen> {
         ]
       },
       {
-        "image": AppImageOthers.runBanner,
+        "image": AppImageOthers.runBanner3,
         "name": "Jeff Galloway",
         "subtitle": "United States Coach",
         "type": "Run",
@@ -77,7 +77,7 @@ class _RunScreenState extends State<RunScreen> {
         ]
       },
       {
-        "image": AppImageOthers.runBanner,
+        "image": AppImageOthers.runBanner4,
         "name": "Maria Gonzalez",
         "subtitle": "Spain Coach",
         "type": "Run",
@@ -95,7 +95,7 @@ class _RunScreenState extends State<RunScreen> {
         ]
       },
       {
-        "image": AppImageOthers.runBanner,
+        "image": AppImageOthers.runBanner5,
         "name": "Arjun Mehta",
         "subtitle": "India Coach",
         "type": "Run",
@@ -113,7 +113,7 @@ class _RunScreenState extends State<RunScreen> {
         ]
       },
       {
-        "image": AppImageOthers.runBanner,
+        "image": AppImageOthers.runBanner6,
         "name": "Daniel Peterson",
         "subtitle": "United Kingdom Coach",
         "type": "Run",

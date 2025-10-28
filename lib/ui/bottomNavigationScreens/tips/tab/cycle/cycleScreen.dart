@@ -38,7 +38,7 @@ class _CycleScreenState extends State<CycleScreen> {
         ]
       },
       {
-        "image": AppImageOthers.cycleBanner,
+        "image": AppImageOthers.cycleBanner1,
         "dietitian": "Speed Interval Program",
         "subtitle": "Spain Coach",
         "type": "Cycle",
@@ -57,7 +57,7 @@ class _CycleScreenState extends State<CycleScreen> {
         ]
       },
       {
-        "image": AppImageOthers.cycleBanner,
+        "image": AppImageOthers.cycleBanner2,
         "dietitian": "Endurance Foundation Plan",
         "subtitle": "Singapore Coach",
         "type": "Cycle",
@@ -76,7 +76,7 @@ class _CycleScreenState extends State<CycleScreen> {
         ]
       },
       {
-        "image": AppImageOthers.cycleBanner,
+        "image": AppImageOthers.cycleBanner3,
         "dietitian": "Recovery Ride Routine",
         "subtitle": "Denmark Coach",
         "type": "Cycle",
@@ -95,7 +95,7 @@ class _CycleScreenState extends State<CycleScreen> {
         ]
       },
       {
-        "image": AppImageOthers.cycleBanner,
+        "image": AppImageOthers.cycleBanner4,
         "dietitian": "Core Stability & Balance Plan",
         "subtitle": "Brazil Coach",
         "type": "Cycle",
@@ -114,7 +114,7 @@ class _CycleScreenState extends State<CycleScreen> {
         ]
       },
       {
-        "image": AppImageOthers.cycleBanner,
+        "image": AppImageOthers.cycleBanner5,
         "dietitian": "Morning Fresh Ride Plan",
         "subtitle": "Australia Coach",
         "type": "Cycle",
