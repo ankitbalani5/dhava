@@ -12,7 +12,7 @@ import 'package:coherent_endurance/ui/search/searchWidget/searchActiveWidget.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:share_plus/share_plus.dart';
 import '../../constant/Constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:coherent_endurance/bloc/profileBloc/profile_bloc.dart';

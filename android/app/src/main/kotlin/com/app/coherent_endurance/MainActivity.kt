@@ -1,4 +1,4 @@
-package com.app.coherent_endurance
+package com.coherent.dhava
 
 import io.flutter.embedding.android.FlutterActivity
 

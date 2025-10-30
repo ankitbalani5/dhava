@@ -207,6 +207,17 @@ class AppImageOthers {
   static const dietBanner2 = 'assets/image/others/Low-Carb Smart Diet.png';
   static const dietBanner3 = 'assets/image/others/Plant Power Diet.png';
   static const dietBanner4 = 'assets/image/others/Mediterranean Balance Plan.png';
-  static const runBanner = 'assets/image/others/runBanner.png';
+  static const runBanner1 = 'assets/image/others/runBanner1.png';
+  static const runBanner2 = 'assets/image/others/runBanner2.png';
+  static const runBanner3 = 'assets/image/others/runBanner3.png';
+  static const runBanner4 = 'assets/image/others/runBanner4.png';
+  static const runBanner5 = 'assets/image/others/runBanner5.png';
+  static const runBanner6 = 'assets/image/others/runBanner6.png';
   static const cycleBanner = 'assets/image/others/cycleBanner.png';
+  static const cycleBanner1 = 'assets/image/others/cycleBanner1.png';
+  static const cycleBanner2 = 'assets/image/others/cycleBanner2.png';
+  static const cycleBanner3 = 'assets/image/others/cycleBanner3.png';
+  static const cycleBanner4 = 'assets/image/others/cycleBanner4.png';
+  static const cycleBanner5 = 'assets/image/others/cycleBanner5.png';
+  static const deleteAccount = 'assets/image/others/deleteAccount.png';
 }

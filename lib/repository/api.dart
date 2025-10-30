@@ -597,5 +597,6 @@ class ApiEndPoint {
 
 
   static const String suggestions = '/api/v1/user/suggestions';
+  static const String deleteAccount = '/api/v1/delete-account-v1';
 
 }

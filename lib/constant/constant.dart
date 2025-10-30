@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
 class PrefKey {
   static String isLogin = 'isLogin';
   static String isFirstTime = 'isFirstTime';
@@ -57,6 +58,10 @@ class Constant {
     );
   }
 
+  static Future<String> loadPackageName() async {
+    final info = await PackageInfo.fromPlatform();
+    return info.packageName;
+  }
 
   static String formatPace(double paceInSec) {
     if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
