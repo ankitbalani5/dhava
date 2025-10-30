@@ -69,6 +69,9 @@ class FeedDetailData {
   int? totalLike;
   bool? isLiked;
   String? createdDate;
+  String? paceStr;
+  String? splitStr;
+  String? elavationStr;
   List<LikedUsers>? likedUsers;
 
   FeedDetailData(
@@ -107,6 +110,9 @@ class FeedDetailData {
         this.totalLike,
         this.isLiked,
         this.createdDate,
+        this.paceStr,
+        this.splitStr,
+        this.elavationStr,
         this.likedUsers});
 
   FeedDetailData.fromJson(Map<String, dynamic> json) {
@@ -150,6 +156,9 @@ class FeedDetailData {
     totalLike = json['total_like'];
     isLiked = json['is_liked'];
     createdDate = json['created_date'];
+    paceStr = json['pace_str'];
+    splitStr = json['split_str'];
+    elavationStr = json['elavation_str'];
     if (json['liked_users'] != null) {
       likedUsers = <LikedUsers>[];
       json['liked_users'].forEach((v) {
@@ -197,6 +206,9 @@ class FeedDetailData {
     data['total_like'] = this.totalLike;
     data['is_liked'] = this.isLiked;
     data['created_date'] = this.createdDate;
+    data['pace_str'] = this.paceStr;
+    data['split_str'] = this.splitStr;
+    data['elavation_str'] = this.elavationStr;
     if (this.likedUsers != null) {
       data['liked_users'] = this.likedUsers!.map((v) => v.toJson()).toList();
     }

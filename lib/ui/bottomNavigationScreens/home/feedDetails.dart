@@ -7,6 +7,7 @@ import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/profileScreens/otherProfileScreen.dart';
 import 'package:coherent_endurance/ui/profileScreens/profileScreen.dart';
+import 'package:coherent_endurance/widgets/backButton.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -143,6 +144,21 @@ class _FeedDetailsState extends State<FeedDetails> {
             var feedData = state.feedDetailModel.data;
             pathPoints.clear();
 
+
+
+            print('pacestr:::::${feedData!.paceStr}');
+            print('elevationstr:::::${feedData!.elavationStr}');
+            print('splitstr:::::${feedData!.splitStr}');
+
+            // final paceSpots = Constant.generatePaceSpots(feedData.paceStr ?? "");
+
+// ✅ maxX को actual distance के हिसाब से लो
+            final splitList = (feedData.splitStr ?? "").split(',');
+            double totalDistance = 0.0;
+            for (var s in splitList) {
+              totalDistance += double.tryParse(s) ?? 0.0;
+            }
+
             if (iconsLoaded || feedData?.path != null && feedData!.path!.isNotEmpty) {
               for (var p in feedData!.path!) {
                 final lat = double.tryParse(p.latitude.toString());
@@ -250,6 +266,14 @@ class _FeedDetailsState extends State<FeedDetails> {
                       zoomControlsEnabled: false,
                       compassEnabled: false,
                     )
+                ),
+                Positioned(
+                  top: 40,
+                  left: 10,
+                  child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: BackButtonWidget()
+                  ),
                 ),
 
                 /// 🔹 Draggable Bottom Sheet
@@ -831,17 +855,32 @@ class _FeedDetailsState extends State<FeedDetails> {
                                       ),
                                       SizedBox(height: 15,),
 
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        child: SizedBox(
-                                          height: 220, // <-- FIXED HEIGHT ADDED
-                                          width: double.infinity, // <-- FIXED WIDTH ADDED
-                                          child: LineChart(
+                                  feedData.elavationStr == null
+                                      ? SizedBox() : Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: SizedBox(
+                                      height: 220,
+                                      width: double.infinity,
+                                      child: Builder(
+                                        builder: (context) {
+                                          // 🧮 Calculate elevation data
+                                          final elevationSpots = Constant.generateElevationSpots(feedData.elavationStr ?? "");
+                                          final double totalDistance = elevationSpots.isNotEmpty ? elevationSpots.last.x : 0;
+                                          final double maxElevation = Constant.getMaxElevation(feedData.elavationStr ?? "");
+                                          final double minElevation = elevationSpots.isNotEmpty
+                                              ? elevationSpots.map((e) => e.y).reduce((a, b) => a < b ? a : b)
+                                              : 0;
+
+                                          return LineChart(
                                             LineChartData(
                                               minX: 0,
-                                              maxX: 2.0,
-                                              minY: 415,
-                                              maxY: 430,
+                                              maxX: totalDistance,
+                                              minY: minElevation,
+                                              maxY: maxElevation,
+
                                               gridData: FlGridData(
                                                 show: true,
                                                 drawVerticalLine: true,
@@ -855,55 +894,66 @@ class _FeedDetailsState extends State<FeedDetails> {
                                                   strokeWidth: 1,
                                                 ),
                                               ),
+
                                               titlesData: FlTitlesData(
+                                                // ✅ Y-Axis (Elevation)
                                                 leftTitles: AxisTitles(
                                                   sideTitles: SideTitles(
                                                     showTitles: true,
                                                     reservedSize: 32,
+                                                    interval: (maxElevation - minElevation),
                                                     getTitlesWidget: (value, meta) {
-                                                      return Text(
-                                                        value.toInt().toString(),
-                                                        style: const TextStyle(color: Colors.black, fontSize: 12),
-                                                      );
+                                                      if (value == minElevation || value == maxElevation) {
+                                                        return Text(
+                                                          '${value.toStringAsFixed(1)} m',
+                                                          style: const TextStyle(color: Colors.black, fontSize: 12),
+                                                        );
+                                                      }
+                                                      return const SizedBox.shrink();
                                                     },
                                                   ),
                                                 ),
+
+                                                // ✅ X-Axis (Distance)
                                                 bottomTitles: AxisTitles(
                                                   sideTitles: SideTitles(
                                                     showTitles: true,
                                                     reservedSize: 28,
+                                                    interval: totalDistance, // only 0 and totalDistance labels
                                                     getTitlesWidget: (value, meta) {
-                                                      if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
+                                                      if (value == 0) {
+                                                        return const Text(
+                                                          '0 km',
+                                                          style: TextStyle(color: Colors.black, fontSize: 12),
+                                                        );
+                                                      } else if (value == totalDistance) {
                                                         return Text(
-                                                          '${value.toStringAsFixed(1)} Km',
+                                                          '${totalDistance.toStringAsFixed(1)} km',
                                                           style: const TextStyle(color: Colors.black, fontSize: 12),
                                                         );
                                                       }
-                                                      return const SizedBox();
+                                                      return const SizedBox.shrink();
                                                     },
                                                   ),
                                                 ),
+
                                                 topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                                                 rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                                               ),
+
                                               borderData: FlBorderData(show: false),
+
                                               lineBarsData: [
                                                 LineChartBarData(
-                                                  spots: const [
-                                                    FlSpot(0, 420),
-                                                    FlSpot(0.5, 421),
-                                                    FlSpot(1.0, 420.5),
-                                                    FlSpot(1.5, 423),
-                                                    FlSpot(2.0, 421),
-                                                  ],
+                                                  spots: elevationSpots,
                                                   isCurved: true,
-                                                  color: Colors.white,
+                                                  color: AppColor.bgRed,
                                                   barWidth: 2,
                                                   belowBarData: BarAreaData(
                                                     show: true,
                                                     gradient: LinearGradient(
                                                       colors: [
-                                                        AppColor.bgRed,
+                                                        AppColor.bgRed.withOpacity(0.5),
                                                         Colors.white,
                                                       ],
                                                       begin: Alignment.topCenter,
@@ -914,9 +964,101 @@ class _FeedDetailsState extends State<FeedDetails> {
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        },
                                       ),
+                                    ),
+                                  ),
+
+
+
+
+                                  // Container(
+                                      //   padding: const EdgeInsets.all(12),
+                                      //   child: SizedBox(
+                                      //     height: 220, // <-- FIXED HEIGHT ADDED
+                                      //     width: double.infinity, // <-- FIXED WIDTH ADDED
+                                      //     child: LineChart(
+                                      //       LineChartData(
+                                      //         minX: 0,
+                                      //         maxX: 2.0,
+                                      //         minY: 415,
+                                      //         maxY: 430,
+                                      //         gridData: FlGridData(
+                                      //           show: true,
+                                      //           drawVerticalLine: true,
+                                      //           drawHorizontalLine: true,
+                                      //           getDrawingHorizontalLine: (value) => FlLine(
+                                      //             color: Colors.grey.shade200,
+                                      //             strokeWidth: 1,
+                                      //           ),
+                                      //           getDrawingVerticalLine: (value) => FlLine(
+                                      //             color: Colors.grey.shade200,
+                                      //             strokeWidth: 1,
+                                      //           ),
+                                      //         ),
+                                      //         titlesData: FlTitlesData(
+                                      //           leftTitles: AxisTitles(
+                                      //             sideTitles: SideTitles(
+                                      //               showTitles: true,
+                                      //               reservedSize: 32,
+                                      //               getTitlesWidget: (value, meta) {
+                                      //                 return Text(
+                                      //                   value.toInt().toString(),
+                                      //                   style: const TextStyle(color: Colors.black, fontSize: 12),
+                                      //                 );
+                                      //               },
+                                      //             ),
+                                      //           ),
+                                      //           bottomTitles: AxisTitles(
+                                      //             sideTitles: SideTitles(
+                                      //               showTitles: true,
+                                      //               reservedSize: 28,
+                                      //               getTitlesWidget: (value, meta) {
+                                      //                 if (value == 0.5 || value == 1.0 || value == 1.5 || value == 2.0) {
+                                      //                   return Text(
+                                      //                     '${value.toStringAsFixed(1)} Km',
+                                      //                     style: const TextStyle(color: Colors.black, fontSize: 12),
+                                      //                   );
+                                      //                 }
+                                      //                 return const SizedBox();
+                                      //               },
+                                      //             ),
+                                      //           ),
+                                      //           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                      //           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                      //         ),
+                                      //         borderData: FlBorderData(show: false),
+                                      //         lineBarsData: [
+                                      //           LineChartBarData(
+                                      //             spots: const [
+                                      //               FlSpot(0, 420),
+                                      //               FlSpot(0.5, 421),
+                                      //               FlSpot(1.0, 420.5),
+                                      //               FlSpot(1.5, 423),
+                                      //               FlSpot(2.0, 421),
+                                      //             ],
+                                      //             isCurved: true,
+                                      //             color: Colors.white,
+                                      //             barWidth: 2,
+                                      //             belowBarData: BarAreaData(
+                                      //               show: true,
+                                      //               gradient: LinearGradient(
+                                      //                 colors: [
+                                      //                   AppColor.bgRed,
+                                      //                   Colors.white,
+                                      //                 ],
+                                      //                 begin: Alignment.topCenter,
+                                      //                 end: Alignment.bottomCenter,
+                                      //               ),
+                                      //             ),
+                                      //             dotData: FlDotData(show: false),
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       SizedBox(height: 15,),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

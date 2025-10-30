@@ -126,27 +126,27 @@ class RunDetailScreen extends StatelessWidget {
             ),
           ),
 
-          Container(
-            width:250,
-            padding:  EdgeInsets.all(16),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.bgRed,
-                padding:  EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Set Up Plan clicked")),
-                );
-              },
-              child:  Text(
-                "Set Up Plan",
-                style: CustomTextStyles.semiBold(fontSize: 16, textColor: Colors.white),
-              ),
-            ),
-          )
+          // Container(
+          //   width:250,
+          //   padding:  EdgeInsets.all(16),
+          //   child: ElevatedButton(
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: AppColor.bgRed,
+          //       padding:  EdgeInsets.symmetric(vertical: 14),
+          //       shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(8)),
+          //     ),
+          //     onPressed: () {
+          //       ScaffoldMessenger.of(context).showSnackBar(
+          //         SnackBar(content: Text("Set Up Plan clicked")),
+          //       );
+          //     },
+          //     child:  Text(
+          //       "Set Up Plan",
+          //       style: CustomTextStyles.semiBold(fontSize: 16, textColor: Colors.white),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );

@@ -1011,9 +1011,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       SizedBox(width: 10,),
                                       GestureDetector(
                                           onTap: () {
-                                            // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingScreen()));
 
-                                            final link = "https://play.google.com/store/apps/details?id=com.app.coherent_endurance";
+                                            // final link = "https://play.google.com/store/apps/details?id=com.app.coherent_endurance";
+                                            //
+                                            // Share.share(
+                                            //   "Check out my profile on Dhava 🏃‍♂️:\n$link",
+                                            //   subject: "My Profile",
+                                            // );
+                                            final link = "https://tracking.coherentlab.com/api/v1/get-profile";
 
                                             Share.share(
                                               "Check out my profile on Dhava 🏃‍♂️:\n$link",

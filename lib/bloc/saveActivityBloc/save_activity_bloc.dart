@@ -19,6 +19,7 @@ class SaveActivityBloc extends Bloc<SaveActivityEvent, SaveActivityState> {
       SaveActivityPressed event, Emitter<SaveActivityState> emit) async {
     emit(SaveActivityLoading());
     try {
+      print('pace_str::::${event.trackingData['pace_str']}');
       final response = await Api.saveActivityApi({
         "category_id": event.categoryId,
         "title": event.title,
@@ -48,6 +49,9 @@ class SaveActivityBloc extends Bloc<SaveActivityEvent, SaveActivityState> {
         "elapsed_time": event.trackingData["time"],
         "max_speed": event.trackingData["maxSpeed"] ?? 0,
         "photo": event.trackingData["photo"],
+        "pace_str": event.trackingData["pace_str"],
+        "split_str": event.trackingData["split_str"],
+        "elavation_str": event.trackingData["elavation_str"],
       }, event.context);
 
       final result = SaveActivityModel.fromJson(response);

@@ -15,6 +15,7 @@ import '../widgets/loadingAnimation.dart';
 import 'errorDialog.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class PrefKey {
   static String isLogin = 'isLogin';
@@ -63,6 +64,49 @@ class Constant {
     int sec = (paceInSec % 60).floor();
     return "$min:${sec.toString().padLeft(2, '0')}";
   }
+
+  // static List<FlSpot> generatePaceSpots(String paceStr) {
+  //   if (paceStr.isEmpty) return [];
+  //
+  //   // paceStr जैसे "21:54,6:12" को split करना
+  //   final paceList = paceStr.split(',');
+  //
+  //   List<FlSpot> spots = [];
+  //   for (int i = 0; i < paceList.length; i++) {
+  //     final pace = paceList[i];
+  //     final parts = pace.split(':');
+  //     if (parts.length == 2) {
+  //       final min = double.tryParse(parts[0]) ?? 0;
+  //       final sec = double.tryParse(parts[1]) ?? 0;
+  //       final totalSeconds = min * 60 + sec;
+  //       // X-axis = km (1-based index), Y-axis = pace seconds
+  //       spots.add(FlSpot(i.toDouble() + 1, totalSeconds));
+  //     }
+  //   }
+  //   return spots;
+  // }
+
+  static List<FlSpot> generateElevationSpots(String elevationStr) {
+    final parts = elevationStr.split(',');
+    final List<FlSpot> spots = [];
+    for (int i = 0; i < parts.length; i++) {
+      final y = double.tryParse(parts[i]) ?? 0.0;
+      spots.add(FlSpot(i.toDouble(), y));
+    }
+    return spots;
+  }
+
+  static double getMaxElevation(String elevationStr) {
+    final parts = elevationStr.split(',');
+    double maxVal = 0;
+    for (var val in parts) {
+      final y = double.tryParse(val) ?? 0;
+      if (y > maxVal) maxVal = y;
+    }
+    return maxVal + 5; // थोड़ा margin
+  }
+
+
 
 
   static String formatTime(Duration duration) {

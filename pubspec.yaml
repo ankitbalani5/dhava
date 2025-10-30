@@ -103,6 +103,8 @@ dev_dependencies:
   image: ^4.2.0
   collection: ^1.17.0
   flutter_contacts: ^1.1.8
+  upgrader: ^12.1.0
+
 
   app_links: ^6.4.1
   firebase_core:

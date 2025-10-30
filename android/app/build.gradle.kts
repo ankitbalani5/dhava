@@ -8,6 +8,8 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val flutterVersionCode = 1
+val flutterVersionName = "1.0.0"
 android {
     namespace = "com.app.coherent_endurance"
     compileSdk = flutter.compileSdkVersion
@@ -29,8 +31,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = flutterVersionCode
+        versionName = flutterVersionName
         multiDexEnabled = true
     }
 

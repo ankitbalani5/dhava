@@ -57,6 +57,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
   ScreenshotController screenshotController = ScreenshotController();
   String? categoryName;
   String? categoryIcon;
+  List<double> altitudeList = [];
 
   @override
   void initState() {
@@ -122,6 +123,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
         setState(() {
           pathPoints.add(newPos);
           pointTimestamps.add(DateTime.now()); // <-- timestamp save
+          altitudeList.add(position.altitude);
         });
 
 
@@ -201,6 +203,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
   //   return splits;
   // }
 
+  var pace_str;
+  var split_str;
+  var elevation_str;
   Map<String, dynamic> calculateResults() {
     List<Map<String, dynamic>> splits = calculateSplits();
     double fastestSplit = double.infinity;
@@ -231,22 +236,24 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   // List<Map<String, dynamic>> calculateSplits() {
   //   List<Map<String, dynamic>> splits = [];
+  //   List<String> paceArr = [];
+  //   List<String> splitArr = [];
+  //   List<String> elevationArr = [];
   //
   //   if (pathPoints.length < 2 || pointTimestamps.length < 2) {
-  //     // Not enough data to calculate splits
-  //     return splits;
+  //     return splits; // Not enough data
   //   }
   //
-  //   // Step 1: Calculate total distance
+  //   // 🔹 Step 1: Calculate total distance
   //   double totalDistanceMeters = 0.0;
   //   for (int i = 1; i < pathPoints.length; i++) {
   //     totalDistanceMeters += _calculateDistance(pathPoints[i - 1], pathPoints[i]);
   //   }
   //
-  //   // Step 2: Determine adaptive split interval
-  //   double splitInterval; // in meters
+  //   // 🔹 Step 2: Adaptive Split Interval
+  //   double splitInterval;
   //   if (totalDistanceMeters < 1000) {
-  //     splitInterval = 100; // every 100 meters for short runs
+  //     splitInterval = 100;
   //   } else if (totalDistanceMeters < 2000) {
   //     splitInterval = 200;
   //   } else if (totalDistanceMeters < 5000) {
@@ -255,98 +262,178 @@ class _TrackingScreenState extends State<TrackingScreen> {
   //     splitInterval = 1000;
   //   }
   //
-  //   // Step 3: Loop through points to calculate splits
+  //   // 🔹 Step 3: Loop
   //   double accumulatedDistance = 0.0;
   //   int splitStartIndex = 0;
   //   int splitCount = 1;
   //
   //   for (int i = 1; i < pathPoints.length; i++) {
-  //     // Safety check: timestamp should exist
   //     if (i >= pointTimestamps.length) break;
   //
   //     double segmentDistance = _calculateDistance(pathPoints[i - 1], pathPoints[i]);
   //     accumulatedDistance += segmentDistance;
+  //     print("🧭 segmentDistance: $segmentDistance, accumulated: $accumulatedDistance, splitInterval: $splitInterval");
   //
-  //     // Check if we reached the split distance or last point
+  //     // जब split पूरा हो जाए या आखिरी पॉइंट हो
   //     if (accumulatedDistance >= splitInterval || i == pathPoints.length - 1) {
   //       Duration splitDuration = pointTimestamps[i].difference(pointTimestamps[splitStartIndex]);
-  //       double pace = splitDuration.inSeconds / (accumulatedDistance / 1000); // seconds per km
+  //
+  //       // pace calculation safeguard
+  //       double paceSecPerKm = (accumulatedDistance > 0)
+  //           ? splitDuration.inSeconds / (accumulatedDistance / 1000)
+  //           : 0;
+  //
+  //       String paceStr = (paceSecPerKm.isFinite && paceSecPerKm > 0)
+  //           ? formatPace(paceSecPerKm)
+  //           : "0:00";
+  //
+  //       String distanceStr = (accumulatedDistance / 1000).toStringAsFixed(2);
+  //       String timeStr =
+  //           "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}";
   //
   //       splits.add({
   //         "split": splitCount,
-  //         "distance": (accumulatedDistance / 1000).toStringAsFixed(2),
-  //         "pace": Constant.formatPace(pace),
-  //         "time": Constant.formatTime(splitDuration),
+  //         "distance": distanceStr,
+  //         "pace": paceStr,
+  //         "time": timeStr,
   //       });
   //
-  //       // Reset for next split
+  //       // arrays for backend
+  //       paceArr.add(paceStr);
+  //       splitArr.add(distanceStr);
+  //       elevationArr.add("0");
+  //
   //       splitCount++;
   //       splitStartIndex = i;
   //       accumulatedDistance = 0.0;
   //     }
   //   }
   //
+  //   // 🔹 Convert to strings
+  //   pace_str = paceArr.join(',');
+  //   split_str = splitArr.join(',');
+  //   elevation_str = elevationArr.join(',');
+  //
+  //   print("✅ pace_str => $pace_str");
+  //   print("✅ split_str => $split_str");
+  //   print("✅ elevation_str => $elevation_str");
+  //
   //   return splits;
   // }
-
   List<Map<String, dynamic>> calculateSplits() {
     List<Map<String, dynamic>> splits = [];
+    List<String> paceArr = [];
+    List<String> splitArr = [];
+    List<String> elevationArr = [];
 
     if (pathPoints.length < 2 || pointTimestamps.length < 2) {
-      return splits; // Not enough data
+      print("⚠️ Not enough data to calculate splits");
+      return splits;
     }
 
-    // 🔹 Step 1: Calculate total distance (in meters)
+    // 🔹 Step 1: Calculate total distance
     double totalDistanceMeters = 0.0;
     for (int i = 1; i < pathPoints.length; i++) {
       totalDistanceMeters += _calculateDistance(pathPoints[i - 1], pathPoints[i]);
     }
 
-    // 🔹 Step 2: Adaptive Split Interval Logic
+    // 🔹 Step 2: Adaptive split interval
     double splitInterval;
     if (totalDistanceMeters < 1000) {
-      splitInterval = 100; // every 100m for <1km
+      splitInterval = 100;
     } else if (totalDistanceMeters < 2000) {
-      splitInterval = 200; // every 200m for <2km
+      splitInterval = 200;
     } else if (totalDistanceMeters < 5000) {
-      splitInterval = 500; // every 500m for <5km
+      splitInterval = 500;
     } else {
-      splitInterval = 1000; // every 1km for 5km+
+      splitInterval = 1000;
     }
 
-    // 🔹 Step 3: Split Calculation Loop
+    print("📏 Total Distance: ${totalDistanceMeters.toStringAsFixed(2)} m");
+    print("📍 Using Split Interval: $splitInterval m");
+
+    // 🔹 Step 3: Loop for split calculation
     double accumulatedDistance = 0.0;
     int splitStartIndex = 0;
     int splitCount = 1;
+    double elevationGain = 0.0;
 
     for (int i = 1; i < pathPoints.length; i++) {
       if (i >= pointTimestamps.length) break;
 
-      // segment distance between two GPS points
       double segmentDistance = _calculateDistance(pathPoints[i - 1], pathPoints[i]);
       accumulatedDistance += segmentDistance;
 
-      // when we reach the split distance or last point
+      print("🧭 Segment #$i → segment: ${segmentDistance.toStringAsFixed(2)} m, "
+          "accumulated: ${accumulatedDistance.toStringAsFixed(2)} m");
+
+
+      // 🏔 Elevation difference (if altitude list or property available)
+      double currentAltitude = (altitudeList.isNotEmpty && i < altitudeList.length)
+          ? altitudeList[i]
+          : 0.0;
+      double previousAltitude = (altitudeList.isNotEmpty && i - 1 < altitudeList.length)
+          ? altitudeList[i - 1]
+          : 0.0;
+
+      double elevationDiff = currentAltitude - previousAltitude;
+      if (elevationDiff > 0) elevationGain += elevationDiff; // only count gain
+
+
+      // ✅ जब split पूरा हो जाए या आखिरी पॉइंट हो
       if (accumulatedDistance >= splitInterval || i == pathPoints.length - 1) {
-        Duration splitDuration = pointTimestamps[i].difference(pointTimestamps[splitStartIndex]);
-        double paceSecPerKm = splitDuration.inSeconds / (accumulatedDistance / 1000);
+        Duration splitDuration =
+        pointTimestamps[i].difference(pointTimestamps[splitStartIndex]);
+
+        // 🕒 pace calculation
+        double paceSecPerKm = (accumulatedDistance > 0)
+            ? splitDuration.inSeconds / (accumulatedDistance / 1000)
+            : 0;
+
+        String paceStr = (paceSecPerKm.isFinite && paceSecPerKm > 0)
+            ? formatPace(paceSecPerKm)
+            : "0:00";
+
+        String distanceStr = (accumulatedDistance / 1000).toStringAsFixed(2);
+        String timeStr =
+            "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}";
 
         splits.add({
           "split": splitCount,
-          "distance": (accumulatedDistance / 1000).toStringAsFixed(2),
-          "pace": formatPace(paceSecPerKm),
-          "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
+          "distance": distanceStr,
+          "pace": paceStr,
+          "time": timeStr,
+          "elevation": elevationGain.toStringAsFixed(1),
         });
 
-        // reset for next split
+        // 🔹 Arrays for backend
+        paceArr.add(paceStr);
+        splitArr.add(distanceStr);
+        elevationArr.add(elevationGain.toStringAsFixed(1));
+
+        print("✅ Split #$splitCount => "
+            "Distance: $distanceStr km | Pace: $paceStr | Time: $timeStr");
+
+        // Reset for next split
         splitCount++;
         splitStartIndex = i;
         accumulatedDistance = 0.0;
+        elevationGain = 0.0;
       }
     }
 
+    // 🔹 Convert to comma-separated strings
+    pace_str = paceArr.join(',');
+    split_str = splitArr.join(',');
+    elevation_str = elevationArr.join(',');
+
+    print("🏁 pace_str => $pace_str");
+    print("🏁 split_str => $split_str");
+    print("🏁 elevation_str => $elevation_str");
+
     return splits;
   }
+
 
 
 
@@ -916,6 +1003,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
           "state": state,
           "country": country,
           "address": address,
+          "pace_str": pace_str,
+          "split_str": split_str,
+          "elavation_str": elevation_str,
         };
         Navigator.push(
           context,
@@ -947,172 +1037,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       }
     });
   }
-
-
-  // Widget expandTimeWidget({
-  //   required Duration elapsed,
-  //   required double distance,          // meters
-  //   required double avgPace,           // seconds per km
-  //   required double elevationGain,required List<double> graphData,}){
-  //   return Container(
-  //     width: double.infinity,
-  //     color: Colors.white,
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-  //         Text('Time', style: CustomTextStyles.semiBold()),
-  //         Text(
-  //             formatElapsed(elapsed), style: CustomTextStyles.bold(fontSize: 80),),
-  //         Divider(),
-  //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
-  //         Text(formatPace(avgPace), style: CustomTextStyles.bold(fontSize: 100),),
-  //         Text('/KM', style: CustomTextStyles.semiBold()),
-  //         Divider(),
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //           children: [
-  //             Column(
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 Container(
-  //                   height: 80,
-  //                   width: 50,
-  //                   color: Colors.blue,
-  //                 ),
-  //                 Text('0:00', style: CustomTextStyles.semiBold()),
-  //               ],
-  //             ),
-  //
-  //             SizedBox(
-  //               height: 200,
-  //               child: VerticalDivider(
-  //                 thickness: 1,
-  //                 color: Colors.grey,
-  //                 // width: 20,
-  //               ),
-  //             ),
-  //             Column(
-  //               children: [
-  //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
-  //                 Text("${(distance / 1000).toStringAsFixed(2)}", style: CustomTextStyles.bold(fontSize: 70),),
-  //                 Text('KILOMETERS', style: CustomTextStyles.semiBold()),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget expandTimeWidget({
-  //   required Duration elapsed,
-  //   required double distance,          // meters
-  //   required double avgPace,           // seconds per km
-  //   required double elevationGain,
-  //   required List<double> graphData,   // pace over time
-  // }) {
-  //   // Ensure graph data is safe (no NaN or Infinity values)
-  //   final safeGraphData = graphData.isNotEmpty
-  //       ? graphData.map((e) => e.isFinite ? e : 0.0).toList()
-  //       : [0.0]; // fallback if empty
-  //
-  //   return Container(
-  //     width: double.infinity,
-  //     color: Colors.white,
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-  //         Text('Time', style: CustomTextStyles.semiBold()),
-  //         Text(
-  //           formatElapsed(elapsed),
-  //           style: CustomTextStyles.bold(fontSize: 80),
-  //         ),
-  //         Divider(),
-  //         Text('AVG PACE', style: CustomTextStyles.semiBold()),
-  //         Text(
-  //           formatPace(avgPace),
-  //           style: CustomTextStyles.bold(fontSize: 100),
-  //         ),
-  //         Text('/KM', style: CustomTextStyles.semiBold()),
-  //         Divider(),
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //           children: [
-  //             Column(
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 // Dynamic Pace Graph
-  //                 Padding(
-  //                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-  //                   child: SizedBox(
-  //                     height: 150,
-  //                     width: 200,
-  //                     // child: LineChart(
-  //                     //   LineChartData(
-  //                     //     gridData: FlGridData(show: true),
-  //                     //     borderData: FlBorderData(show: true),
-  //                     //     titlesData: FlTitlesData(
-  //                     //       leftTitles: AxisTitles(
-  //                     //         sideTitles: SideTitles(showTitles: true),
-  //                     //       ),
-  //                     //       bottomTitles: AxisTitles(
-  //                     //         sideTitles: SideTitles(showTitles: false),
-  //                     //       ),
-  //                     //     ),
-  //                     //     lineBarsData: [
-  //                     //       LineChartBarData(
-  //                     //         spots: List.generate(
-  //                     //           safeGraphData.length,
-  //                     //               (index) => FlSpot(index.toDouble(), safeGraphData[index]),
-  //                     //         ),
-  //                     //         isCurved: true,
-  //                     //         barWidth: 2,
-  //                     //         color: Colors.red,
-  //                     //         dotData: FlDotData(show: false),
-  //                     //       ),
-  //                     //     ],
-  //                     //   ),
-  //                     // ),
-  //                   ),
-  //                 ),
-  //
-  //                 // Small reference box
-  //                 Container(
-  //                   height: 80,
-  //                   width: 50,
-  //                   color: Colors.blue,
-  //                 ),
-  //                 Text('0:00', style: CustomTextStyles.semiBold()),
-  //               ],
-  //             ),
-  //
-  //             // Divider
-  //             SizedBox(
-  //               height: 200,
-  //               child: VerticalDivider(
-  //                 thickness: 1,
-  //                 color: Colors.grey,
-  //               ),
-  //             ),
-  //
-  //             // Distance display
-  //             Column(
-  //               children: [
-  //                 Text('DISTANCE', style: CustomTextStyles.semiBold()),
-  //                 Text(
-  //                   "${(distance / 1000).toStringAsFixed(2)}",
-  //                   style: CustomTextStyles.bold(fontSize: 70),
-  //                 ),
-  //                 Text('KILOMETERS', style: CustomTextStyles.semiBold()),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
 
   Widget expandTimeWidget({required Duration elapsed, required double distance,}) {

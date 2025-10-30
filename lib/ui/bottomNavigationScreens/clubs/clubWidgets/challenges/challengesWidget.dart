@@ -78,23 +78,14 @@ class _challengesWidgetState extends State<challengesWidget> {
     return Column(
       children: [
 
-        BlocBuilder<SuggestedBloc, SuggestedState>(
-          builder: (context, state) {
-            if(state is PostSuggestedSuccess){
-              return state.suggestedModel.data!.data!.isEmpty
-                  ? SizedBox()
-                  : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical:0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: categories.map((cat) => buildFilterButton(cat)).toList(),
-                  ),
-                ),
-              );
-            }
-            return SizedBox();
-          },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical:0),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: categories.map((cat) => buildFilterButton(cat)).toList(),
+            ),
+          ),
         ),
         Expanded(
           child: SmartRefresher(

@@ -86,23 +86,14 @@ class _ActiveWidgetState extends State<ActiveWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical:0),
       child: Column(
         children: [
-          BlocBuilder<ActiveChallengeBloc, ActiveChallengeState>(
-            builder: (context, state) {
-              if(state is ActiveChallengeSuccess){
-                return state.activeChallengeModel.data!.data!.isEmpty
-                    ? SizedBox()
-                    : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical:0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: categories.map((cat) => buildFilterButton(cat)).toList(),
-                    ),
-                  ),
-                );
-              }
-              return SizedBox();
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0,vertical:0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: categories.map((cat) => buildFilterButton(cat)).toList(),
+              ),
+            ),
           ),
 
 

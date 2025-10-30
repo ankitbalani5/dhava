@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../bloc/profileBloc/profile_bloc.dart';
 import 'package:coherent_endurance/constant/constant.dart';
@@ -44,9 +45,8 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
+    Upgrader.clearSavedSettings();
     _currentIndex = widget.i;
-    _initializePreferences();
-
     context.read<ProfileBloc>().add(CategoryEvent(context));
   }
 
@@ -65,33 +65,6 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     });
   }
 
-  _initializePreferences() {
-
-    // _loadPage();
-  }
-
-  // _loadPage() {
-  //   context.read<ProfileBloc>().add(ClearProfileDataEvent());
-  //   context.read<ProfileBloc>().add(
-  //     GetProfileEvent(
-  //       context: context,
-  //       securityCode: Constant.securityCode,
-  //     ),
-  //   );
-  //
-  //   //Injury
-  //   context.read<InjuryBloc>().add(ClearInjuryEvent());
-  //   context.read<InjuryBloc>().add(
-  //     GetInjuryQuestionEvent(context: context, securityCode: Constant.securityCode),
-  //   );
-  //
-  // }
-
-  // _loadQuestionsPage(roleName) {
-  //   var questionFor = QuestionKeys.getQuestionId(roleName);
-  //   context.read<PreWorkoutQuestionBloc>().add(ClearWorkoutQuestionEvent());
-  //   context.read<PreWorkoutQuestionBloc>().add(GetWorkoutQuestionEvent(context: context, securityCode: Constant.securityCode, questionFor : questionFor),);
-  // }
 
   final List<Widget> _overlayStack = [];
 
@@ -164,78 +137,88 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
 
         return true;
       },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            _baseScreens[_currentIndex], // Base screens
-            ..._overlayStack, // Overlay screens
-          ],
-        ),
-
-        bottomNavigationBar: Container(
-          // elevation: 10,
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.grey))
+      child: UpgradeAlert(
+      upgrader: Upgrader(
+        // debugDisplayAlways: true, // हर बार dialog दिखाओ
+        debugLogging: true,       // Console में log दिखे
+        minAppVersion: '1.0.0',   // Minimum supported version
+        // debugDisplayOnce: false,  // हर restart पर फिर दिखे
+        // countryCode: 'IN',        // Optional, तुम चाहो तो रख सकते हो
+        // useFakeAppStore: true,    // ✅ यह important है
+      ),
+        child: Scaffold(
+          body: Stack(
+            children: [
+              _baseScreens[_currentIndex], // Base screens
+              ..._overlayStack, // Overlay screens
+            ],
           ),
-          child: BottomAppBar(
-            padding: EdgeInsets.zero,
-            height: 60,
-            color: Colors.white,
-            // color: AppColor.backgroundGrey,
-            //surfaceTintColor: Colors.black,
-            child: Container(
-              height: 60,
-              // decoration: BoxDecoration(
-              //     border: Border(top: BorderSide(color: Colors.grey))
-              // ),
-              // decoration: BoxDecoration(color: AppColor.backgroundGrey),
-              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: bottomNavItem(
-                      label: 'Home',
-                      index: 0,
-                      icon: AppImageSvg.home,
-                    ),
-                  ),
-                  Expanded(
-                    child: bottomNavItem(
-                      label: 'News',
-                      index: 1,
-                      icon: AppImageSvg.news,
-                    ),
-                  ),
-                  Expanded(
-                    child: bottomNavItem(
-                      label: 'Record',
-                      index: 2,
-                      icon: AppImageSvg.record,
-                    ),
-                  ),
-                  Expanded(
-                    child: bottomNavItem(
-                      label: 'Tips',
-                      index: 3,
-                      icon: AppImageSvg.tips,
-                    ),
-                  ),
-                  Expanded(
-                    child: bottomNavItem(
-                      label: 'Challenge',
-                      index: 4,
-                      icon: AppImageSvg.club,
-                    ),
-                  ),
 
-                  // bottomNavItem(
-                  //   label: 'Profile',
-                  //   index: 4,
-                  //   icon: AppImageSvg.profile,
-                  // ),
-                ],
+          bottomNavigationBar: Container(
+            // elevation: 10,
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.grey))
+            ),
+            child: BottomAppBar(
+              padding: EdgeInsets.zero,
+              height: 60,
+              color: Colors.white,
+              // color: AppColor.backgroundGrey,
+              //surfaceTintColor: Colors.black,
+              child: Container(
+                height: 60,
+                // decoration: BoxDecoration(
+                //     border: Border(top: BorderSide(color: Colors.grey))
+                // ),
+                // decoration: BoxDecoration(color: AppColor.backgroundGrey),
+                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: bottomNavItem(
+                        label: 'Home',
+                        index: 0,
+                        icon: AppImageSvg.home,
+                      ),
+                    ),
+                    Expanded(
+                      child: bottomNavItem(
+                        label: 'News',
+                        index: 1,
+                        icon: AppImageSvg.news,
+                      ),
+                    ),
+                    Expanded(
+                      child: bottomNavItem(
+                        label: 'Record',
+                        index: 2,
+                        icon: AppImageSvg.record,
+                      ),
+                    ),
+                    Expanded(
+                      child: bottomNavItem(
+                        label: 'Tips',
+                        index: 3,
+                        icon: AppImageSvg.tips,
+                      ),
+                    ),
+                    Expanded(
+                      child: bottomNavItem(
+                        label: 'Challenge',
+                        index: 4,
+                        icon: AppImageSvg.club,
+                      ),
+                    ),
+
+                    // bottomNavItem(
+                    //   label: 'Profile',
+                    //   index: 4,
+                    //   icon: AppImageSvg.profile,
+                    // ),
+                  ],
+                ),
               ),
             ),
           ),

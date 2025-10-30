@@ -58,49 +58,6 @@ class _SaveActivityState extends State<SaveActivity> {
   final ImagePicker picker = ImagePicker();
 
 
-  Future<void> uploadActivity() async {
-    setState(() => isUploading = true);
-
-    if (_selectedImage != null) {
-      final bytes = await _selectedImage!.readAsBytes();
-      convertedImage = base64Encode(bytes);
-    }
-
-    await Api.saveActivityApi({
-      "category_id": categoryId,
-      "title": titleController.text,
-      "description": descriptionController.text,
-      "distance": widget.trackingData["distance"],
-      "pace": widget.trackingData["avgPace"],
-      "moving_time": widget.trackingData["time"],
-      "city": widget.trackingData["city"],
-      "state": widget.trackingData["state"],
-      "country": widget.trackingData["country"],
-      "address": widget.trackingData["address"],
-      "elavation_gain": widget.trackingData["elevationGain"],
-      "max_elavation": widget.trackingData["maxElevation"],
-      "steps": widget.trackingData["steps"],
-      "fastest_split": widget.trackingData["fastestSplit"],
-      "path": widget.trackingData["path"],
-      "run_type": selectedRunType,
-      "type_of_run": selectedTypeOfRun,
-      "feeling": selectedFeeling,
-      "private_note": privateNoteController.text,
-      "gear": selectedGear,
-      "visibility": selectedVisibility,
-      "hidden_details": selectedHiddenDetails,
-      "mute_activity": isPublish,
-      "type": "activity",
-      "avg_elapsed_pace": widget.trackingData["avgPace"],
-      "elapsed_time": widget.trackingData["time"],
-      "max_speed": widget.trackingData["maxSpeed"] ?? 0,
-      "photo": _selectedImage != null ? convertedImage : widget.trackingData["photo"],
-    }, context);
-
-    setState(() => isUploading = false);
-  }
-
-
   Future<void> saveActivity() async {
     final url = Uri.parse("https://yourapi.com/save-activity");
 
