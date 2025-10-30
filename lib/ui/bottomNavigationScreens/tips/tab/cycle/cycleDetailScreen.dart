@@ -11,7 +11,7 @@ class CycleDetailScreen extends StatelessWidget {
   final String description;
   final List<String> keyFeatures;
 
-  const CycleDetailScreen({
+  const CycleDetailScreen({Z
     super.key,
     required this.imageUrl,
     required this.type,
@@ -47,7 +47,8 @@ class CycleDetailScreen extends StatelessWidget {
                       onTap:(){
                         Navigator.pop(context);
                       },
-                      child: Image.asset(AppImageOthers.backArrow,width: 30,height: 30,))
+                      child: Image.asset(AppImageOthers.backArrow,width: 30,height: 30,)
+                  )
               ),
               Positioned.fill(
                 child: Center(
@@ -73,8 +74,7 @@ class CycleDetailScreen extends StatelessWidget {
                     SizedBox(width: 6),
                     Text(
                       type,
-                      style:  TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.w500),
+                      style:  TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -93,6 +93,7 @@ class CycleDetailScreen extends StatelessWidget {
                   description,
                   style:  TextStyle(fontSize: 14, color: Colors.black87),
                 ),
+
                 SizedBox(height: 16),
 
                 Text(
@@ -109,13 +110,12 @@ class CycleDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("• ",
-                            style: TextStyle(
-                                fontSize: 14, color: Colors.black87)),
+                            style: TextStyle(fontSize: 14, color: Colors.black87)
+                        ),
                         Expanded(
                           child: Text(
                             feature,
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.black87),
+                            style: const TextStyle(fontSize: 14, color: Colors.black87),
                           ),
                         ),
                       ],
@@ -147,6 +147,7 @@ class CycleDetailScreen extends StatelessWidget {
               ),
             ),
           )
+
         ],
       ),
     );
