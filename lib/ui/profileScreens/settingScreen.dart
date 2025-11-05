@@ -1,3 +1,4 @@
+import 'package:coherent_endurance/constant/Constant.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
 import 'package:coherent_endurance/ui/authScreens/registerScreen.dart';
@@ -179,7 +180,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         await _auth.signOut();
                         Navigator.pop(context);
                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.clear(); // or just remove saved_email/saved_password
+                        prefs.remove(PrefKey.isLogin);
+                        prefs.remove(PrefKey.refreshToken);
+                        prefs.remove(PrefKey.accessToken);
+                        prefs.remove(PrefKey.fcmToken);
+                        // await prefs.clear(); // or just remove saved_email/saved_password
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RegisterScreen( )), (route) => false,);
 
                       },

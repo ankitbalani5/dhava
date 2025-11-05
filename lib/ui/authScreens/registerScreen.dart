@@ -27,6 +27,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   var _formKey = GlobalKey<FormState>();
 
   final SocialAuth _authService = SocialAuth();
+
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+  }
+
+  void fetchData() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var isRememberMe = pref.getBool(PrefKey.rememberMe);
+    if(isRememberMe != null && isRememberMe == true){
+      emailController.text = pref.getString(PrefKey.savedEmail)!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

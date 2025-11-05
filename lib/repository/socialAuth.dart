@@ -156,96 +156,96 @@ class SocialAuth{
   //   }
 
 
-  Future<void> facebookLogin(BuildContext context) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    fcmToken = pref.getString('fcmToken');
-    try {
-      final LoginResult result = await FacebookAuth.instance.login(
-        // permissions: ['email'],
-        permissions: ['email', 'public_profile'],
-      );
-
-      if (result.status == LoginStatus.success) {
-        final AccessToken accessToken = result.accessToken!;
-        final userData = await FacebookAuth.i.getUserData(
-          fields: "name,email",
-        );
-        final name = userData["name"];
-        final email = userData["email"];
-        final phone = userData["phone"] ?? "";
-        final id = userData["id"];
-
-        String countryCode = "";
-        String phoneNumber = phone;
-
-        if (phone == null) {
-          final parts = phone.split(' ');
-          if (parts.length > 1) {
-            countryCode = parts[0];
-            phoneNumber = parts[1];
-          }
-        }
-
-        print("User Name: $name");
-        print("User Email: $email");
-        print("User Phone: $phone");
-        print("Country Code: $countryCode");
-        print("Phone Number: $phoneNumber");
-
-        var namePart = name.split(' ');
-        var firstName = namePart?[0].toString();
-        var lastName = namePart?.sublist(1).join(" ");
-        SharedPreferences pref = await SharedPreferences.getInstance();
-        pref.setString('first_name', firstName.toString());
-        pref.setString('last_name', lastName.toString());
-        pref.setString('email', email.toString());
-        // pref.setString('image', user.photoURL.toString());
-        pref.setBool('login', true);
-
-        Constant.token = pref.getString('token').toString();
-        Constant.firstName = pref.getString('first_name').toString();
-        Constant.lastName = pref.getString('last_name').toString();
-        Constant.email = pref.getString('email').toString();
-        // Constant.country = pref.getString('country');
-        // Constant.countryCode = pref.getString('country_code');
-        // Constant.image = pref.getString('image');
-
-        // await Api.socialLoginApi(
-        //   socailite_type: "facebook",
-        //   email: email,
-        //   socailite_id: id,
-        //   first_name: name,
-        //   fcm_token: fcmToken,
-        //   context: context
-        //   // mobile: phoneNumber,
-        //   // countryCode: countryCode,
-        // ).then((e) async {
-        //   if(e['status'] == 'success'){
-        //     Navigator.pop(context);
-        //     SharedPreferences pref = await SharedPreferences.getInstance();
-        //     pref.setString('token', e['token'].toString());
-        //     pref.setString('current_steps', e['userdata']['current_steps'].toString());
-        //     Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)));
-        //   }
-        // });
-      } else {
-        Navigator.pop(context);
-        print(result.message);
-        Fluttertoast.showToast(msg: '${result.message}');
-        // Utils.toastMessage("${result.message}");
-        // Get.back();
-      }
-    } catch (e) {
-      Navigator.pop(context);
-      // Get.back();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: ${e.toString()}')),
-      );
-      print("An error occurred during Facebook login: $e");
-      Fluttertoast.showToast(msg: "An error occurred during Facebook login: $e");
-      // Get.back();
-    }
-  }
+  // Future<void> facebookLogin(BuildContext context) async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   fcmToken = pref.getString('fcmToken');
+  //   try {
+  //     final LoginResult result = await FacebookAuth.instance.login(
+  //       // permissions: ['email'],
+  //       permissions: ['email', 'public_profile'],
+  //     );
+  //
+  //     if (result.status == LoginStatus.success) {
+  //       final AccessToken accessToken = result.accessToken!;
+  //       final userData = await FacebookAuth.i.getUserData(
+  //         fields: "name,email",
+  //       );
+  //       final name = userData["name"];
+  //       final email = userData["email"];
+  //       final phone = userData["phone"] ?? "";
+  //       final id = userData["id"];
+  //
+  //       String countryCode = "";
+  //       String phoneNumber = phone;
+  //
+  //       if (phone == null) {
+  //         final parts = phone.split(' ');
+  //         if (parts.length > 1) {
+  //           countryCode = parts[0];
+  //           phoneNumber = parts[1];
+  //         }
+  //       }
+  //
+  //       print("User Name: $name");
+  //       print("User Email: $email");
+  //       print("User Phone: $phone");
+  //       print("Country Code: $countryCode");
+  //       print("Phone Number: $phoneNumber");
+  //
+  //       var namePart = name.split(' ');
+  //       var firstName = namePart?[0].toString();
+  //       var lastName = namePart?.sublist(1).join(" ");
+  //       SharedPreferences pref = await SharedPreferences.getInstance();
+  //       pref.setString('first_name', firstName.toString());
+  //       pref.setString('last_name', lastName.toString());
+  //       pref.setString('email', email.toString());
+  //       // pref.setString('image', user.photoURL.toString());
+  //       pref.setBool('login', true);
+  //
+  //       Constant.token = pref.getString('token').toString();
+  //       Constant.firstName = pref.getString('first_name').toString();
+  //       Constant.lastName = pref.getString('last_name').toString();
+  //       Constant.email = pref.getString('email').toString();
+  //       // Constant.country = pref.getString('country');
+  //       // Constant.countryCode = pref.getString('country_code');
+  //       // Constant.image = pref.getString('image');
+  //
+  //       // await Api.socialLoginApi(
+  //       //   socailite_type: "facebook",
+  //       //   email: email,
+  //       //   socailite_id: id,
+  //       //   first_name: name,
+  //       //   fcm_token: fcmToken,
+  //       //   context: context
+  //       //   // mobile: phoneNumber,
+  //       //   // countryCode: countryCode,
+  //       // ).then((e) async {
+  //       //   if(e['status'] == 'success'){
+  //       //     Navigator.pop(context);
+  //       //     SharedPreferences pref = await SharedPreferences.getInstance();
+  //       //     pref.setString('token', e['token'].toString());
+  //       //     pref.setString('current_steps', e['userdata']['current_steps'].toString());
+  //       //     Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavBar(key: bottomNavKey)));
+  //       //   }
+  //       // });
+  //     } else {
+  //       Navigator.pop(context);
+  //       print(result.message);
+  //       Fluttertoast.showToast(msg: '${result.message}');
+  //       // Utils.toastMessage("${result.message}");
+  //       // Get.back();
+  //     }
+  //   } catch (e) {
+  //     Navigator.pop(context);
+  //     // Get.back();
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('An error occurred: ${e.toString()}')),
+  //     );
+  //     print("An error occurred during Facebook login: $e");
+  //     Fluttertoast.showToast(msg: "An error occurred during Facebook login: $e");
+  //     // Get.back();
+  //   }
+  // }
 
   // Future<void> signout() async {
   //   await auth.signOut();

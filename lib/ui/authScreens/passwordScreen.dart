@@ -30,7 +30,17 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   void initState() {
     super.initState();
+    fetchData();
     _loadSavedCredentials();
+  }
+
+
+  void fetchData() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var isRememberMe = pref.getBool(PrefKey.rememberMe);
+    if(isRememberMe != null && isRememberMe == true){
+      passwordController.text = pref.getString(PrefKey.savedPassword)!;
+    }
   }
 
   Future<void> _loadSavedCredentials() async {
