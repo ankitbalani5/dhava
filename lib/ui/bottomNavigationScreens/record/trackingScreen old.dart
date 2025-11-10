@@ -58,6 +58,11 @@ class _TrackingScreenState extends State<TrackingScreen> {
   String? categoryName;
   String? categoryIcon;
   List<double> altitudeList = [];
+  var pace_str;
+  var split_str;
+  var elevation_str;
+  var split_string;
+  double totalDistanceMetersSoFar = 0.0;
 
   @override
   void initState() {
@@ -152,60 +157,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     });
   }
 
-  // List<Map<String, dynamic>> calculateSplits() {
-  //   List<Map<String, dynamic>> splits = [];
-  //   double distanceCovered = 0.0;
-  //   Duration splitDuration = Duration.zero;
-  //   const double splitDistance = 1000.0; // 1km split
-  //
-  //   LatLng? lastPoint;
-  //   DateTime? lastTime;
-  //
-  //   for (int i = 0; i < pathPoints.length; i++) {
-  //
-  //     if (i >= pointTimestamps.length) break;
-  //
-  //     if (lastPoint != null && lastTime != null) {
-  //       double distance = _calculateDistance(lastPoint, pathPoints[i]);
-  //       distanceCovered += distance;
-  //
-  //       splitDuration += pointTimestamps[i].difference(lastTime);
-  //
-  //       if (distanceCovered >= splitDistance) {
-  //         double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
-  //         splits.add({
-  //           "split": splits.length + 1,
-  //           "distance": (distanceCovered / 1000).toStringAsFixed(2),
-  //           "pace": formatPace(paceSec),
-  //           "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
-  //         });
-  //
-  //
-  //         distanceCovered = 0.0;
-  //         splitDuration = Duration.zero;
-  //       }
-  //     }
-  //     lastPoint = pathPoints[i];
-  //     lastTime = pointTimestamps[i];
-  //   }
-  //
-  //
-  //   if (distanceCovered > 0 && lastTime != null) {
-  //     double paceSec = splitDuration.inSeconds / (distanceCovered / 1000);
-  //     splits.add({
-  //       "split": splits.length + 1,
-  //       "distance": (distanceCovered / 1000).toStringAsFixed(2),
-  //       "pace": formatPace(paceSec),
-  //       "time": "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}"
-  //     });
-  //   }
-  //
-  //   return splits;
-  // }
-
-  var pace_str;
-  var split_str;
-  var elevation_str;
   Map<String, dynamic> calculateResults() {
     List<Map<String, dynamic>> splits = calculateSplits();
     double fastestSplit = double.infinity;
@@ -233,96 +184,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
       'avgPace': avgPace
     };
   }
-
-  // List<Map<String, dynamic>> calculateSplits() {
-  //   List<Map<String, dynamic>> splits = [];
-  //   List<String> paceArr = [];
-  //   List<String> splitArr = [];
-  //   List<String> elevationArr = [];
-  //
-  //   if (pathPoints.length < 2 || pointTimestamps.length < 2) {
-  //     return splits; // Not enough data
-  //   }
-  //
-  //   // 🔹 Step 1: Calculate total distance
-  //   double totalDistanceMeters = 0.0;
-  //   for (int i = 1; i < pathPoints.length; i++) {
-  //     totalDistanceMeters += _calculateDistance(pathPoints[i - 1], pathPoints[i]);
-  //   }
-  //
-  //   // 🔹 Step 2: Adaptive Split Interval
-  //   double splitInterval;
-  //   if (totalDistanceMeters < 1000) {
-  //     splitInterval = 100;
-  //   } else if (totalDistanceMeters < 2000) {
-  //     splitInterval = 200;
-  //   } else if (totalDistanceMeters < 5000) {
-  //     splitInterval = 500;
-  //   } else {
-  //     splitInterval = 1000;
-  //   }
-  //
-  //   // 🔹 Step 3: Loop
-  //   double accumulatedDistance = 0.0;
-  //   int splitStartIndex = 0;
-  //   int splitCount = 1;
-  //
-  //   for (int i = 1; i < pathPoints.length; i++) {
-  //     if (i >= pointTimestamps.length) break;
-  //
-  //     double segmentDistance = _calculateDistance(pathPoints[i - 1], pathPoints[i]);
-  //     accumulatedDistance += segmentDistance;
-  //     print("🧭 segmentDistance: $segmentDistance, accumulated: $accumulatedDistance, splitInterval: $splitInterval");
-  //
-  //     // जब split पूरा हो जाए या आखिरी पॉइंट हो
-  //     if (accumulatedDistance >= splitInterval || i == pathPoints.length - 1) {
-  //       Duration splitDuration = pointTimestamps[i].difference(pointTimestamps[splitStartIndex]);
-  //
-  //       // pace calculation safeguard
-  //       double paceSecPerKm = (accumulatedDistance > 0)
-  //           ? splitDuration.inSeconds / (accumulatedDistance / 1000)
-  //           : 0;
-  //
-  //       String paceStr = (paceSecPerKm.isFinite && paceSecPerKm > 0)
-  //           ? formatPace(paceSecPerKm)
-  //           : "0:00";
-  //
-  //       String distanceStr = (accumulatedDistance / 1000).toStringAsFixed(2);
-  //       String timeStr =
-  //           "${splitDuration.inMinutes}:${(splitDuration.inSeconds % 60).toString().padLeft(2, '0')}";
-  //
-  //       splits.add({
-  //         "split": splitCount,
-  //         "distance": distanceStr,
-  //         "pace": paceStr,
-  //         "time": timeStr,
-  //       });
-  //
-  //       // arrays for backend
-  //       paceArr.add(paceStr);
-  //       splitArr.add(distanceStr);
-  //       elevationArr.add("0");
-  //
-  //       splitCount++;
-  //       splitStartIndex = i;
-  //       accumulatedDistance = 0.0;
-  //     }
-  //   }
-  //
-  //   // 🔹 Convert to strings
-  //   pace_str = paceArr.join(',');
-  //   split_str = splitArr.join(',');
-  //   elevation_str = elevationArr.join(',');
-  //
-  //   print("✅ pace_str => $pace_str");
-  //   print("✅ split_str => $split_str");
-  //   print("✅ elevation_str => $elevation_str");
-  //
-  //   return splits;
-  // }
-
-  var split_string;
-  double totalDistanceMetersSoFar = 0.0;
 
   List<Map<String, dynamic>> calculateSplits() {
     List<Map<String, dynamic>> splits = [];
@@ -454,10 +315,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return splits;
   }
 
-
-
-
-
   String formatPace(double paceInSec) {
     if (paceInSec.isInfinite || paceInSec.isNaN || paceInSec == 0) return "0:00";
     int min = (paceInSec / 60).floor();
@@ -516,14 +373,74 @@ class _TrackingScreenState extends State<TrackingScreen> {
     super.dispose();
   }
 
+  Future<void> _showStopTrackingDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Are you sure?',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          content: const Text(
+            'Are you sure you want to stop tracking and exit?',
+            style: TextStyle(fontSize: 16),
+          ),
+          actionsAlignment: MainAxisAlignment.end,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // close dialog
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                stopTracking(); // <-- Call your stop tracking function
+                bottomNavKey.currentState?.changeTab(2);
+                Navigator.of(context).pop(); // close dialog
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         // Back press → Endurance tab
         print('current State from tracking:::${bottomNavKey.currentState?.currentTap}');
-        bottomNavKey.currentState?.changeTab(2);
-        Navigator.of(context).pop(); // Remove TrackingScreen
+
+
+        if (start == true) {
+          await _showStopTrackingDialog(context);
+        } else {
+          Navigator.of(context).pop();
+        }
         return false; // prevent BottomNavBar onWillPop
       },
       child: Scaffold(
@@ -539,7 +456,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
           leading: isShort
               ? GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              if (start == true) {
+                _showStopTrackingDialog(context);
+              } else {
+                Navigator.of(context).pop();
+              }
             },
             child: Icon(Icons.arrow_back_ios, color: Colors.black),
           )

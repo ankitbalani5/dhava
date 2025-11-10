@@ -439,6 +439,61 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return "${min}:${sec.toString().padLeft(2, '0')}";
   }
 
+  Future<void> _showStopTrackingDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Are you sure?',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          content: const Text(
+            'Are you sure you want to stop tracking and exit?',
+            style: TextStyle(fontSize: 16),
+          ),
+          actionsAlignment: MainAxisAlignment.end,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // close dialog
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // close dialog
+                Navigator.of(context).pop(); // close dialog
+                stopTracking(); // <-- Call your stop tracking function
+                bottomNavKey.currentState?.changeTab(2);
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     positionStream?.cancel();
@@ -451,9 +506,13 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return WillPopScope(
       onWillPop: () async {
         print('current State from tracking:::${bottomNavKey.currentState?.currentTap}');
-        bottomNavKey.currentState?.changeTab(2);
-        Navigator.of(context).pop();
-        return false;
+
+        if (start == true) {
+          await _showStopTrackingDialog(context);
+        } else {
+          Navigator.of(context).pop();
+        }
+        return false; // prevent BottomNavBar onWillPop
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -468,7 +527,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
           leading: isShort
               ? GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              if (start == true) {
+                _showStopTrackingDialog(context);
+              } else {
+                Navigator.of(context).pop();
+              }
             },
             child: Icon(Icons.arrow_back_ios, color: Colors.black),
           )

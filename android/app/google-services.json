@@ -9,10 +9,23 @@
       "client_info": {
         "mobilesdk_app_id": "1:365106345715:android:03348219a97e6e9b3b2986",
         "android_client_info": {
-          "package_name": "com.coherent.dhava"
+          "package_name": "com.app.coherent_endurance"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "365106345715-uo2us8bksrev3f9gjrm6pvi8qka0sa65.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.coherent_endurance",
+            "certificate_hash": "d2b76e58e72f685c61f125fab598883f27dd0707"
+          }
+        },
+        {
+          "client_id": "365106345715-bne2o6p1romh22ohcjpu2tguigtgj51m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAHDWMLWsP3gy_OP5ItoF1Kl7svo4yE25A"
@@ -20,7 +33,55 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365106345715-bne2o6p1romh22ohcjpu2tguigtgj51m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "365106345715-07ltatg0334kcdbj5uvapadcg3q7tgh1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.coherentEndurance"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365106345715:android:6cad961d92d0f3e43b2986",
+        "android_client_info": {
+          "package_name": "com.coherent.dhava"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "365106345715-bne2o6p1romh22ohcjpu2tguigtgj51m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHDWMLWsP3gy_OP5ItoF1Kl7svo4yE25A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365106345715-bne2o6p1romh22ohcjpu2tguigtgj51m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "365106345715-07ltatg0334kcdbj5uvapadcg3q7tgh1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.coherentEndurance"
+              }
+            }
+          ]
         }
       }
     }
