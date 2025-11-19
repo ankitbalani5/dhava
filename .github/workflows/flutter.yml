@@ -1,0 +1,54 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Clone repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Install Flutter
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.22.0' # <-- Set your version
+
+      # Cache pub dependencies
+      - name: Cache Flutter packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+
+      # Get dependencies
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      # Run analyzer
+      - name: Flutter Analyze
+        run: flutter analyze
+
+      # Run tests (Optional)
+      - name: Flutter Test
+        run: flutter test
+
+      # Build Release APK
+      - name: Build APK
+        run: flutter build apk --release
+
+      # Upload APK as GitHub Artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
