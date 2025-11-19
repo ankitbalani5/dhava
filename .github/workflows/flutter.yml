@@ -8,7 +8,6 @@ on:
     branches:
       - "**"
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,7 +15,7 @@ jobs:
     steps:
       # Clone repo
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Install Flutter
       - name: Install Flutter
@@ -49,9 +48,9 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      # Upload APK as GitHub Artifact
+      # Upload APK as GitHub Artifact (UPDATED TO v4)
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
