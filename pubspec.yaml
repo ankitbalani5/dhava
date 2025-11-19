@@ -80,10 +80,6 @@ dev_dependencies:
 
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  build_runner: ^2.4.8
-  hive_generator: ^2.0.1
   dropdown_search: ^6.0.2
   dotted_border: ^2.0.0
   fl_chart: ^0.63.0
@@ -95,7 +91,6 @@ dev_dependencies:
   screenshot: ^3.0.0
   google_fonts: ^6.3.1
 
-  flutter_facebook_auth:
   firebase_auth: ^5.3.1
   email_validator: ^3.0.0
   geocoding: ^2.1.0
