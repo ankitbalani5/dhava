@@ -163,7 +163,7 @@ class ClubScreenState extends State<ClubScreen> {
                     child: Center(child: Text(challengesKey, style: CustomTextStyles.medium(fontSize: 16, textColor: tabStatus == challengesKey ? Colors.white : Colors.black),)),
                   ),
                 ),
-                SizedBox(width: 10,),
+                // SizedBox(width: 10,),
                 // GestureDetector(
                 //   onTap: () {
                 //     tabStatus = clubsKey;

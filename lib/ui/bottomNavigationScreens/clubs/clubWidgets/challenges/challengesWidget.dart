@@ -11,6 +11,8 @@ import 'package:coherent_endurance/repository/api.dart';
 import 'package:coherent_endurance/resources/color/appColor.dart';
 import 'package:coherent_endurance/resources/image/appImages.dart';
 import 'package:coherent_endurance/resources/style/textStyle.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/challenges/weRunnerDetail.dart';
+import 'package:coherent_endurance/ui/bottomNavigationScreens/clubs/clubWidgets/club/clubDetailScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -117,7 +119,11 @@ class _challengesWidgetState extends State<challengesWidget> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Image.asset(AppImageOthers.challengesBanner, fit: BoxFit.cover),
+                          GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => WeRunnerDetail()));
+                              },
+                              child: Image.asset(AppImageOthers.challengesBanner, fit: BoxFit.cover)),
                           SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),

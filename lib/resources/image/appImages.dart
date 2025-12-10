@@ -128,6 +128,7 @@ class AppImageOthers {
   static const feedCard6 = 'assets/image/others/feedCard6.png';
   static const sendCode = 'assets/image/others/sendCode.png';
 
+  static const filterWeRunner = 'assets/image/others/filterWeRunner.png';
   static const splash = 'assets/image/others/splash.png';
   static const map = 'assets/image/others/map.png';
   static const trophy = 'assets/image/others/trophy.png';

@@ -94,10 +94,57 @@ class LeaderboardTabScreen extends StatelessWidget {
               ),
             ),
 
+            SizedBox(height: 20,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
+                        cursorColor: AppColor.bgRed,
+                        decoration: InputDecoration(
+                          hintText: "Search athelete...",
+                          // prefixIcon: const Icon(Icons.search),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            // child: SvgPicture.asset(AppImageSvg.searchRed, height: 33,),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 8,  // इसको adjust करके perfect center पा सकते हैं
+                            horizontal: 10,
+                          ),
+                          /*IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.arrow_forward, color: Colors.red),
+                      ),*/
+                          filled: true,
+                          fillColor: AppColor.bgTextField,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  GestureDetector(
+                      onTap: () {
+                        _showFilterPopup(context);
+                      },
+                      child: Image.asset(AppImageOthers.filterWeRunner, width: 33,))
+                ],
+              ),
+            ),
+
 
             ListView.builder(
               shrinkWrap: true,
               physics:  NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               itemCount: 10,
               itemBuilder: (context, index) {
                 return Container(
@@ -114,7 +161,7 @@ class LeaderboardTabScreen extends StatelessWidget {
                         child: Text("${index + 1}"),
                       ),
                       Expanded(
-                        flex: 3,
+                        flex: 5,
                         child: Row(
                           children: [
                             SizedBox(height: 30,child: Image.asset(AppImageOthers.defaultUserImg)),
@@ -145,6 +192,92 @@ class LeaderboardTabScreen extends StatelessWidget {
     );
   }
 }
+
+void _showFilterPopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        insetPadding: EdgeInsets.only(right: 20, top: 120),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          width: 200,
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              // Header Row
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: const [
+                        Icon(Icons.filter_list, size: 18),
+                        SizedBox(width: 5),
+                        Text(
+                          "Filter",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, size: 18),
+                    ),
+                  ],
+                ),
+              ),
+
+              Divider(),
+
+              // Options List
+              ..._filterOptions.map((item) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(item,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: item == "All" ? Colors.red : Colors.black)),
+                        if (item == "All")
+                          Icon(Icons.check, color: Colors.red, size: 18),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+List<String> _filterOptions = [
+  "All",
+  "Male",
+  "Female",
+  "Under 15",
+  "15-25",
+  "25-35",
+  "35-45",
+  "45-55",
+  "55-65",
+  "65-Above",
+];
+
 
 class _statRow extends StatelessWidget {
   final String title;
