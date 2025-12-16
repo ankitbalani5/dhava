@@ -123,7 +123,6 @@ class _MyAppState extends State<MyApp> {
     theme: ThemeData(fontFamily: 'InterRegular'),
     home: const SplashScreen(),
     ),
-
     );
   }
 }
