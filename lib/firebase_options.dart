@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -49,9 +40,18 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCgpdcdP5_C4tm_3v41OACytowOyDczrUc',
+    appId: '1:365106345715:web:751dcb2ec41679053b2986',
+    messagingSenderId: '365106345715',
+    projectId: 'dhava-91034',
+    authDomain: 'dhava-91034.firebaseapp.com',
+    storageBucket: 'dhava-91034.firebasestorage.app',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAHDWMLWsP3gy_OP5ItoF1Kl7svo4yE25A',
-    appId: '1:365106345715:android:03348219a97e6e9b3b2986',
+    appId: '1:365106345715:android:6cad961d92d0f3e43b2986',
     messagingSenderId: '365106345715',
     projectId: 'dhava-91034',
     storageBucket: 'dhava-91034.firebasestorage.app',
@@ -63,6 +63,28 @@ class DefaultFirebaseOptions {
     messagingSenderId: '365106345715',
     projectId: 'dhava-91034',
     storageBucket: 'dhava-91034.firebasestorage.app',
+    androidClientId: '365106345715-44bto1n60oag13b1tlcu1hqvftguqhol.apps.googleusercontent.com',
+    iosClientId: '365106345715-07ltatg0334kcdbj5uvapadcg3q7tgh1.apps.googleusercontent.com',
     iosBundleId: 'com.app.coherentEndurance',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBPpdjsng1tJJgX_q5ODL2-39ZB1Zx9JOk',
+    appId: '1:365106345715:ios:1f17f399c5fcc7e03b2986',
+    messagingSenderId: '365106345715',
+    projectId: 'dhava-91034',
+    storageBucket: 'dhava-91034.firebasestorage.app',
+    androidClientId: '365106345715-44bto1n60oag13b1tlcu1hqvftguqhol.apps.googleusercontent.com',
+    iosClientId: '365106345715-07ltatg0334kcdbj5uvapadcg3q7tgh1.apps.googleusercontent.com',
+    iosBundleId: 'com.app.coherentEndurance',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCgpdcdP5_C4tm_3v41OACytowOyDczrUc',
+    appId: '1:365106345715:web:274e79fdd785e6da3b2986',
+    messagingSenderId: '365106345715',
+    projectId: 'dhava-91034',
+    authDomain: 'dhava-91034.firebaseapp.com',
+    storageBucket: 'dhava-91034.firebasestorage.app',
   );
 }
