@@ -22,7 +22,7 @@ android {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
-    namespace = "com.coherent.dhava"
+    namespace = "com.coherentlab.dhava"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -36,7 +36,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.coherent.dhava"
+        applicationId = "com.coherentlab.dhava"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode
@@ -114,7 +114,7 @@ android {
         keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
     }
 
-    namespace = "com.coherent.dhava"
+    namespace = "com.coherentlab.dhava"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -129,7 +129,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.coherent.dhava"
+        applicationId = "com.coherentlab.dhava"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

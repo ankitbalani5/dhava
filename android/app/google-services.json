@@ -7,26 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:365106345715:android:6cad961d92d0f3e43b2986",
+        "mobilesdk_app_id": "1:365106345715:android:bd39b620c93a915d3b2986",
         "android_client_info": {
-          "package_name": "com.coherent.dhava"
+          "package_name": "com.coherentlab.dhava"
         }
       },
       "oauth_client": [
         {
-          "client_id": "365106345715-44bto1n60oag13b1tlcu1hqvftguqhol.apps.googleusercontent.com",
+          "client_id": "365106345715-281qi6e2duuoohbs9n062ek9c7ej1ldb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.coherent.dhava",
-            "certificate_hash": "d2b76e58e72f685c61f125fab598883f27dd0707"
-          }
-        },
-        {
-          "client_id": "365106345715-ieb1gi5rdqkle725enoarc43c5feqk1a.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.coherent.dhava",
-            "certificate_hash": "7868d7f23c26014f4d8689d3ad783164ffa58a79"
+            "package_name": "com.coherentlab.dhava",
+            "certificate_hash": "6a40c545ac0174142a4270c53baea050a5a3931e"
           }
         },
         {
